@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
-import com.example.topics2.ui.viewmodels.topicViewModel
+import com.example.topics2.ui.viewmodels.TopicViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 //fun TopicName(function: () -> Unit) {
-fun TopicName(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun TopicName(navController: NavController, viewModel: TopicViewModel = viewModel()) {
     val density = LocalDensity.current.density // Get screen density
     var inputText by remember { mutableStateOf("") }
     val sPlaceHolder = "Topic Name..."
