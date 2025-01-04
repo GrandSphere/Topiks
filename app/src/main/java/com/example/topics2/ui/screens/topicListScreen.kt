@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.topics2.ui.components.fSearchBox
 import com.example.topics2.ui.viewmodels.topicViewModel
 
 @Composable
@@ -62,7 +63,7 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
                 .padding(horizontal = 8.dp, vertical = 1.dp)
         ) {
             // Search Box
-            //fSearchBox() // No changes required for the SearchBox
+            fSearchBox()
 
             // Topic List
             LazyColumn(
