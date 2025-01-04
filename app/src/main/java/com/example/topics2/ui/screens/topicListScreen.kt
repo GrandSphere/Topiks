@@ -39,13 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.topics2.model.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
-    // viewModel.addTestData()
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
 
@@ -71,15 +71,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
             ) {
-                //  items(topics) { topic ->
-                //TopicItem(
-                //topic = topic,
-                //onClick = { /* Navigate to topic details */ },
-                //onDelete = { viewModel.deleteTopic(topic.topicId) }
-                //)
-                //    }
+                items(topics.size) { index ->
+                    val topic = topics[index]
+                    TopicItem(navController, viewModel, topic) // Pass the topic correctly
+                }
             }
-
 
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
@@ -101,7 +97,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 
 
 @Composable
-fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -109,9 +105,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
             .background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    //onTap = { onClick() },
                     onTap = { },
-                    //onLongPress = { showMenu = true }
                     onLongPress = { }
                 )
             }
@@ -122,22 +116,23 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
         ) {
             Surface(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CircleShape, // Ensures the Surface is circular
+                shape = CircleShape,
                 modifier = Modifier
                     .size(35.dp)
                     .heightIn(max = 35.dp),
 
                 ) {
                 Box(
-                    contentAlignment = Alignment.Center, // Center the text inside the circle
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Transparent)
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
-                        //text = topic.topicName.first().toString(),
-                        text = "",
+                        text = topic.topicName.first().toString(),
+
+                       // text = "",
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
@@ -146,8 +141,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                //text = topic.topicName,
-                text = "",
+                text = topic.topicName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
