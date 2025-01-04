@@ -1,6 +1,5 @@
 package com.example.topics2.ui.components.addTopic
 
-import coil.compose.rememberImagePainter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,9 +28,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.topics2.ui.viewmodels.TopicViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewModel()) {
