@@ -1,4 +1,4 @@
-package com.example.topics2.viewmodels
+package com.example.topics2.ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
