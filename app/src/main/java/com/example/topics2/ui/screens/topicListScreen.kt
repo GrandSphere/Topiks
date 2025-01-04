@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.graphics.Paint.Align
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -55,7 +56,7 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
             }
     ) {
         // Topic List Column
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
@@ -65,33 +66,34 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
 
             // Topic List
             LazyColumn(
-                modifier = Modifier.weight(1f) // Ensure LazyColumn takes up all available space
+                modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
             ) {
-               // items(topics.size) { index ->
-               //     val topic = topics[index]
-               //     TopicItem(
-               //         topic = topic,
-               //         onClick = { onTopicClick(topic) },
-               //         onDelete = { onTopicDelete(topic.topicId) }
-                    //)
-                }
+                // items(topics.size) { index ->
+                //     val topic = topics[index]
+                //     TopicItem(
+                //         topic = topic,
+                //         onClick = { onTopicClick(topic) },
+                //         onDelete = { onTopicDelete(topic.topicId) }
+                //)
+            }
+
+            // Button to add new topic, aligned at the bottom end of the screen
+            FloatingActionButton(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Topic",
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
-
-        // Button to add new topic, aligned at the bottom end of the screen
-        FloatingActionButton(
-            onClick = {  },
-            modifier = Modifier
-                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Topic",
-                modifier = Modifier.size(24.dp)
-            )
-        }
     }
+}
 
 
 @Composable
@@ -104,9 +106,9 @@ fun TopicItem(navController: NavController, viewModel: topicViewModel = viewMode
             .pointerInput(Unit) {
                 detectTapGestures(
                     //onTap = { onClick() },
-                    onTap = {  },
+                    onTap = { },
                     //onLongPress = { showMenu = true }
-                    onLongPress = {  }
+                    onLongPress = { }
                 )
             }
             .padding(8.dp)
@@ -161,7 +163,8 @@ fun TopicItem(navController: NavController, viewModel: topicViewModel = viewMode
             )
         }
     }
-
-
 }
+
+
+
 
