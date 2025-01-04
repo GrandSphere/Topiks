@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ fun CustomTextBox(
     focusModifier: Modifier = Modifier,
     boxModifier: Modifier = Modifier // Modifier for the Box
 ) {
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = boxModifier // Apply the modifier passed for the Box
     ) {
@@ -39,7 +41,7 @@ fun CustomTextBox(
                 .heightIn(max = vMaxLinesSize),
             textStyle = TextStyle(
                 fontSize = vFontSize,
-                color = Color.White, // Set font color for the input text
+                color = colors.onBackground, // Set font color for the input text
                 lineHeight = 20.sp,
             ),
             cursorBrush = if (isFocused) SolidColor(Color.White) else SolidColor(Color.Transparent), // Hide cursor if not focused
@@ -48,7 +50,7 @@ fun CustomTextBox(
                     Text(
                         text = sPlaceHolder,
                         style = TextStyle(
-                            color = Color.Gray, // Placeholder color
+                            color = colors.secondary, // Placeholder color
                             fontSize = vFontSize,
                             lineHeight = 20.sp
                         ),

@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,11 +81,10 @@ fun CustomTopMenu(
     DropdownMenu(
         expanded = isMenuExpanded,
         onDismissRequest = { onDismiss() },
-        //containerColor = colors.surface, // Set background to surface color
-        //contentColor = colors.onSurface // Set content color to text color for visibility
+        modifier = Modifier.background(colors.background) // Background color for the dropdown
     ) {
         DropdownMenuItem(
-            text = { Text("Export", color = colors.onSurface) }, // Use onSurface for text color
+            text = { Text("Export", color = colors.onBackground) },
             onClick = {
                 onDismiss()
                 showDirectoryPicker = true
@@ -91,14 +92,14 @@ fun CustomTopMenu(
             }
         )
         DropdownMenuItem(
-            text = { Text("Import", color = colors.onSurface) }, // Use onSurface for text color
+            text = { Text("Import", color = colors.onBackground) }, // Use onSurface for text color
             onClick = {
                 onDismiss()
                 showImportPicker = true
             }
         )
         DropdownMenuItem(
-            text = { Text("Close", color = colors.onSurface) }, // Use onSurface for text color
+            text = { Text("Close", color = colors.onBackground) }, // Use onSurface for text color
             onClick = {
                 onDismiss()
                 // Handle Close action here

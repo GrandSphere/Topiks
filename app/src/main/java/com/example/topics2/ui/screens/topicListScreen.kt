@@ -103,6 +103,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 @Composable
 fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewModel()) {
     var showMenu by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +122,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = colors.primaryContainer,
                 shape = CircleShape, // Ensures the Surface is circular
                 modifier = Modifier
                     .size(35.dp)
@@ -138,7 +139,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
                     Text(
                         //text = topic.topicName.first().toString(),
                         text = "",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = colors.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
                     )
@@ -150,7 +151,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
                 text = "",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = colors.onBackground
             )
         }
 

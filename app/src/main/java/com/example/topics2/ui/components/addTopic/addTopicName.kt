@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -51,6 +51,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
 
+    val colors = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
     val focusModifier = Modifier
         .focusRequester(focusRequester)
@@ -86,9 +87,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
 
         ) {
             Icon(
-                imageVector = Icons.Filled.Close, // Attach file icon
+                imageVector = Icons.Filled.Close,
                 contentDescription = "Attach",
-                tint = Color.White, // Set the icon color to white
+                tint = colors.onBackground,
                 modifier = Modifier
                     .height(vIconSize)
             )
@@ -112,7 +113,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
             Icon(
                 imageVector = Icons.Filled.Check, // Attach file icon
                 contentDescription = "Attach",
-                tint = Color.White, // Set the icon color to white
+                tint = colors.onBackground,
                 modifier = Modifier
                     .size(vIconSize)
             )
