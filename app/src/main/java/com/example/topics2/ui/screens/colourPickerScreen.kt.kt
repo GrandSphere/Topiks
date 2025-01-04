@@ -28,7 +28,7 @@ import com.example.topics2.ui.components.addTopic.colorToHsv
 
 
 @Composable
-fun ColorPickerScreen(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun ColourPickerScreen(navController: NavController, viewModel: topicViewModel = viewModel()) {
         //initialColor: Color = MaterialTheme.colorScheme.tertiary
     var initialColor: Color = Color.Red
     //val colors = MaterialTheme.colorScheme
