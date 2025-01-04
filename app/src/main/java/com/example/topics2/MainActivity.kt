@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            insertTestData(applicationContext)
+          //  insertTestData(applicationContext)
             GreetingApp()
         }
     }
