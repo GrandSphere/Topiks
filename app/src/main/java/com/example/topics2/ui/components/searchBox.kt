@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomSearchBox() {
-
+    val colors = MaterialTheme.colorScheme
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var isSearchFocused by remember { mutableStateOf(false) }
     Box(
@@ -45,8 +45,7 @@ fun CustomSearchBox() {
     ) {
         Surface(
             shape = RoundedCornerShape(50),
-            color = MaterialTheme.colorScheme.secondary,
-            //color = MaterialTheme.colorScheme.surfaceVariant,
+            color = colors.secondary,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal=12.dp, vertical=0.dp)
@@ -68,7 +67,7 @@ fun CustomSearchBox() {
                         .padding(horizontal = 20.dp, vertical = 0.dp),
                     textStyle = TextStyle(
                         fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = colors.onSecondary,
                         lineHeight = 20.sp
                     ),
                     singleLine = true,
@@ -83,7 +82,7 @@ fun CustomSearchBox() {
                             innerTextField()
                         }
                     },
-                    cursorBrush = SolidColor(Color.White) // White cursor
+                    cursorBrush = SolidColor(colors.tertiary) // White cursor
                 )
 
                 Spacer(modifier = Modifier.width(5.dp))
@@ -100,7 +99,7 @@ fun CustomSearchBox() {
                         Icon(
                             imageVector = Icons.Filled.Search, // Attach file icon
                             contentDescription = "Attach",
-                            tint = Color.White, // Set the icon color to white
+                            tint = colors.onBackground, // Set the icon color to white
                             modifier = Modifier
                                 .height(25.dp)
                             //.align(Alignment.Center)

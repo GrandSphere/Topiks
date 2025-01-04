@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,10 @@ import coil.compose.rememberImagePainter
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
+
+    val noteColour by viewModel.colour.collectAsState()
+
     val colors = MaterialTheme.colorScheme
     var categoryText by remember { mutableStateOf("Topics") }
     var selectedColor by remember { mutableStateOf(colors.secondary) }
@@ -68,7 +72,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewMo
                 Icon(
                     imageVector = Icons.Filled.Add, // Example icon
                     contentDescription = "Add Image",
-                    tint = Color.White,
+                    tint = colors.onPrimary,
                     modifier = Modifier
                         .clip(CircleShape) // Clip the image into a circular shape
                         //.background(Color.Gray) // Optional: background color in case the image is not loaded
@@ -84,10 +88,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewMo
         ) {
             IconButton(
                 onClick = {
-                    //onNavigateColourPick()
-                    // Handle color picker icon click
-                    // selectedColor =
-                    //     if (selectedColor == colors.secondary) Color.Red else colors.secondary // Toggle between colors
+                    navController.navigate("navcolourpicker")
                 },
                 modifier = Modifier.size(40.dp)
             ) {
@@ -95,7 +96,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewMo
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(selectedColor)
+                        .background(noteColour)
                 )
             }
         }

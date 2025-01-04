@@ -3,10 +3,12 @@ package com.example.topics2.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,51 +41,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.topics2.model.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
-    // viewModel.addTestData()
+
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus() // Clear focus when tapping outside
-                })
-            }
+
     ) {
         // Topic List Column
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus() // Clear focus when tapping outside
+                    })
+                }
         ) {
-            // Search Box
+            // TODO:: Search Box focus
             CustomSearchBox()
-
+            Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
+                modifier = Modifier.fillMaxWidth()
             ) {
-                //  items(topics) { topic ->
-                //TopicItem(
-                //topic = topic,
-                //onClick = { /* Navigate to topic details */ },
-                //onDelete = { viewModel.deleteTopic(topic.topicId) }
-                //)
-                //    }
+                items(topics.size) { index ->
+                    val topic = topics[index]
+                    TopicItem(navController, viewModel, topic)
+                }
             }
-
-
+        }
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
-                onClick = { },
+                onClick = { navController.navigate("navaddtopic") },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -97,12 +97,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             }
         }
     }
-}
-
 
 @Composable
-fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +120,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = colors.primaryContainer,
                 shape = CircleShape, // Ensures the Surface is circular
                 modifier = Modifier
                     .size(35.dp)
@@ -129,15 +128,14 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
 
                 ) {
                 Box(
-                    contentAlignment = Alignment.Center, // Center the text inside the circle
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Transparent)
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
-                        //text = topic.topicName.first().toString(),
-                        text = "",
+                        text = topic.topicName.first().toString(),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
@@ -146,11 +144,10 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewMode
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                //text = topic.topicName,
-                text = "",
+                text = topic.topicName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = colors.onBackground
             )
         }
 
