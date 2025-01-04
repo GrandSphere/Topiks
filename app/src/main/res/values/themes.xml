@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.Topics" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/black</item>
 
     </style>
 </resources>

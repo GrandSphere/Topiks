@@ -7,26 +7,27 @@ import androidx.navigation.compose.rememberNavController
 
 // MainActivity.kt
 
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import com.example.topics2.ui.screens.GreetingScreen
-import com.example.topics2.ui.screens.NameInputScreen
 import com.example.topics2.ui.screens.TopicListScreen
-import com.example.topics2.ui.screens.insertTestData
+import com.example.topics2.ui.themes.TopicsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //insertTestData(applicationContext)
-            GreetingApp()
+
+            TopicsTheme {
+                //insertTestData(applicationContext)
+                TopicsApp()
+            }
         }
     }
 }
 
 @Composable
-fun GreetingApp() {
+fun TopicsApp() {
     val navController = rememberNavController()
 
     // Setting up the NavHost with two screens

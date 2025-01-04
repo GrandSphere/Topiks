@@ -40,6 +40,11 @@ android {
 }
 
 dependencies {
+     // Jetpack Compose UI
+    implementation(libs.androidx.ui.v140)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.runtime)
     implementation (libs.coil.compose)
     implementation(libs.ui)
     implementation(libs.material3)
