@@ -97,8 +97,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             }
         }
     }
-}
-
 
 @Composable
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
