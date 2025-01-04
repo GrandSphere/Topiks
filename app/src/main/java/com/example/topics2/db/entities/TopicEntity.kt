@@ -1,6 +1,5 @@
 package com.example.topics2.model.enitities
 
-import androidx.compose.foundation.MutatePriority
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
