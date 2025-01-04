@@ -97,19 +97,22 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             }
         }
     }
-
+}
 
 
 @Composable
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
+                    //onTap = { onClick() },
                     onTap = { },
+                    //onLongPress = { showMenu = true }
                     onLongPress = { }
                 )
             }
@@ -119,8 +122,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CircleShape,
+                color = colors.primaryContainer,
+                shape = CircleShape, // Ensures the Surface is circular
                 modifier = Modifier
                     .size(35.dp)
                     .heightIn(max = 35.dp),
@@ -146,7 +149,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 text = topic.topicName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = colors.onBackground
             )
         }
 

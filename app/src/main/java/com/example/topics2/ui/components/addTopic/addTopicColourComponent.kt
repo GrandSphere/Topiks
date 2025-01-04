@@ -72,7 +72,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 Icon(
                     imageVector = Icons.Filled.Add, // Example icon
                     contentDescription = "Add Image",
-                    tint = Color.White,
+                    tint = colors.onPrimary,
                     modifier = Modifier
                         .clip(CircleShape) // Clip the image into a circular shape
                         //.background(Color.Gray) // Optional: background color in case the image is not loaded
