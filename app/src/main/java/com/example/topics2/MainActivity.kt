@@ -1,4 +1,4 @@
-package com.example.topics2.ui
+package com.example.topics2
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
