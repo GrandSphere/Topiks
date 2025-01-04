@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.room.util.TableInfo
-import com.example.topics2.ui.viewmodels.topicViewModel
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topics2.ui.components.addTopic.TopicCategory
@@ -27,7 +27,7 @@ import com.example.topics2.ui.components.addTopic.TopicColour
 import com.example.topics2.ui.components.addTopic.TopicName
 
 @Composable
-fun AddTopicScreen(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
     val focusManager = LocalFocusManager.current // For clearing focus
 
     Box(

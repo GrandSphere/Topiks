@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +43,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.fSearchBox
-import com.example.topics2.ui.viewmodels.topicViewModel
+import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.model.enitities.TopicTbl
+
 
 @Composable
-fun TopicListScreen(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
+   // viewModel.addTestData()
+    val topics by viewModel.topics.collectAsState()
+    val focusManager = LocalFocusManager.current
 
-    val focusManager = LocalFocusManager.current // For managing focus
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,14 +75,15 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
             ) {
-                // items(topics.size) { index ->
-                //     val topic = topics[index]
-                //     TopicItem(
-                //         topic = topic,
-                //         onClick = { onTopicClick(topic) },
-                //         onDelete = { onTopicDelete(topic.topicId) }
-                //)
+              //  items(topics) { topic ->
+                    //TopicItem(
+                        //topic = topic,
+                        //onClick = { /* Navigate to topic details */ },
+                        //onDelete = { viewModel.deleteTopic(topic.topicId) }
+                    //)
+            //    }
             }
+
 
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
@@ -98,7 +105,7 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
 
 
 @Composable
-fun TopicItem(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun TopicItem(navController: NavController, viewModel: TopicViewModel = viewModel()) {
     var showMenu by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
