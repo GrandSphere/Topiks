@@ -4,12 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -28,10 +39,12 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+    val noteColour by viewModel.colour.collectAsState()
+
     //initialColor: Color = MaterialTheme.colorScheme.tertiary
     var initialColor: Color = Color.Red
     //val colors = MaterialTheme.colorScheme
-    val hsv = colorToHsv(initialColor)
+    val hsv = colorToHsv(noteColour)
     val initialHue = hsv[0] // Hue
     val initialSaturation = hsv[1] // Saturation
     val initialValue = hsv[2] // Value
@@ -42,22 +55,63 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     var value by remember { mutableStateOf(initialValue) }
     var alpha by remember { mutableStateOf(initialAlpha) }
     // Calculate the selected color based on HSV
-    val color = Color.hsv(hue, saturation, value, alpha)
-
+    val newNoteColour = Color.hsv(hue, saturation, value, alpha)
+    val vSpacer: Dp = 25.dp // You can change this value as needed
+    val vIconSize: Dp = 25.dp // You can change this value as needed
     // Main UI
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        //verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxSize()
+            .padding(horizontal = 20.dp)
+        //.padding(16.dp)
     ) {
-        // Color preview Box
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape) // Make the box circular
-                .background(color)
-        )
 
+        Row(
+            //verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            IconButton( // Clear button
+                onClick = {
+                    navController.popBackStack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "Attach",
+                    tint = Color.White, // Set the icon color to white
+                    modifier = Modifier
+                        .height(vIconSize)
+                )
+            }
+            Spacer(modifier = Modifier.width(vSpacer))
+            // Color preview Box
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape) // Make the box circular
+                    .background(newNoteColour)
+            )
+
+            Spacer(modifier = Modifier.width(vSpacer))
+            IconButton(
+                // ADD BUTTON
+                onClick = {
+                    viewModel.setColour(newNoteColour)
+                    navController.popBackStack()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Attach",
+                    tint = Color.White, // Set the icon color to white
+                    modifier = Modifier
+                        .height(vIconSize)
+                )
+            }
+        }
         // Hue Slider
         Text(text = "Hue: ${hue.toInt()}")
         CustomSlider(

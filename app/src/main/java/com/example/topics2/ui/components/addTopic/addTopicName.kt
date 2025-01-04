@@ -35,8 +35,8 @@ import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-//fun TopicName(function: () -> Unit) {
-fun TopicName(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+fun TopicName(navController: NavController, viewModel: TopicViewModel) {
+
     val density = LocalDensity.current.density // Get screen density
     var inputText by remember { mutableStateOf("") }
     val sPlaceHolder = "Topic Name..."
@@ -46,7 +46,6 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
     val vIconSize: Dp = 30.dp // You can change this value as needed
     val vMaxLinesSize: Dp = 80.dp
     val vLineHeight: TextUnit = 20.sp // You can change this value as needed
-
 
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
@@ -78,8 +77,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
         Spacer(modifier = Modifier.width(8.dp))
         IconButton( // CANCEL BUTTON
             onClick = {
-                //onCancel()
-                // Handle button click (e.g., show file picker or attachment options)
+                navController.popBackStack()
             },
             modifier = Modifier.size(vButtonSize)
                 .align(Alignment.Bottom) // Align button vertically in the center
@@ -98,9 +96,15 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel = viewMode
         IconButton( // CONFIRM BUTTON
             onClick = {
                 if (inputText.isNotBlank()) {
-                    //val timestamp = System.currentTimeMillis() // Automatically generate a timestamp
-                    //onAddTopic(inputText, timestamp, timestamp, "", "", "", 1)
-                    //inputText = ""
+                    viewModel.addTopic(
+                        inputText,
+                        "",
+                        "",
+                        "topicIcon",
+                        1
+                    )
+                    inputText = ""
+                    navController.popBackStack()
                 }
             },
             modifier = Modifier

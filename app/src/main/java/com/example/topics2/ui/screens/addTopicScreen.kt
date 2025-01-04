@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,8 +26,10 @@ import com.example.topics2.ui.components.addTopic.TopicColour
 import com.example.topics2.ui.components.addTopic.TopicName
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
+import com.example.topics2.MyApplication
+
 @Composable
-fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
+fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel) {
     val focusManager = LocalFocusManager.current // For clearing focus
 
     Box(
@@ -49,7 +53,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel = vie
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TopicColour(navController)
+                TopicColour(navController, viewModel)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -62,7 +66,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel = vie
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TopicName(navController)
+                TopicName(navController, viewModel)
                 //onAddTopic = onAddTopic,
                 //onCancel = onCancel
             }
