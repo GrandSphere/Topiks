@@ -30,11 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.topics2.ui.viewmodels.topicViewModel
+import com.example.topics2.ui.viewmodels.TopicViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun TopicColour(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun TopicColour(navController: NavController, viewModel: TopicViewModel = viewModel()) {
     val colors = MaterialTheme.colorScheme
     var categoryText by remember { mutableStateOf("Topics") }
     var selectedColor by remember { mutableStateOf(colors.secondary) }
