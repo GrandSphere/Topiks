@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.model.dao.MessageDao
-import com.example.topics2.model.dao.TopicDao
 import com.example.topics2.model.enitities.MessageTbl
 import com.example.topics2.model.enitities.TopicTbl
+
 
 @Database(entities = [TopicTbl::class, MessageTbl::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
@@ -34,3 +35,5 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 }
+
+
