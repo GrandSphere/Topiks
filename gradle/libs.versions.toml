@@ -16,6 +16,8 @@ navigationCompose = "2.8.5"
 navigationComposeVersion = "2.5.0"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+roomKtxVersion = "2.6.0"
+roomRuntime = "2.6.0"
 runtime = "1.4.0"
 roomRuntime_kapt_androidxRoom = "room-compiler)"
 ui = "1.3.0"
@@ -29,6 +31,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose-v250 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+androidx-room-ktx-v260 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }
+androidx-room-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "runtime" }
 androidx-ui-v140 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
@@ -51,6 +55,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtxVersion" }
 room-runtime = { module = "androidx.room:room-runtime" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }

@@ -72,9 +72,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation ("androidx.room:room-runtime:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
-    kapt ("androidx.room:room-compiler:$room_version") // Add this for kapt
+    implementation (libs.androidx.room.room.runtime)
+    implementation (libs.androidx.room.ktx.v260)
+    kapt (libs.room.compiler) // Add this for kapt
     kapt (libs.androidx.room.compiler)
 
 

@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-import com.example.topics2.ui.screens.GreetingScreen
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -67,7 +66,6 @@ fun TopicsApp(context: Context) {
                             topicViewModel
                         )
                     }
-                    composable("greeting") { GreetingScreen(navController) }
                 }
             }
         }
