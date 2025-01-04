@@ -19,17 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.topics2.ui.viewmodels.TopicViewModel
-
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.CustomSlider
 import com.example.topics2.ui.components.addTopic.colorToHsv
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
 @Composable
 fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
-        //initialColor: Color = MaterialTheme.colorScheme.tertiary
+    //initialColor: Color = MaterialTheme.colorScheme.tertiary
     var initialColor: Color = Color.Red
     //val colors = MaterialTheme.colorScheme
     val hsv = colorToHsv(initialColor)
