@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.documentfile)
     val room_version = "2.6.0"
     implementation(libs.androidx.ui.v140)
     implementation(libs.ui.tooling.preview)
