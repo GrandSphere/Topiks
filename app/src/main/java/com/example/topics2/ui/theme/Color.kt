@@ -2,14 +2,14 @@ package com.example.topics2.ui.themes
 
 import androidx.compose.ui.graphics.Color
 
-val CustomPrimary = Color.Black  // OLED primary color (pure black)
+val CustomPrimary = Color.DarkGray  // OLED primary color (pure black)
+val CustomOnPrimary = Color.White  // White text/icons on primary elements
 val CustomSecondary = Color(0xFF2C2C2C)  // Dark gray for secondary UI elements
+val CustomOnSecondary = Color.Gray  // White text/icons on secondary elements
 val CustomBackground = Color.Black  // Black background for OLED screens
+val CustomOnBackground = Color.White  // White text/icons on background elements
 //val CustomSurface = Color(0xFF121212)  // Very dark gray for surfaces like cards or containers
 val CustomSurface = Color.Black  // Very dark gray for surfaces like cards or containers
-val CustomOnPrimary = Color.White  // White text/icons on primary elements
-val CustomOnSecondary = Color.Gray  // White text/icons on secondary elements
-val CustomOnBackground = Color.White  // White text/icons on background elements
 val CustomOnSurface = Color.White  // White text/icons on surface elements
 val CustomError = Color(0xFFB00020)  // Deep red for error elements
 val CustomOnError = Color.White  // White text/icons on error elements

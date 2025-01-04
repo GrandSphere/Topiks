@@ -1,13 +1,16 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,12 +25,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicCategory() {
+fun TopicCategory(viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
+
     var isFocused by remember { mutableStateOf(false) }
 
+    val colors = MaterialTheme.colorScheme
     // Focus change listener to update isFocused state
     val focusModifier = Modifier
         .focusRequester(focusRequester)
@@ -36,8 +42,8 @@ fun TopicCategory() {
         }
 
     // Initial text state, set to "Topics"
-    var inputText by remember { mutableStateOf("Topics") }
-
+     var inputText by remember { mutableStateOf("Topics") }
+     viewModel.setCategory(inputText)
     Row(
         modifier = Modifier
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 4.dp)
@@ -52,7 +58,7 @@ fun TopicCategory() {
                 .padding(start = 3.dp, top = 3.dp, end = 8.dp),
             style = TextStyle(
                 fontSize = 18.sp, // Set the font size
-                color = Color.Gray, // Set the text color
+                color = colors.onSecondary, // Set the text color
             )
         )
 
@@ -64,6 +70,7 @@ fun TopicCategory() {
                 .align(Alignment.CenterVertically) // Align the text field vertically in the center
         ) {
             BasicTextField(
+
                 value = inputText, // Bind value to inputText
                 onValueChange = { newText ->
                     inputText = newText // Update inputText when the user types
@@ -73,17 +80,17 @@ fun TopicCategory() {
                     .padding(start = 3.dp, top = 3.dp), // Padding inside text field
                 textStyle = TextStyle(
                     fontSize = 18.sp,
-                    color = Color.White, // Set font color for the input text
+                    color = colors.onPrimary, // Set font color for the input text
                     lineHeight = 20.sp,
                 ),
-                cursorBrush = if (isFocused) SolidColor(Color.White) else SolidColor(Color.Transparent), // Show cursor only when focused
+                cursorBrush = if (isFocused) SolidColor(colors.tertiary) else SolidColor(Color.Transparent), // Show cursor only when focused
                 decorationBox = @Composable { innerTextField ->
                     if (inputText.isEmpty()) {
                         // Show "Category..." text only when the input is empty
                         Text(
                             text = "Category...", // Placeholder text
                             style = TextStyle(
-                                color = Color.Gray, // Placeholder color
+                                color = colors.secondary, // Placeholder color
                                 fontSize = 18.sp,
                                 lineHeight = 20.sp
                             ),

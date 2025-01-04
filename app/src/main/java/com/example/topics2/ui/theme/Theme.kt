@@ -8,13 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = CustomPrimary,
-    secondary = CustomSecondary,
     background = CustomBackground,
-    surface = CustomSurface,
-    onPrimary = CustomOnPrimary,
-    onSecondary = CustomOnSecondary,
     onBackground = CustomOnBackground,
+    primary = CustomPrimary,
+    onPrimary = CustomOnPrimary,
+    secondary = CustomSecondary,
+    tertiary = CustomTertiary,
+    onTertiary = CustomOnTertiary,
+    onSecondary = CustomOnSecondary,
+    surface = CustomSurface,
     onSurface = CustomOnSurface,
     error = CustomError,
     onError = CustomOnError,
@@ -23,8 +25,6 @@ private val DarkColorScheme = darkColorScheme(
     scrim = CustomScrim,
     surfaceVariant = CustomSurfaceVariant,
     onSurfaceVariant = CustomOnSurfaceVariant,
-    tertiary = CustomTertiary,
-    onTertiary = CustomOnTertiary,
     tertiaryContainer = CustomTertiaryContainer,
     onTertiaryContainer = CustomOnTertiaryContainer,
     surfaceTint = CustomSurfaceTint

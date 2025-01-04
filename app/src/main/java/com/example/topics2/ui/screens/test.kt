@@ -16,7 +16,7 @@ fun insertTestData(context: Context) {
             topicName = "Technology",
             topicLastEdit = System.currentTimeMillis(),
             topicCreated = System.currentTimeMillis(),
-            topicColour = "#FF5733",
+            topicColour = 123,
             topicCategory = "Tech",
             topicIcon = "ic_tech",
             topicPriority = 1
@@ -25,7 +25,7 @@ fun insertTestData(context: Context) {
             topicName = "Science",
             topicLastEdit = System.currentTimeMillis(),
             topicCreated = System.currentTimeMillis(),
-            topicColour = "#33FF57",
+            topicColour = 321,
             topicCategory = "Science",
             topicIcon = "ic_science",
             topicPriority = 2
@@ -34,7 +34,7 @@ fun insertTestData(context: Context) {
             topicName = "Art",
             topicLastEdit = System.currentTimeMillis(),
             topicCreated = System.currentTimeMillis(),
-            topicColour = "#5733FF",
+            topicColour = 123,
             topicCategory = "Art",
             topicIcon = "ic_art",
             topicPriority = 3
