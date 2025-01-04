@@ -17,13 +17,16 @@ import kotlinx.coroutines.launch
 
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
+    val topics: StateFlow<List<TopicTbl>> = _topics
 
+    private val _category = MutableStateFlow<String>("")
+    val category: StateFlow<String> = _category
 
     private val _colour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
     val colour: StateFlow<Color> = _colour  // Expose as immutable StateFlow
 
 
-    val topics: StateFlow<List<TopicTbl>> = _topics
+
 
     init {
         fetchTopics()
@@ -40,10 +43,15 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
         _colour.value = newColor
     }
 
+    // Set a new category
+    fun setCategory(newCategory: String) {
+        _category.value = newCategory
+    }
+
     // Add a new topic
     fun addTopic(
         topicName: String,
-        topicColour: String,
+        topicColour: Int,
         topicCategory: String,
         topicIcon: String,
         topicPriority: Int
@@ -83,7 +91,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
                     topicName = "Work",
                     topicLastEdit = System.currentTimeMillis(),
                     topicCreated = System.currentTimeMillis(),
-                    topicColour = "#FF5733",
+                    topicColour = 5733,
                     topicCategory = "Productivity",
                     topicIcon = "work_icon",
                     topicPriority = 1
@@ -92,7 +100,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
                     topicName = "Personal",
                     topicLastEdit = System.currentTimeMillis(),
                     topicCreated = System.currentTimeMillis(),
-                    topicColour = "#33FF57",
+                    topicColour = 222,
                     topicCategory = "Wellness",
                     topicIcon = "personal_icon",
                     topicPriority = 2
@@ -101,7 +109,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
                     topicName = "Hobby",
                     topicLastEdit = System.currentTimeMillis(),
                     topicCreated = System.currentTimeMillis(),
-                    topicColour = "#3357FF",
+                    topicColour = 333,
                     topicCategory = "Leisure",
                     topicIcon = "hobby_icon",
                     topicPriority = 3

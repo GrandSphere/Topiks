@@ -9,7 +9,7 @@ data class TopicTbl(
     val topicName: String,
     val topicLastEdit: Long,
     val topicCreated: Long,
-    val topicColour: String,
+    val topicColour: Int,
     val topicCategory: String,
     val topicIcon: String,
     val topicPriority: Int

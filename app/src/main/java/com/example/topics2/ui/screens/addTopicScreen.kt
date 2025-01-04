@@ -59,7 +59,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel) {
             Row(
                 horizontalArrangement = Arrangement.Center
             ) {
-                TopicCategory()
+                TopicCategory(viewModel)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
