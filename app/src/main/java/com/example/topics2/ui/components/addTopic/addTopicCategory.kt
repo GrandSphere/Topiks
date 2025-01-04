@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,10 +24,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicCategory() {
+fun TopicCategory(viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
+
     var isFocused by remember { mutableStateOf(false) }
 
     // Focus change listener to update isFocused state
@@ -36,8 +40,8 @@ fun TopicCategory() {
         }
 
     // Initial text state, set to "Topics"
-    var inputText by remember { mutableStateOf("Topics") }
-
+     var inputText by remember { mutableStateOf("Topics") }
+     viewModel.setCategory(inputText)
     Row(
         modifier = Modifier
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 4.dp)
@@ -64,6 +68,7 @@ fun TopicCategory() {
                 .align(Alignment.CenterVertically) // Align the text field vertically in the center
         ) {
             BasicTextField(
+
                 value = inputText, // Bind value to inputText
                 onValueChange = { newText ->
                     inputText = newText // Update inputText when the user types

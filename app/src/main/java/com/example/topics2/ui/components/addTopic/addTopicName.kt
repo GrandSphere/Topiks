@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +37,7 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun TopicName(navController: NavController, viewModel: TopicViewModel) {
-
+    val category: String by viewModel.category.collectAsState()
     val density = LocalDensity.current.density // Get screen density
     var inputText by remember { mutableStateOf("") }
     val sPlaceHolder = "Topic Name..."
@@ -95,12 +96,16 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
         Spacer(modifier = Modifier.width(5.dp))
         IconButton( // CONFIRM BUTTON
             onClick = {
+
+                val nColor : Color = viewModel.colour.value
+                val iColor : Int = colorToArgb(nColor)
+
                 if (inputText.isNotBlank()) {
                     viewModel.addTopic(
-                        inputText,
-                        "",
-                        "",
-                        "topicIcon",
+                        topicName = inputText,
+                        topicColour = iColor,
+                        topicCategory = category,
+                        "1",
                         1
                     )
                     inputText = ""
@@ -129,3 +134,4 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
         focusRequester.requestFocus()
     }
 }
+

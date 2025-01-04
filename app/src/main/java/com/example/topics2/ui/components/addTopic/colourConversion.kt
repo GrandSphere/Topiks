@@ -57,6 +57,23 @@ fun hexToHsv(hex: String): FloatArray {
     return hsv
 }
 
+fun colorToArgb(color: Color): Int {
+    val alpha = (color.alpha * 255).toInt() and 0xFF
+    val red = (color.red * 255).toInt() and 0xFF
+    val green = (color.green * 255).toInt() and 0xFF
+    val blue = (color.blue * 255).toInt() and 0xFF
+
+    // Combine into ARGB format
+    return (alpha shl 24) or (red shl 16) or (green shl 8) or blue
+}
+fun argbToColor(argb: Int): Color {
+    val alpha = ((argb shr 24) and 0xFF) / 255f
+    val red = ((argb shr 16) and 0xFF) / 255f
+    val green = ((argb shr 8) and 0xFF) / 255f
+    val blue = (argb and 0xFF) / 255f
+
+    return Color(red, green, blue, alpha)
+}
 
 //@OptIn(ExperimentalMaterial3Api::class)
 @OptIn(ExperimentalMaterial3Api::class)
