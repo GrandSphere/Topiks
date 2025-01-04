@@ -1,4 +1,4 @@
-package com.example.topics2.model.dao
+package com.example.topics2.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
