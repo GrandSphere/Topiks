@@ -12,11 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import com.example.topics2.ui.screens.GreetingScreen
 import com.example.topics2.ui.screens.NameInputScreen
+import com.example.topics2.ui.screens.TopicListScreen
+import com.example.topics2.ui.screens.insertTestData
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            insertTestData(applicationContext)
             GreetingApp()
         }
     }
@@ -27,8 +30,8 @@ fun GreetingApp() {
     val navController = rememberNavController()
 
     // Setting up the NavHost with two screens
-    NavHost(navController = navController, startDestination = "name_input") {
-        composable("name_input") { NameInputScreen(navController) }
+    NavHost(navController = navController, startDestination = "navtopicListScreen") {
+        composable("navtopicListScreen") { TopicListScreen(navController) }
         composable("greeting") { GreetingScreen(navController) }
     }
 }
