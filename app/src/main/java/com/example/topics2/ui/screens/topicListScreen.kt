@@ -3,10 +3,12 @@ package com.example.topics2.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -59,7 +61,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             }
     ) {
         // Topic List Column
-        Box(
+        Column (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
@@ -67,6 +69,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             // Search Box
             CustomSearchBox()
 
+            Spacer(modifier = Modifier.height(16.dp)) // Spacer to add some space between the rows
             // Topic List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
@@ -79,22 +82,22 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 //)
                 //    }
             }
+        }
 
 
-            // Button to add new topic, aligned at the bottom end of the screen
-            FloatingActionButton(
-                onClick = { },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Topic",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+        // Button to add new topic, aligned at the bottom end of the screen
+        FloatingActionButton(
+            onClick = { },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Topic",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }
