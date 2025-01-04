@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,9 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,11 +41,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.fSearchBox
 import com.example.topics2.ui.viewmodels.topicViewModel
+import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicListScreen(navController: NavController, viewModel: topicViewModel = viewModel()) {
+fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
+   // viewModel.addTestData()
+    val topics by viewModel.topics.collectAsState()
+    val focusManager = LocalFocusManager.current
 
-    val focusManager = LocalFocusManager.current // For managing focus
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,14 +72,15 @@ fun TopicListScreen(navController: NavController, viewModel: topicViewModel = vi
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
             ) {
-                // items(topics.size) { index ->
-                //     val topic = topics[index]
-                //     TopicItem(
-                //         topic = topic,
-                //         onClick = { onTopicClick(topic) },
-                //         onDelete = { onTopicDelete(topic.topicId) }
-                //)
+                items(topics) { topic ->
+                    TopicItem(
+                        topic = topic,
+                        onClick = { /* Navigate to topic details */ },
+                        onDelete = { viewModel.deleteTopic(topic.topicId) }
+                    )
+                }
             }
+
 
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
@@ -133,8 +137,7 @@ fun TopicItem(navController: NavController, viewModel: topicViewModel = viewMode
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
-                        //text = topic.topicName.first().toString(),
-                        text = "",
+                        text = topic.topicName.first().toString(),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
@@ -143,8 +146,7 @@ fun TopicItem(navController: NavController, viewModel: topicViewModel = viewMode
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                //text = topic.topicName,
-                text = "",
+                text = topic.topicName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
