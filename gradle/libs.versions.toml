@@ -10,6 +10,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 lifecycleViewmodelCompose = "2.6.0-alpha01"
+lifecycleViewmodelComposeVersion = "2.6.0-alpha03"
 material = "1.4.0"
 material3 = "1.0.0"
 navigationCompose = "2.8.5"
@@ -29,6 +30,7 @@ annotation = "1.9.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-lifecycle-viewmodel-compose-v260alpha03 = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelComposeVersion" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose-v250 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-room-ktx-v260 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }

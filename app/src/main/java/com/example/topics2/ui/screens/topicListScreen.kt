@@ -3,10 +3,12 @@ package com.example.topics2.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,40 +48,42 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
+
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus() // Clear focus when tapping outside
-                })
-            }
+
     ) {
         // Topic List Column
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus() // Clear focus when tapping outside
+                    })
+                }
         ) {
-            // Search Box
+            // TODO:: Search Box focus
             CustomSearchBox()
-
+            Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()// Ensure LazyColumn takes up all available space
+                modifier = Modifier.fillMaxWidth()
             ) {
                 items(topics.size) { index ->
                     val topic = topics[index]
-                    TopicItem(navController, viewModel, topic) // Pass the topic correctly
+                    TopicItem(navController, viewModel, topic)
                 }
             }
-
+        }
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
-                onClick = { },
+                onClick = { navController.navigate("navaddtopic") },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -93,7 +97,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             }
         }
     }
-}
+
 
 
 @Composable
@@ -131,8 +135,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 ) {
                     Text(
                         text = topic.topicName.first().toString(),
-
-                       // text = "",
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center

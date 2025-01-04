@@ -76,7 +76,7 @@ dependencies {
     implementation (libs.androidx.room.ktx.v260)
     kapt (libs.room.compiler) // Add this for kapt
     kapt (libs.androidx.room.compiler)
-
+    implementation(libs.androidx.lifecycle.viewmodel.compose.v260alpha03)
 
 
 }
