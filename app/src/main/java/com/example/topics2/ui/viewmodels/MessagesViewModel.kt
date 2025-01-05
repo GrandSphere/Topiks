@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
-import com.example.topics2.model.dao.MessageDao
+import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.model.enitities.MessageTbl
 
 
