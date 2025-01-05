@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -24,16 +25,18 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     // Delete Message
     suspend fun deleteMessagesForTopic(topicId: Int) {
         messageDao.deleteMessagesForTopic(topicId)
+        fetchMessages(topicId)
     }
 
     // Add Message
-    suspend fun addMessage(topicId: Int, content: String, priority: Int) {
+    suspend fun addMessage(topicId: Int?, content: String, priority: Int) {
         val newMessage = createMessage(topicId, content, priority)
         messageDao.insertMessage(newMessage) // Insert the message into the database
+        fetchMessages(topicId)
     }
 
     // New Message
-    private fun createMessage(topicId: Int, content: String, priority: Int): MessageTbl {
+    private fun createMessage(topicId: Int?, content: String, priority: Int): MessageTbl {
         return MessageTbl(
             topicId = topicId,
             messageContent = content,

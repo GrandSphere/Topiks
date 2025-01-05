@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,12 +36,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController, messageViewModel: MessageViewModel
+    navController: NavController, messageViewModel: MessageViewModel, topicId: Int?
 ) {
-
+    val messagePriority = 0
     val colors = MaterialTheme.colorScheme
     val density = LocalDensity.current.density // Get screen density
     var inputText by remember { mutableStateOf("") }
@@ -53,7 +56,6 @@ fun InputBarMessageScreen(
 
     val vLineHeight : TextUnit = 20.sp // You can change this value as needed
     //val iButtonSize=40.dp
-
 
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
@@ -71,7 +73,7 @@ fun InputBarMessageScreen(
 
             //.background(Color.Red)
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp),
-        //verticalAlignment = Alignment.CenterVertically
+            //verticalAlignment = Alignment.CenterVertically
     ) {
         CustomTextBox(
             inputText = inputText,
@@ -105,12 +107,17 @@ fun InputBarMessageScreen(
                     .height(vIconSize)
             )
         }
-
+        val coroutineScope = rememberCoroutineScope()
         Spacer(modifier = Modifier.width(5.dp))
-        IconButton( // SEND BUTTON
+
+            IconButton( // SEND BUTTON
             onClick = {
+
                 if (inputText.isNotBlank()) {
-                    //onSendMessage(inputText)
+                    val tempInput = inputText
+                    coroutineScope.launch {
+                    messageViewModel.addMessage(topicId, tempInput, messagePriority)
+                        }
                     inputText = ""
                 }
                 // Handle button click (e.g., show file picker or attachment options)
