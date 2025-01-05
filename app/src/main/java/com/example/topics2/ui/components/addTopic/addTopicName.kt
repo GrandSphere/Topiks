@@ -114,9 +114,10 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                         topicName = viewModel.temptopicname.value,
                         topicColour = iColor,
                         topicCategory = viewModel.tempcategory.value,
-                        "1",
-                        1
+                        topicIcon = viewModel.fileURI.value,
+                        topicPriority = 0,
                     )
+                    viewModel.setURI("")
                     inputText = ""
                     navController.popBackStack()
                 }
