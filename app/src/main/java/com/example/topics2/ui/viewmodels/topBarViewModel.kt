@@ -12,7 +12,7 @@ class TopBarViewModel : ViewModel() {
 
     fun updateTopBarTitle(currentRoute: String?, currentBackStackEntry: NavBackStackEntry?) {
         val title = when (currentRoute) {
-            "chat/{topicId}/{topicName}/{topicColour}" -> {
+            "navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
                 val topicName = currentBackStackEntry?.arguments?.getString("topicName") ?: "Chat"
                 topicName
             }

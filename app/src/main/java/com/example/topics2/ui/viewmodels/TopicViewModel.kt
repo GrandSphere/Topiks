@@ -1,14 +1,12 @@
 package com.example.topics2.ui.viewmodels
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.topics2.MyApplication
+import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.model.enitities.TopicTbl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -143,7 +141,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
                 val application = checkNotNull(extras[APPLICATION_KEY])
 
                 // Get the TopicDao from the Application class
-                val myApplication = application as MyApplication
+                val myApplication = application as DbTopics
                 return TopicViewModel(myApplication.topicDao) as T
             }
         }
