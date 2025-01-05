@@ -48,6 +48,7 @@ import com.example.topics.utilities.ImportImageWithPicker
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
+import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.launch
 
@@ -56,6 +57,10 @@ import kotlinx.coroutines.launch
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
+
+    //val inputColor = Color.Gray     // Example input color
+    //val outputColor = chooseColorBasedOnLuminance(inputColor)
+    //println(outputColor) // This will print the output color
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -120,6 +125,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     onTap = { // Go to specific Topic
 
                         viewModel.cTopicColor=argbToColor(topic.topicColour)
+                        //viewModel
                         //viewModel.setTopicColor(topic)
                         navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
                     },
@@ -132,7 +138,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = colors.primaryContainer,
+                //color = colors.primaryContainer,
                 shape = CircleShape, // Ensures the Surface is circular
                 modifier = Modifier
                     .size(35.dp)
@@ -144,11 +150,13 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     modifier = Modifier
                         .fillMaxSize()
                         .background(argbToColor(topic.topicColour))
+                        //.background(argbToColor(topic.topicColour))
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
                         text = topic.topicName.first().toString(),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        //color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = chooseColorBasedOnLuminance(argbToColor(topic.topicColour)),
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
                     )
