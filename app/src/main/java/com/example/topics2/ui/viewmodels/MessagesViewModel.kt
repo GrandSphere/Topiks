@@ -21,27 +21,23 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val shouldupdate: StateFlow<Boolean> = _shouldupdate
     fun setShouldUpdate(newValue: Boolean) { _shouldupdate.value = newValue }
 
-    // Used only for Editing a message
+    // TempID, used only for editing a message
     private val _tempMessageId = MutableStateFlow<Int>(0)
     val tempMessageId: StateFlow<Int> = _tempMessageId
     fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
 
+
+    //Temp message, used only for editing a message
+    private val _tempMessage = MutableStateFlow<String>("")
+    val tempMessage: StateFlow<String> = _tempMessage
+    fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
 
-    //Temp Message
-    private val _tempMessage = MutableStateFlow<String>("")
-    val tempMessage: StateFlow<String> = _tempMessage
-    fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
 
-    // Delete Messages for topic
-    suspend fun deleteMessagesForTopic(topicId: Int) {
-        messageDao.deleteMessagesForTopic(topicId)
-        fetchMessages(topicId)
-    }
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
@@ -101,33 +97,6 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
             }
         }
     }
-
-
-// fun insertTestMessages() {
-
-//        // Inserting 20 test messages with different content
-//        val testMessages = (1..20).map { index ->
-//            MessageTbl(
-//                topicId = 2,  // Example Topic ID (you can change this)
-//                messageContent = "Otherr chat #$index",
-//                messageTimestamp = System.currentTimeMillis() + index * 1000L,  // Add a small delay to each message timestamp
-//                messagePriority = (index % 3) + 1  // Random priority (1, 2, or 3)
-//            )
-//        }
-//
-//        // Launching a coroutine to insert data into the database on a background thread
-//        viewModelScope.launch {
-//            testMessages.forEach { message ->
-//                messageDao.insertMessage(message)
-//            }
-//            //loadMessagesByTopicId(1)  // Reload the messages to update the UI (if needed)
-//        }
-//    }
-
-
-
-
-
 }
 
 
