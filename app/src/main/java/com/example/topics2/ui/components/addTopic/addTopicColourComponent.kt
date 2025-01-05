@@ -1,7 +1,9 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -27,22 +29,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.topics.utilities.ImportImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import kotlinx.coroutines.coroutineScope
 
 @Composable
 fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
+
 
     val noteColour by viewModel.colour.collectAsState()
 
     val colors = MaterialTheme.colorScheme
     var categoryText by remember { mutableStateOf("Topics") }
     var selectedColor by remember { mutableStateOf(colors.secondary) }
-    var imageUrl by remember { mutableStateOf<String?>(null) } // Add the imageUrl variable
+    //var imageUrl by remember { mutableStateOf<String?>(null) } // Add the imageUrl variable
+    var imageUrl = viewModel.fileURI.collectAsState().value
+    var showImagePicker by remember { mutableStateOf(false) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -52,15 +62,33 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
         Spacer(modifier = Modifier.width(16.dp)) // Spacer to add some space between the rows
         Box(
             modifier = Modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                       // Clear focus when tapping outside
+                        showImagePicker = true;
+                    })
+                }
                 .clip(CircleShape) // Clip the image into a circular shape
                 .background(colors.secondary) // Optional: background color in case the image is not loaded
                 .size(60.dp),
-            contentAlignment = Alignment.Center
+                 contentAlignment = Alignment.Center
         ) {
-            if (imageUrl != null) {
+            if (showImagePicker) {
+                ImportImageWithPicker(
+                    onImportComplete = {
+                        // Reset the picker state after import is complete
+                        showImagePicker = false
+                    },
+                    topicViewModel = viewModel
+                )
+
+            }
+
+            if (imageUrl != "") {
+                Log.d("THIS IS NOT NULL", imageUrl )
                 // Load and display the image
                 Image(
-                    painter = rememberImagePainter(imageUrl),
+                    painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = "Circular Image",
                     contentScale = ContentScale.Crop, // Crop the image to fill the circle
                     modifier = Modifier
@@ -68,6 +96,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                         .clip(CircleShape) // Clip the image into a circular shape
                 )
             } else {
+                Log.d("THIS IS NOT GOOD", "$imageUrl" )
                 // Show an icon as a fallback if no image URL is provided
                 Icon(
                     imageVector = Icons.Filled.Add, // Example icon
