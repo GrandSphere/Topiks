@@ -44,6 +44,12 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     fun settopicname(newCategory: String) {_topicname.value = newCategory}
 
 
+    // Delete Messages for topic
+    suspend fun deleteMessagesForTopic(topicId: Int) {
+        topicDao.deleteMessagesForTopic(topicId)
+    }
+
+
     // Set a new category
 
     // Add a new topic

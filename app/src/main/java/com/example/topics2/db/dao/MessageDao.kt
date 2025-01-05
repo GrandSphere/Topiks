@@ -21,6 +21,4 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
-    @Query("DELETE FROM messages WHERE topicId = :topicId")
-    suspend fun deleteMessagesForTopic(topicId: Int)
 }
