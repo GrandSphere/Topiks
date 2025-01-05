@@ -2,8 +2,8 @@ package com.example.topics2
 
 import android.app.Application
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
-import com.example.topics2.model.dao.MessageDao
 
 
 class DbTopics : Application() {
