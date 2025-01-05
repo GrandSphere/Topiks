@@ -1,7 +1,6 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,12 +36,10 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?) {
+fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     val messages by viewModel.messages.collectAsState()
     viewModel.fetchMessages(topicId)
     val context = LocalContext.current
-   //val coroutineScope = rememberCoroutineScope()
-    //val messages = remember { mutableStateListOf<MessageTbl>() }
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
@@ -51,11 +49,13 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val focusManager = LocalFocusManager.current // For clearing focus
 
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             //.background(Color.Red)
             .pointerInput(Unit) {
+
                 detectTapGestures(onTap = { focusManager.clearFocus() })
             }
     ) {
@@ -68,7 +68,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-                MessageBubble(message = message, topicId = topicId, viewModel = viewModel)
+                MessageBubble(
+                    message = message,
+                    topicId = topicId,
+                    viewModel = viewModel,
+                    topicColor = topicColor,
+                )
                 //Log.d("aabbcc",message)
             }
             item {
@@ -82,7 +87,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Transparent)
+                //.background(Color.Transparent)
                 .align(Alignment.BottomCenter)
                 .onSizeChanged { size ->
                     inputBarHeightPx = size.height
