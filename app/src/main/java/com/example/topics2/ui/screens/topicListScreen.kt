@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.topics.utilities.ImportImageWithPicker
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
@@ -116,6 +118,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { // Go to specific Topic
+
                         viewModel.cTopicColor=argbToColor(topic.topicColour)
                         //viewModel.setTopicColor(topic)
                         navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
