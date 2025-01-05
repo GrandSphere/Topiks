@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
+import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -128,81 +129,3 @@ fun MessageScreen(navController: NavController, messageViewModel: MessageViewMod
 
 }
 
-@Composable
-fun MessageBubble(
-    message: MessageTbl,
-    cColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
-    topicId: Int?,
-    messageViewModel: MessageViewModel
-) {
-    var showMenu by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-    Log.d("aabbcc", "we got into a message buble this many time")
-    // Format timestamp (you can format this as needed)
-    val formattedTimestamp =
-        SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.messageTimestamp)
-
-    Log.d("aabbcc", message.messageContent)
-    //val colors = MaterialTheme.colorScheme // Use the theme color scheme
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            //.background(Color.Red)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = { },
-                    onLongPress = { showMenu = true }
-                )
-            }
-            .padding(3.dp),  // Reduced padding between messages
-
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Message bubble with some padding and rounded corners
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = Color.Red,
-            //color = Color.Red,
-            modifier = Modifier.padding(1.dp),
-            tonalElevation = 0.dp, // Remove shadow
-            border = null // Remove border
-        ) {
-            Column(
-                modifier = Modifier
-                    //.fillMaxWidth() //messages take up entire width
-                    .background(Color.Red)
-                    .padding(6.dp), //space around message
-            ) {
-                Text(
-                    text = message.messageContent,
-
-                    style = MaterialTheme.typography.bodyMedium,
-                    //color = MaterialTheme.colorScheme.onPrimary
-                )
-
-                Spacer(modifier = Modifier.height(1.dp)) //space between message and date
-                Text(
-                    text = formattedTimestamp,
-                    style = MaterialTheme.typography.bodySmall,
-                    // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
-                )
-            }
-        }
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("Delete Message") },
-                onClick = {
-                    coroutineScope.launch {
-                        messageViewModel.deleteMessage(message.id, topicId,)
-                        showMenu = false
-                    }
-                }
-            )
-        }
-    }
-
-}
