@@ -1,4 +1,4 @@
-package com.example.topics2.model.enitities
+package com.example.topics2.db.enitities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

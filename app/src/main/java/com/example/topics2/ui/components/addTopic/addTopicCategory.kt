@@ -42,8 +42,9 @@ fun TopicCategory(viewModel: TopicViewModel) {
         }
 
     // Initial text state, set to "Topics"
-     var inputText by remember { mutableStateOf("Topics") }
-     viewModel.setCategory(inputText)
+     var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
+     viewModel.setTempCategory(inputText)
+    //viewModel.category
     Row(
         modifier = Modifier
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 4.dp)

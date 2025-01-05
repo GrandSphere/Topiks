@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -41,17 +42,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
-
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +82,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
         }
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
-                onClick = { navController.navigate("navaddtopic") },
+                onClick = {
+                    viewModel.setTempCategory("Topics")
+                    viewModel.settemptopicname("")
+                    navController.navigate("navaddtopic")
+                          },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -102,6 +105,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,7 +113,13 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .pointerInput(Unit) {
                 detectTapGestures(
                     //onTap = { onClick() },
-                    onTap = { },
+                    onTap = {
+
+                        Log.d("aabbcc sent topic ID", topic.topicId.toString())
+                        //passMessageData.setTopicId(topic.topicId)
+                        //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
+                        navController.navigate("navnotescreen/${topic.topicId}")
+                    },
                     //onLongPress = { showMenu = true }
                     onLongPress = { }
                 )
@@ -136,6 +146,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 ) {
                     Text(
                         text = topic.topicName.first().toString(),
+                        //text = topic.topicName.toString(),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center

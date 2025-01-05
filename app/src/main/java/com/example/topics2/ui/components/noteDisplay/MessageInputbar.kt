@@ -33,10 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
-import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.ui.viewmodels.MessageViewModel
 
 @Composable
-fun InputBarNoteScreen(navController: NavController, viewModel: TopicViewModel) {
+fun InputBarMessageScreen(
+    navController: NavController, messageViewModel: MessageViewModel
+) {
 
     val colors = MaterialTheme.colorScheme
     val density = LocalDensity.current.density // Get screen density

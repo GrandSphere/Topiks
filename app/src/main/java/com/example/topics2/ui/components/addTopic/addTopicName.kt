@@ -40,7 +40,6 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 fun TopicName(navController: NavController, viewModel: TopicViewModel) {
     val category: String by viewModel.category.collectAsState()
     val density = LocalDensity.current.density // Get screen density
-    var inputText by remember { mutableStateOf("") }
     val sPlaceHolder = "Topic Name..."
 //val iMaxLines = 5
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -51,6 +50,12 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
 
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
+
+    //var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
+    // DELETE THESE 2 LINES
+    var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
+    viewModel.settemptopicname(inputText)
+
 
     val colors = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
@@ -101,12 +106,14 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
 
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
-
                 if (inputText.isNotBlank()) {
+                    //viewModel.setCategory(viewModel.tempcategory.value)
+                    //viewModel.set(viewModel.temptopicname)
                     viewModel.addTopic(
-                        topicName = inputText,
+                        //topicName = inputText,
+                        topicName = viewModel.temptopicname.value,
                         topicColour = iColor,
-                        topicCategory = category,
+                        topicCategory = viewModel.tempcategory.value,
                         "1",
                         1
                     )
