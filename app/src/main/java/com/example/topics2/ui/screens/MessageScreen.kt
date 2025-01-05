@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
@@ -111,9 +112,7 @@ fun MessageScreen(navController: NavController, messageViewModel: MessageViewMod
                     inputBarHeightPx = size.height
                 }
         ) {
-            InputBarMessageScreen(navController=navController, messageViewModel= messageViewModel ){
-
-            }
+           InputBarMessageScreen(navController = navController, messageViewModel = messageViewModel, topicId = topicId)
         }
     }
 

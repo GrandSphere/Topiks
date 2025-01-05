@@ -44,6 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
+import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
@@ -120,8 +121,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
                         navController.navigate("navnotescreen/${topic.topicId}")
                     },
-                    //onLongPress = { showMenu = true }
-                    onLongPress = { }
+                    onLongPress = { showMenu = true }
+
                 )
             }
             .padding(8.dp)
@@ -141,7 +142,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Transparent)
+                        .background(argbToColor(topic.topicColour))
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
@@ -169,8 +170,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem(
                 text = { Text("Delete") },
                 onClick = {
-                    //showMenu = false
-                    //onDelete()
+                  viewModel.deleteTopic(topic.topicId)
+                    showMenu = false
                 }
             )
         }

@@ -24,6 +24,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val category: StateFlow<String> = _category
     fun setCategory(newCategory: String) { _category.value = newCategory }
 
+    // This is when adding topic colour
     private val _colour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
     val colour: StateFlow<Color> = _colour  // Expose as immutable StateFlow
     fun setColour(newColor: Color) { _colour.value = newColor }
@@ -41,7 +42,6 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     private val _topicname = MutableStateFlow<String>("")
     val topicname: StateFlow<String> = _topicname
     fun settopicname(newCategory: String) {_topicname.value = newCategory}
-
 
 
     // Set a new category
