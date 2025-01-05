@@ -101,8 +101,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
 
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
-
                 if (inputText.isNotBlank()) {
+                    viewModel.setCategory(viewModel.tempcategory.value)
                     viewModel.addTopic(
                         topicName = inputText,
                         topicColour = iColor,
