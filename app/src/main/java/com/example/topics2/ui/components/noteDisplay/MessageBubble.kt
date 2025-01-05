@@ -38,6 +38,7 @@ import java.util.Locale
 fun MessageBubble(
     message: MessageTbl,
     topicColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
+    topicFontColor: Color = MaterialTheme.colorScheme.onSecondary,  // Default to secondary color from theme
     topicId: Int?,
     viewModel: MessageViewModel
 ) {
@@ -84,7 +85,7 @@ fun MessageBubble(
             ) {
                 Text(
                     text = message.messageContent,
-
+                    color=topicFontColor,
                     style = MaterialTheme.typography.bodyMedium,
                     //color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -92,6 +93,7 @@ fun MessageBubble(
                 Spacer(modifier = Modifier.height(1.dp)) //space between message and date
                 Text(
                     text = formattedTimestamp,
+                    color=topicFontColor,
                     style = MaterialTheme.typography.bodySmall,
                     // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                 )

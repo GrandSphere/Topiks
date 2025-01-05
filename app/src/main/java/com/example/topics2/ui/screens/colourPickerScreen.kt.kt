@@ -28,12 +28,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.CustomSlider
 import com.example.topics2.ui.components.addTopic.colorToHsv
+import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
@@ -88,13 +91,22 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             }
             Spacer(modifier = Modifier.width(vSpacer))
             // Color preview Box
-            Box(
+            Box( // Colour previewer
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape) // Make the box circular
                     .background(newNoteColour)
-            )
+                    //.align(Alignment.Center)
+            ){
 
+                Text(
+                    text = "Sample",
+                    color = chooseColorBasedOnLuminance(newNoteColour),
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                            modifier = Modifier.align(Alignment.Center)
+                )
+            }
             Spacer(modifier = Modifier.width(vSpacer))
             IconButton(
                 // ADD BUTTON

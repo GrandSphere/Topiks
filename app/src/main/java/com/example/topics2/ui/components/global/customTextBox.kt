@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.global
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -61,4 +62,42 @@ fun CustomTextBox(
             }
         )
     }
+}
+
+
+
+
+
+fun chooseColorBasedOnLuminance(inputColor: Color): Color {
+    // Extract normalized RGB values
+    val red = inputColor.red
+    val green = inputColor.green
+    val blue = inputColor.blue
+
+    // Compute luminance using the standard formula
+    var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+    // Debugging: Print the values
+//    Log.d("zzzzColour", red.toString() + green.toString() + blue.toString())
+//
+//    Log.d("zzzzColourLum", luminance.toString())
+//    Log.d("zzzzColourLum", "black")
+
+
+
+    // Determine the output color based on luminance
+    return when {
+        luminance < 0.5 -> Color.White
+        //luminance < 0.25 -> Color.White
+        //luminance < 0.5 -> Color.Gray
+        //luminance < 0.75 -> Color.DarkGray
+        else -> Color.Black
+    }
+
+//        }
+//         luminance < 0.25 -> Color.Black      // Very dark colors
+//        luminance < 0.5 -> Color.DarkGray   // Dark colors
+//        luminance < 0.75 -> Color.LightGray // Light colors
+//        else -> Color.White                 // Very bright colors
+//    }
 }
