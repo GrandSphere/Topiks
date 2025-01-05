@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -44,9 +45,9 @@ import java.util.Locale
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?) {
-    val messages by viewModel.messages.collectAsState()
-    viewModel.fetchMessages(topicId)
+fun MessageScreen(navController: NavController, messageViewModel: MessageViewModel, topicId: Int?) {
+    val messages by messageViewModel.messages.collectAsState()
+    messageViewModel.fetchMessages(topicId)
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     //val messages = remember { mutableStateListOf<MessageTbl>() }
@@ -59,22 +60,19 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val focusManager = LocalFocusManager.current // For clearing focus
 
     // Fetch messages for the topic when the screen is shown
-    LaunchedEffect(topicId) {
-        //val fetchedMessages = messageController.getMessagesForTopic(topicId)
-        //messages.clear()
-        //messages.addAll(fetchedMessages)
-
-        if (messages.isNotEmpty()) {
-            scrollState.scrollToItem(messages.size - 1)
-        }
-    }
+    //LaunchedEffect(topicId) {
+    //    if (messages.isNotEmpty()) {
+    //        //scrollState.scrollToItem(messages.size - 1)
+    //        scrollState.scrollToItem(messages.size - 1)
+    //    }
+    //}
 
     // Scroll to the bottom when messages are updated
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            scrollState.animateScrollToItem(messages.size - 1)
-        }
-    }
+//    LaunchedEffect(messages.size) {
+//        if (messages.isNotEmpty()) {
+//            scrollState.animateScrollToItem(messages.size - 1)
+//        }
+//    }
 
     Box(
         modifier = Modifier
@@ -93,8 +91,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-
-                Log.d("aabbcclaunch bubblenow", messages.size.toString())
                 MessageBubble(message)
                 //Log.d("aabbcc",message)
             }
@@ -115,23 +111,19 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     inputBarHeightPx = size.height
                 }
         ) {
-            //InputBarNoteScreen {
-            //    messageText ->
-            //    coroutineScope.launch {
-            //        messageController.addMessage(topicId, messageText, 1)
-            //        topicController.updateLastModified(topicId, System.currentTimeMillis())
+            InputBarMessageScreen(navController=navController, messageViewModel= messageViewModel ){
 
-            //        val newMessages = messageController.getMessagesForTopic(topicId)
-            //        messages.clear()
-            //        messages.addAll(newMessages)
-
-            //        if (messages.isNotEmpty()) {
-            //            //scrollState.animateScrollToItem(messages.size - 1)
-            //        }
-            //    }
-            //}
+            }
         }
     }
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            //scrollState.animateScrollToItem(messages.size - 1)
+                    scrollState.scrollToItem(messages.size - 1)
+        }
+    }
+
 }
 
 @Composable
@@ -139,6 +131,10 @@ fun MessageBubble(
     message: MessageTbl,
     cColor: Color = MaterialTheme.colorScheme.secondary  // Default to secondary color from theme
 ) {
+
+
+
+
     Log.d("aabbcc", "we got into a message buble this many time")
     // Format timestamp (you can format this as needed)
     val formattedTimestamp =
