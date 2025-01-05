@@ -1,7 +1,4 @@
 package com.example.topics2.activities
-
-// MainActivity.kt
-
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -32,35 +29,27 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-
-            TopicsTheme {
-                TopicsApp(applicationContext)
-            }
-        }
+        setContent { TopicsTheme { TopicsApp(applicationContext) } }
     }
 }
 
 @Composable
 fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
-
     val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
-    val topBarViewModel: TopBarViewModel = viewModel()  // Use a shared ViewModel for top bar
+    val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
+    val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
+    val backStackEntry = navController.currentBackStackEntryAsState()
 
-  val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
- val backStackEntry = navController.currentBackStackEntryAsState()
     // Listen for changes in the navController's back stack and update the title accordingly
-     LaunchedEffect(backStackEntry.value) {
+    LaunchedEffect(backStackEntry.value) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
     }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -80,25 +69,9 @@ fun TopicsApp(context: Context) {
             ) {
                 // Setting up the NavHost with two screens
                 NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                    composable("navtopicListScreen") {
-                        TopicListScreen( navController,
-                            topicViewModel
-                        )
-                    }
-
-                    composable("navaddtopic") {
-                        AddTopicScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
-
-                    composable("navcolourpicker") {
-                        ColourPickerScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
+                    composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
+                    composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
+                    composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
                 }
             }
         }
