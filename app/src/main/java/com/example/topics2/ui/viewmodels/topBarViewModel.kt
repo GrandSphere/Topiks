@@ -10,7 +10,6 @@ class TopBarViewModel : ViewModel() {
     private val _topBarTitle = MutableStateFlow("Unknown")  // Default title
     val topBarTitle: StateFlow<String> get() = _topBarTitle
 
-    // Function to update the title based on the current route
     fun updateTopBarTitle(currentRoute: String?, currentBackStackEntry: NavBackStackEntry?) {
         val title = when (currentRoute) {
             "chat/{topicId}/{topicName}/{topicColour}" -> {
