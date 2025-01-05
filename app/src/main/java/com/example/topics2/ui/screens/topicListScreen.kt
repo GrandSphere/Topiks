@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -48,10 +49,8 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
-
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -106,6 +105,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,10 +114,11 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 detectTapGestures(
                     //onTap = { onClick() },
                     onTap = {
+
+                        Log.d("aabbcc sent topic ID", topic.topicId.toString())
                         //passMessageData.setTopicId(topic.topicId)
                         //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
                         navController.navigate("navnotescreen/${topic.topicId}")
-
                     },
                     //onLongPress = { showMenu = true }
                     onLongPress = { }

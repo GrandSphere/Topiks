@@ -16,12 +16,17 @@ import kotlinx.coroutines.launch
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
     val topics: StateFlow<List<TopicTbl>> = _topics
+    private fun fetchTopics() { viewModelScope.launch { _topics.value = topicDao.getAllTopics() } }
+
+    init { fetchTopics() }
 
     private val _category = MutableStateFlow<String>("")
     val category: StateFlow<String> = _category
+    fun setCategory(newCategory: String) { _category.value = newCategory }
 
     private val _colour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
     val colour: StateFlow<Color> = _colour  // Expose as immutable StateFlow
+    fun setColour(newColor: Color) { _colour.value = newColor }
 
 
     private val _tempcategory = MutableStateFlow<String>("")
@@ -37,25 +42,9 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val topicname: StateFlow<String> = _topicname
     fun settopicname(newCategory: String) {_topicname.value = newCategory}
 
-    init {
-        fetchTopics()
-    }
 
-    private fun fetchTopics() {
-        viewModelScope.launch {
-            _topics.value = topicDao.getAllTopics()
-        }
-    }
-
-    // Set a new color
-    fun setColour(newColor: Color) {
-        _colour.value = newColor
-    }
 
     // Set a new category
-    fun setCategory(newCategory: String) {
-        _category.value = newCategory
-    }
 
     // Add a new topic
     fun addTopic(

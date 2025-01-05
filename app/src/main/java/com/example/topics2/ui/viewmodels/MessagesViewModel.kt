@@ -3,14 +3,36 @@ package com.example.topics2.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.enitities.MessageTbl
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
-class MessageViewModel (private val messageDoa: MessageDao): ViewModel() {
+class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
+    // Retrieve messages
+    private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
+    val messages: StateFlow<List<MessageTbl>> = _messages
+    fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
+
+
+    // Delete Message
+    suspend fun deleteMessagesForTopic(topicId: Int) {
+        messageDao.deleteMessagesForTopic(topicId)
+    }
+
+    // Add Message
+    suspend fun addMessage(topicId: Int, content: String, priority: Int) {
+        val newMessage = createMessage(topicId, content, priority)
+        messageDao.insertMessage(newMessage) // Insert the message into the database
+    }
+
+    // New Message
     private fun createMessage(topicId: Int, content: String, priority: Int): MessageTbl {
         return MessageTbl(
             topicId = topicId,
@@ -18,22 +40,6 @@ class MessageViewModel (private val messageDoa: MessageDao): ViewModel() {
             messageTimestamp = System.currentTimeMillis(),
             messagePriority = priority
         )
-    }
-
-    // Function to add a new message for a specific topic
-    suspend fun addMessage(topicId: Int, content: String, priority: Int) {
-        val newMessage = createMessage(topicId, content, priority)
-        messageDoa.insertMessage(newMessage) // Insert the message into the database
-    }
-
-    // Function to retrieve messages for a specific topic
-    suspend fun getMessagesForTopic(topicId: Int): List<MessageTbl> {
-        //Log.d("MessageController", "Fetching messages for topic ID: $topicId")
-        return messageDoa.getMessagesForTopic(topicId)
-    }
-
-    suspend fun deleteMessagesForTopic(topicId: Int) {
-        messageDoa.deleteMessagesForTopic(topicId)
     }
 
     companion object {
@@ -50,4 +56,33 @@ class MessageViewModel (private val messageDoa: MessageDao): ViewModel() {
             }
         }
     }
+
+
+// fun insertTestMessages() {
+
+//        // Inserting 20 test messages with different content
+//        val testMessages = (1..20).map { index ->
+//            MessageTbl(
+//                topicId = 2,  // Example Topic ID (you can change this)
+//                messageContent = "Otherr chat #$index",
+//                messageTimestamp = System.currentTimeMillis() + index * 1000L,  // Add a small delay to each message timestamp
+//                messagePriority = (index % 3) + 1  // Random priority (1, 2, or 3)
+//            )
+//        }
+//
+//        // Launching a coroutine to insert data into the database on a background thread
+//        viewModelScope.launch {
+//            testMessages.forEach { message ->
+//                messageDao.insertMessage(message)
+//            }
+//            //loadMessagesByTopicId(1)  // Reload the messages to update the UI (if needed)
+//        }
+//    }
+
+
+
+
+
 }
+
+
