@@ -14,6 +14,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
+    val cTopicID: Int = 1
+    var cTopicColor: Color = Color.Red
+
+    //private val _TopicColor = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
+    //val TopicColor: StateFlow<Color> = _TopicColor  // Expose as immutable StateFlow
+    //fun setTopicColor(newColor: Color) { _TopicColor.value = newColor }
+
+
+
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
     val topics: StateFlow<List<TopicTbl>> = _topics
     private fun fetchTopics() { viewModelScope.launch { _topics.value = topicDao.getAllTopics() } }
@@ -30,18 +39,26 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     fun setColour(newColor: Color) { _colour.value = newColor }
 
 
+    // Only used in addTopic, to store values when adding Colour
     private val _tempcategory = MutableStateFlow<String>("")
     val tempcategory: StateFlow<String> = _tempcategory
     fun setTempCategory(newCategory: String) {_tempcategory.value = newCategory}
 
 
+    // Only used in addTopic, to store values when adding Colour
     private val _temptopicname = MutableStateFlow<String>("")
     val temptopicname: StateFlow<String> = _temptopicname
     fun settemptopicname(newCategory: String) {_temptopicname.value = newCategory}
 
-    private val _topicname = MutableStateFlow<String>("")
-    val topicname: StateFlow<String> = _topicname
-    fun settopicname(newCategory: String) {_topicname.value = newCategory}
+    //private val _topicname = MutableStateFlow<String>("")
+    //val topicname: StateFlow<String> = _topicname
+    //fun settopicname(newCategory: String) {_topicname.value = newCategory}
+
+
+    // Delete Messages for topic
+    suspend fun deleteMessagesForTopic(topicId: Int) {
+        topicDao.deleteMessagesForTopic(topicId)
+    }
 
 
     // Set a new category

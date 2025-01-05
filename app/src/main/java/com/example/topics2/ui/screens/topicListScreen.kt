@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -106,14 +108,16 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
-
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Transparent)
+            //.background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = {
+                    onTap = { // Go to specific Topic
+                        viewModel.cTopicColor=argbToColor(topic.topicColour)
+                        //viewModel.setTopicColor(topic)
                         navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
                     },
                     onLongPress = { showMenu = true }
@@ -160,10 +164,11 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
-            DropdownMenuItem(
+            DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
-                  viewModel.deleteTopic(topic.topicId)
+                    viewModel.deleteTopic(topic.topicId)
+                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.topicId)}
                     showMenu = false
                 }
             )
