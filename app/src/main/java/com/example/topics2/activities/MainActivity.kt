@@ -13,18 +13,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
-import com.example.topics2.ui.screens.NoteScreen
+import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
@@ -48,6 +48,9 @@ fun TopicsApp(context: Context) {
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
+
+    //messageViewModel.insertTestMessages()
+
 
     // Listen for changes in the navController's back stack and update the title accordingly
     LaunchedEffect(backStackEntry.value) {
@@ -76,12 +79,11 @@ fun TopicsApp(context: Context) {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
-                    composable("navnotescreen/{topicId}") {
-                            backStackEntry ->
-                        val topicId = (backStackEntry).arguments?.getInt("topicId")
-                        if (topicId != -1) {
-                            NoteScreen(navController, messageViewModel, topicId)
-                        }
+                    composable("navnotescreen/{topicId}",
+                        arguments= listOf(navArgument("topicId"){type= NavType.IntType})
+                    ) { backStackEntry ->
+                        val topicId = backStackEntry.arguments?.getInt("topicId")
+                        if (topicId != -1) { MessageScreen(navController, messageViewModel, topicId) }
 
                     }
                 }

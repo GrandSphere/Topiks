@@ -13,7 +13,7 @@ interface MessageDao {
     suspend fun insertMessage(message: MessageTbl)
 
     @Query("SELECT * FROM messages WHERE topicId = :topicId")
-    suspend fun getMessagesForTopic(topicId: Int): List<MessageTbl>
+    suspend fun getMessagesForTopic(topicId: Int?): List<MessageTbl>
 
     @Delete
     suspend fun deleteMessage(message: MessageTbl)
