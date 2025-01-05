@@ -11,6 +11,6 @@ data class TopicTbl(
     val topicCreated: Long,
     val topicColour: Int,
     val topicCategory: String,
-    val topicIcon: String,
-    val topicPriority: Int
+    val topicIcon: String="",
+    val topicPriority: Int=0,
 )

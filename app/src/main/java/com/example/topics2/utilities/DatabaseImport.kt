@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 //import com.example.topics.model.db.AppDatabase
 import java.io.File
@@ -20,23 +21,26 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-
+// Called from topAppBar
+// TODO:: REFRESH UI SOMEHOW
 @Composable
 fun ImportDatabaseWithPicker(onImportComplete: () -> Unit) {
     // State to hold the selected file URI
     var fileUri by remember { mutableStateOf<Uri?>(null) }
 
     // Use the FilePicker composable to pick a file
-    FilePicker(onFileSelected = { selectedUri ->
-        fileUri = selectedUri
-    })
+    if (fileUri == null) {
+        Log.d("ZZZ Import URI", "EMPTY")
+        FilePicker(onFileSelected = { selectedUri ->
+            fileUri = selectedUri
+            Log.d("ZZZ Import URI", fileUri.toString())
+        }, fileTypes = arrayOf("*/*")) // Restrict to image types
+    }
     val context = LocalContext.current
-    // Perform the import operation outside the composable body
     LaunchedEffect(fileUri) {
         fileUri?.let { uri ->
-            // Ensure you call the importDatabaseFromUri function when the URI is selected
             importDatabaseFromUri(context, uri)
-            // Notify that import is complete
+            fileUri = null // Reset state after import
             onImportComplete()
         }
     }
@@ -63,7 +67,7 @@ fun importDatabaseFromUri(context: Context, uri: Uri) {
             resolver.openOutputStream(Uri.fromFile(currentDatabaseFile))?.use { outputStream ->
 
                 // Copy the content from the input stream (imported file) to the output stream (current database)
-                copy(inputStream, outputStream)
+                copyStream(inputStream, outputStream)
 
                 // Show success message
                 Toast.makeText(context, "Database imported successfully!", Toast.LENGTH_SHORT).show()
@@ -79,16 +83,5 @@ fun importDatabaseFromUri(context: Context, uri: Uri) {
     finally {
         // After export, reopen the database
         AppDatabase.getDatabase(context)
-    }
-}
-
-/**
- * Helper function to copy data from InputStream to OutputStream.
- */
-private fun copy(inputStream: InputStream, outputStream: OutputStream) {
-    val buffer = ByteArray(1024)
-    var length: Int
-    while (inputStream.read(buffer).also { length = it } != -1) {
-        outputStream.write(buffer, 0, length)
     }
 }

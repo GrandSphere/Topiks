@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,9 +74,8 @@ fun CustomTopMenu(
     // Show the import picker when the state changes
     if (showImportPicker) {
         ImportDatabaseWithPicker(onImportComplete = {
-            reloadTopics()
             showImportPicker = false
-
+            reloadTopics()
         })
     }
 
