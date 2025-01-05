@@ -83,7 +83,10 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
         }
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
-                onClick = { navController.navigate("navaddtopic") },
+                onClick = {
+                    viewModel.setTempCategory(viewModel.category.value)
+                    navController.navigate("navaddtopic")
+                          },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -135,7 +138,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         .heightIn(max = 35.dp),
                 ) {
                     Text(
-                        text = topic.topicName.first().toString(),
+                        //text = topic.topicName.first().toString(),
+                        text = topic.topicCategory.first().toString(),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
