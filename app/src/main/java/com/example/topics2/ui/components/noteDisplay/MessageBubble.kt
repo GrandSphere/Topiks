@@ -114,8 +114,15 @@ fun MessageBubble(
                 text = { Text("Edit") },
                 onClick = {
 
-
-                    showMenu = false
+                    coroutineScope.launch {
+                        messageViewModel.editMessage(
+                            message.id,
+                            topicId,
+                            "I was edited",
+                            message.messagePriority
+                        )
+                        showMenu = false
+                    }
                 }
             )
 

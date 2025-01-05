@@ -41,12 +41,33 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
         fetchMessages(topicId)
     }
 
+    //Edit Message
+    suspend fun editMessage(
+        messageId: Int,
+        topicId: Int?, content: String, priority: Int,
+        messageTimestamp: Long = System.currentTimeMillis() )
+    {
+        val editedMessage = MessageTbl(
+            id = messageId,
+            topicId = topicId,
+            messageContent = content,
+            messageTimestamp = messageTimestamp,
+            messagePriority = priority,
+        )
+        messageDao.updateMessage(editedMessage)
+        fetchMessages(topicId)
+    }
+
+
     // New Message
-    private fun createMessage(topicId: Int?, content: String, priority: Int): MessageTbl {
+    private fun createMessage(
+        topicId: Int?, content: String, priority: Int,
+        messageTimestamp: Long = System.currentTimeMillis() ): MessageTbl
+    {
         return MessageTbl(
             topicId = topicId,
             messageContent = content,
-            messageTimestamp = System.currentTimeMillis(),
+            messageTimestamp = messageTimestamp,
             messagePriority = priority
         )
     }
