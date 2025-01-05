@@ -21,4 +21,8 @@ interface TopicDao {
     // Update the last modified date for a specific topic by topicId
     @Query("UPDATE topics SET topicLastEdit = :lastEdit WHERE topicId = :topicId")
     suspend fun updateLastModified(topicId: Int, lastEdit: Long)
+
+
+    @Query("DELETE FROM messages WHERE topicId = :topicId")
+    suspend fun deleteMessagesForTopic(topicId: Int)
 }

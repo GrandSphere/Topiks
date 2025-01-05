@@ -85,7 +85,10 @@ fun TopicsApp(context: Context) {
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
                         val topicId = backStackEntry.arguments?.getInt("topicId")
-                        if (topicId != -1) { MessageScreen(navController, messageViewModel, topicId) }
+                        if (topicId != -1) { MessageScreen(
+                            navController, messageViewModel, topicId,
+                            topicColor = topicViewModel.cTopicColor,
+                        ) }
 
                     }
                 }
