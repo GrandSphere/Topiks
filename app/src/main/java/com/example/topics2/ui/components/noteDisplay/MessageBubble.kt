@@ -37,7 +37,7 @@ import java.util.Locale
 @Composable
 fun MessageBubble(
     message: MessageTbl,
-    cColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
+    topicColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
     topicId: Int?,
     viewModel: MessageViewModel
 ) {
@@ -70,8 +70,8 @@ fun MessageBubble(
         // Message bubble with some padding and rounded corners
         Surface(
             shape = RoundedCornerShape(8.dp),
-            color = Color.Red,
-            //color = Color.Red,
+            //color = topicColor,
+            color = topicColor,
             modifier = Modifier.padding(1.dp),
             tonalElevation = 0.dp, // Remove shadow
             border = null // Remove border
@@ -79,7 +79,7 @@ fun MessageBubble(
             Column(
                 modifier = Modifier
                     //.fillMaxWidth() //messages take up entire width
-                    .background(Color.Red)
+                    //.background(topic)
                     .padding(6.dp), //space around message
             ) {
                 Text(

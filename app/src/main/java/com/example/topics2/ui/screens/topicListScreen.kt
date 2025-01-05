@@ -108,15 +108,16 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
-
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Transparent)
+            //.background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = {
+                    onTap = { // Go to specific Topic
+                        viewModel.cTopicColor=argbToColor(topic.topicColour)
+                        //viewModel.setTopicColor(topic)
                         navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
                     },
                     onLongPress = { showMenu = true }
@@ -163,7 +164,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
-            DropdownMenuItem(
+            DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
                     viewModel.deleteTopic(topic.topicId)
