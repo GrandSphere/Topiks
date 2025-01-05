@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
@@ -37,6 +38,7 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 
 @Composable
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val messages by viewModel.messages.collectAsState()
     viewModel.fetchMessages(topicId)
     val context = LocalContext.current
@@ -73,6 +75,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     topicId = topicId,
                     viewModel = viewModel,
                     topicColor = topicColor,
+                    topicFontColor = topicFontColor,
                 )
                 //Log.d("aabbcc",message)
             }
