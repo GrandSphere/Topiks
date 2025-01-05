@@ -16,11 +16,26 @@ import kotlinx.coroutines.launch
 
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
+    // States whether you are editing or sending
+    private val _shouldupdate = MutableStateFlow<Boolean>(false)
+    val shouldupdate: StateFlow<Boolean> = _shouldupdate
+    fun setShouldUpdate(newValue: Boolean) { _shouldupdate.value = newValue }
+
+    // Used only for Editing a message
+    private val _tempMessageId = MutableStateFlow<Int>(0)
+    val tempMessageId: StateFlow<Int> = _tempMessageId
+    fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
+
+
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
 
+    //Temp Message
+    private val _tempMessage = MutableStateFlow<String>("")
+    val tempMessage: StateFlow<String> = _tempMessage
+    fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
 
     // Delete Messages for topic
     suspend fun deleteMessagesForTopic(topicId: Int) {

@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +42,22 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController, messageViewModel: MessageViewModel, topicId: Int?
+    navController: NavController, viewModel: MessageViewModel, topicId: Int?
 ) {
+
+
+    //var vIsEdited by remember { mutableStateOf(messageViewModel.tempMessage.value) }
+
+    //val tempAbc by viewModel.tempMessage.collectAsState()
+    var inputText by remember { mutableStateOf("" ) }
+
+    val shouldUpdate by viewModel.shouldupdate.collectAsState()
+    //val inputText by viewModel.tempMessage.collectAsState(tempAbc)
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
     val density = LocalDensity.current.density // Get screen density
-    var inputText by remember { mutableStateOf("") }
+    //var inputText by remember { mutableStateOf("" ) }
+    
     val sPlaceHolder = "Type a message..."
     //val iMaxLines = 5
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -66,6 +78,20 @@ fun InputBarMessageScreen(
         .onFocusChanged { focusState ->
             isFocused = focusState.isFocused
         }
+
+
+
+    var tempMessageID by remember { mutableStateOf(-1 ) }
+    //var tempMessageID: Int// = -1
+    LaunchedEffect(shouldUpdate) {
+        if (viewModel.shouldupdate.value) {
+            inputText = viewModel.tempMessage.value
+            viewModel.setShouldUpdate(false)
+            tempMessageID=viewModel.tempMessageId.value
+            viewModel.setTempMessageId(-1)
+
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -99,7 +125,6 @@ fun InputBarMessageScreen(
 
         ) {
             Icon(
-
                 imageVector = Icons.Filled.Add, // Attach file icon
                 contentDescription = "Attach",
                 tint = Color.White, // Set the icon color to white
@@ -110,15 +135,30 @@ fun InputBarMessageScreen(
         val coroutineScope = rememberCoroutineScope()
         Spacer(modifier = Modifier.width(5.dp))
 
-            IconButton( // SEND BUTTON
+        IconButton( // SEND BUTTON
             onClick = {
-
                 if (inputText.isNotBlank()) {
                     val tempInput = inputText
-                    coroutineScope.launch {
-                    messageViewModel.addMessage(topicId, tempInput, messagePriority)
-                        }
                     inputText = ""
+                    if (tempMessageID > -1){ // Edit Mode
+                        coroutineScope.launch {
+                            viewModel.editMessage(
+                                tempMessageID,
+                                topicId,
+                                tempInput,
+                                messagePriority
+                            )
+                            tempMessageID=-1
+                        }
+
+                    }
+                    else { //Send Mode
+                        coroutineScope.launch {
+                            viewModel.addMessage(topicId, tempInput, messagePriority)
+                        }
+                    }
+
+
                 }
                 // Handle button click (e.g., show file picker or attachment options)
             },
@@ -131,7 +171,9 @@ fun InputBarMessageScreen(
 
         ) {
             Icon(
-                imageVector = Icons.Filled.Send, // Attach file icon
+
+                imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.Filled.Send,
+                //imageVector = Icons.Filled.Send, // Attach file icon
                 contentDescription = "Attach",
                 tint = colors.primaryContainer, // Set the icon color to white
                 modifier = Modifier
