@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ import androidx.navigation.NavController
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -50,7 +53,7 @@ fun MessageScreen(navController: NavController, messageViewModel: MessageViewMod
     val messages by messageViewModel.messages.collectAsState()
     messageViewModel.fetchMessages(topicId)
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+   //val coroutineScope = rememberCoroutineScope()
     //val messages = remember { mutableStateListOf<MessageTbl>() }
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
@@ -92,7 +95,7 @@ fun MessageScreen(navController: NavController, messageViewModel: MessageViewMod
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-                MessageBubble(message)
+                MessageBubble(message = message, topicId = topicId, messageViewModel = messageViewModel)
                 //Log.d("aabbcc",message)
             }
             item {
@@ -128,12 +131,12 @@ fun MessageScreen(navController: NavController, messageViewModel: MessageViewMod
 @Composable
 fun MessageBubble(
     message: MessageTbl,
-    cColor: Color = MaterialTheme.colorScheme.secondary  // Default to secondary color from theme
+    cColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
+    topicId: Int?,
+    messageViewModel: MessageViewModel
 ) {
-
-
-
-
+    var showMenu by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     Log.d("aabbcc", "we got into a message buble this many time")
     // Format timestamp (you can format this as needed)
     val formattedTimestamp =
@@ -145,6 +148,12 @@ fun MessageBubble(
         modifier = Modifier
             .fillMaxWidth()
             //.background(Color.Red)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { },
+                    onLongPress = { showMenu = true }
+                )
+            }
             .padding(3.dp),  // Reduced padding between messages
 
         horizontalArrangement = Arrangement.Start,
@@ -180,5 +189,20 @@ fun MessageBubble(
                 )
             }
         }
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete Message") },
+                onClick = {
+                    coroutineScope.launch {
+                        messageViewModel.deleteMessage(message.id, topicId,)
+                        showMenu = false
+                    }
+                }
+            )
+        }
     }
+
 }

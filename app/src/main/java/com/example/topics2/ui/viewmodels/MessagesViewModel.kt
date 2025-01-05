@@ -22,9 +22,15 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
 
 
-    // Delete Message
+    // Delete Messages for topic
     suspend fun deleteMessagesForTopic(topicId: Int) {
         messageDao.deleteMessagesForTopic(topicId)
+        fetchMessages(topicId)
+    }
+
+    // Delete Message
+    suspend fun deleteMessage(messageId: Int, topicId: Int?) {
+        messageDao.deleteMessage(messageId)
         fetchMessages(topicId)
     }
 
