@@ -81,7 +81,7 @@ fun TopicsApp(context: Context) {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
-                    composable("navnotescreen/{topicId}",
+                    composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
                         val topicId = backStackEntry.arguments?.getInt("topicId")
