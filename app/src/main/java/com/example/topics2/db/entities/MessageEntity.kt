@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "messages")
 data class MessageTbl(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val topicId: Int,  // Foreign key to the Topic table
+    val topicId: Int?,  // Foreign key to the Topic table
     val messageContent: String,
     val messageTimestamp: Long,
     val messagePriority: Int
