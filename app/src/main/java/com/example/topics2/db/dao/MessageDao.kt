@@ -15,8 +15,8 @@ interface MessageDao {
     @Query("SELECT * FROM messages WHERE topicId = :topicId")
     suspend fun getMessagesForTopic(topicId: Int?): List<MessageTbl>
 
-    @Delete
-    suspend fun deleteMessage(message: MessageTbl)
+    @Query("DELETE FROM messages WHERE id = :messageId")
+    suspend fun deleteMessage(messageId: Int)
 
     @Update
     suspend fun updateMessage(message: MessageTbl)
