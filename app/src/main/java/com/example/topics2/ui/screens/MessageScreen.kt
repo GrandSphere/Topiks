@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +20,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,50 +36,48 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.topics2.model.enitities.MessageTbl
-import com.example.topics2.ui.components.noteDisplay.InputBarNoteScreen
-import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
+import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun NoteScreen(navController: NavController, viewModel: TopicViewModel) {
-    val topicId = "changethis"
+fun MessageScreen(navController: NavController, messageViewModel: MessageViewModel, topicId: Int?) {
+    val messages by messageViewModel.messages.collectAsState()
+    messageViewModel.fetchMessages(topicId)
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val messages = remember { mutableStateListOf<MessageTbl>() }
+    //val messages = remember { mutableStateListOf<MessageTbl>() }
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
+    Log.d("aabbccTopicId", topicId.toString())
     val focusManager = LocalFocusManager.current // For clearing focus
 
     // Fetch messages for the topic when the screen is shown
-    LaunchedEffect(topicId) {
-        //val fetchedMessages = messageController.getMessagesForTopic(topicId)
-        //messages.clear()
-        //messages.addAll(fetchedMessages)
-
-        if (messages.isNotEmpty()) {
-            scrollState.scrollToItem(messages.size - 1)
-        }
-    }
+    //LaunchedEffect(topicId) {
+    //    if (messages.isNotEmpty()) {
+    //        //scrollState.scrollToItem(messages.size - 1)
+    //        scrollState.scrollToItem(messages.size - 1)
+    //    }
+    //}
 
     // Scroll to the bottom when messages are updated
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            scrollState.animateScrollToItem(messages.size - 1)
-        }
-    }
+//    LaunchedEffect(messages.size) {
+//        if (messages.isNotEmpty()) {
+//            scrollState.animateScrollToItem(messages.size - 1)
+//        }
+//    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Transparent)
+            //.background(Color.Red)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { focusManager.clearFocus() })
             }
@@ -87,11 +86,13 @@ fun NoteScreen(navController: NavController, viewModel: TopicViewModel) {
             state = scrollState,
             modifier = Modifier
                 .fillMaxSize()
+                //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
                 MessageBubble(message)
+                //Log.d("aabbcc",message)
             }
             item {
                 Spacer(
@@ -110,23 +111,19 @@ fun NoteScreen(navController: NavController, viewModel: TopicViewModel) {
                     inputBarHeightPx = size.height
                 }
         ) {
-            //InputBarNoteScreen {
-               // messageText ->
-               // coroutineScope.launch {
-               //     messageController.addMessage(topicId, messageText, 1)
-               //     topicController.updateLastModified(topicId, System.currentTimeMillis())
+            InputBarMessageScreen(navController=navController, messageViewModel= messageViewModel ){
 
-               //     val newMessages = messageController.getMessagesForTopic(topicId)
-               //     messages.clear()
-               //     messages.addAll(newMessages)
-
-                    //if (messages.isNotEmpty()) {
-                        //scrollState.animateScrollToItem(messages.size - 1)
-                    //}
-                //}
-            //}
+            }
         }
     }
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            //scrollState.animateScrollToItem(messages.size - 1)
+                    scrollState.scrollToItem(messages.size - 1)
+        }
+    }
+
 }
 
 @Composable
@@ -134,10 +131,16 @@ fun MessageBubble(
     message: MessageTbl,
     cColor: Color = MaterialTheme.colorScheme.secondary  // Default to secondary color from theme
 ) {
+
+
+
+
+    Log.d("aabbcc", "we got into a message buble this many time")
     // Format timestamp (you can format this as needed)
     val formattedTimestamp =
         SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.messageTimestamp)
 
+    Log.d("aabbcc", message.messageContent)
     //val colors = MaterialTheme.colorScheme // Use the theme color scheme
     Row(
         modifier = Modifier
@@ -151,7 +154,7 @@ fun MessageBubble(
         // Message bubble with some padding and rounded corners
         Surface(
             shape = RoundedCornerShape(8.dp),
-            color = cColor,
+            color = Color.Red,
             //color = Color.Red,
             modifier = Modifier.padding(1.dp),
             tonalElevation = 0.dp, // Remove shadow
@@ -160,14 +163,16 @@ fun MessageBubble(
             Column(
                 modifier = Modifier
                     //.fillMaxWidth() //messages take up entire width
-                    //.background(Color.Red)
+                    .background(Color.Red)
                     .padding(6.dp), //space around message
             ) {
                 Text(
                     text = message.messageContent,
+
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    //color = MaterialTheme.colorScheme.onPrimary
                 )
+
                 Spacer(modifier = Modifier.height(1.dp)) //space between message and date
                 Text(
                     text = formattedTimestamp,

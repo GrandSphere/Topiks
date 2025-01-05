@@ -1,7 +1,4 @@
 package com.example.topics2.activities
-
-// MainActivity.kt
-
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -12,53 +9,59 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
+import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
+import com.example.topics2.ui.viewmodels.MessageViewModel
+import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-
-            TopicsTheme {
-                TopicsApp(applicationContext)
-            }
-        }
+        setContent { TopicsTheme { TopicsApp(applicationContext) } }
     }
 }
 
 @Composable
 fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
-   // val topicDao = database.topicDao()
- //   val topicViewModel = TopicViewModel(topicDao)
-    //val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
-
-    val topicViewModel: TopicViewModel = viewModel(
-       factory = TopicViewModel.Factory
-   )
-
+    val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
+    val messageViewModel: MessageViewModel = viewModel( factory = MessageViewModel.Factory )
+    //val messageViewModel: Messaag
+    val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
+    val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
+    val backStackEntry = navController.currentBackStackEntryAsState()
+
+    //messageViewModel.insertTestMessages()
 
 
+    // Listen for changes in the navController's back stack and update the title accordingly
+    LaunchedEffect(backStackEntry.value) {
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
+        topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CustomTopAppBar(
-                title = "topBarBarTitle",
+                title = topBarTitle,
                 onSettingsClick = { /* Handle settings click here */ },
                 reloadTopics = {//topicController.loadTopics()
                 }
@@ -73,29 +76,18 @@ fun TopicsApp(context: Context) {
             ) {
                 // Setting up the NavHost with two screens
                 NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                    composable("navtopicListScreen") {
-                        TopicListScreen( navController,
-                            topicViewModel
-                        )
-                    }
+                    composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
+                    composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
+                    composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
+                    composable("navnotescreen/{topicId}",
+                        arguments= listOf(navArgument("topicId"){type= NavType.IntType})
+                    ) { backStackEntry ->
+                        val topicId = backStackEntry.arguments?.getInt("topicId")
+                        if (topicId != -1) { MessageScreen(navController, messageViewModel, topicId) }
 
-                    composable("navaddtopic") {
-                        AddTopicScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
-
-                    composable("navcolourpicker") {
-                        ColourPickerScreen(
-                            navController,
-                            topicViewModel
-                        )
                     }
                 }
             }
         }
     )
-
-
 }

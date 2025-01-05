@@ -1,11 +1,11 @@
-package com.example.topics2.model.dao
+package com.example.topics2.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.topics2.model.enitities.MessageTbl
+import com.example.topics2.db.enitities.MessageTbl
 
 @Dao
 interface MessageDao {
@@ -13,7 +13,7 @@ interface MessageDao {
     suspend fun insertMessage(message: MessageTbl)
 
     @Query("SELECT * FROM messages WHERE topicId = :topicId")
-    suspend fun getMessagesForTopic(topicId: Int): List<MessageTbl>
+    suspend fun getMessagesForTopic(topicId: Int?): List<MessageTbl>
 
     @Delete
     suspend fun deleteMessage(message: MessageTbl)

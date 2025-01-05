@@ -1,6 +1,5 @@
 package com.example.topics2.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,17 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.TopicCategory
 import com.example.topics2.ui.components.addTopic.TopicColour
 import com.example.topics2.ui.components.addTopic.TopicName
 import com.example.topics2.ui.viewmodels.TopicViewModel
-
-import com.example.topics2.MyApplication
 
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel) {

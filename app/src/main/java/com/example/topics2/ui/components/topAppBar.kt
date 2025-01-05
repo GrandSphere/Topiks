@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components
 
+import ExportDatabaseWithPicker
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.topics.utilities.ImportDatabaseWithPicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,18 +65,18 @@ fun CustomTopMenu(
     var showImportPicker by remember { mutableStateOf(false) }
     // Show the directory picker when the state changes
     if (showDirectoryPicker) {
-        //ExportDatabaseWithPicker(onExportComplete = {
-        //    // Reset state after the export process completes
-        //    showDirectoryPicker = false
-        //})
+        ExportDatabaseWithPicker(onExportComplete = {
+            // Reset state after the export process completes
+            showDirectoryPicker = false
+        })
     }
     // Show the import picker when the state changes
     if (showImportPicker) {
-        //ImportDatabaseWithPicker(onImportComplete = {
-        //    reloadTopics()
-        //    showImportPicker = false
+        ImportDatabaseWithPicker(onImportComplete = {
+            reloadTopics()
+            showImportPicker = false
 
-        //})
+        })
     }
 
 
