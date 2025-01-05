@@ -35,6 +35,10 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val temptopicname: StateFlow<String> = _temptopicname
     fun settemptopicname(newCategory: String) {_temptopicname.value = newCategory}
 
+    private val _topicname = MutableStateFlow<String>("")
+    val topicname: StateFlow<String> = _topicname
+    fun settopicname(newCategory: String) {_topicname.value = newCategory}
+
     init {
         fetchTopics()
     }

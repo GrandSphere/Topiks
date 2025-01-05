@@ -1,0 +1,27 @@
+package com.example.topics2.ui.viewmodels
+
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+// TopBarViewModel.kt
+class TopBarViewModel : ViewModel() {
+    private val _topBarTitle = MutableStateFlow("Unknown")  // Default title
+    val topBarTitle: StateFlow<String> get() = _topBarTitle
+
+    // Function to update the title based on the current route
+    fun updateTopBarTitle(currentRoute: String?, currentBackStackEntry: NavBackStackEntry?) {
+        val title = when (currentRoute) {
+            "chat/{topicId}/{topicName}/{topicColour}" -> {
+                val topicName = currentBackStackEntry?.arguments?.getString("topicName") ?: "Chat"
+                topicName
+            }
+            "navcolourpicker" -> "Pick a colour"
+            "navtopicListScreen" -> "Topics"
+            "navaddtopic" -> "Add Topic"
+            else -> "Unknown"
+        }
+        _topBarTitle.value = title
+    }
+}
