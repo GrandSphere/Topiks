@@ -3,7 +3,7 @@ package com.example.topics2.db.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.TopicTbl
 
 
 @Dao

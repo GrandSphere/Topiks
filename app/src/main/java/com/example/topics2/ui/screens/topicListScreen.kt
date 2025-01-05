@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -116,7 +116,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     onTap = {
                         //passMessageData.setTopicId(topic.topicId)
                         //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
-                        navController.navigate("navnotescreen/{topic.topicId}")
+                        navController.navigate("navnotescreen/${topic.topicId}")
 
                     },
                     //onLongPress = { showMenu = true }

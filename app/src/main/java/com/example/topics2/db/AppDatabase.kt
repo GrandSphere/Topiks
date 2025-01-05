@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
-import com.example.topics2.model.enitities.MessageTbl
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.enitities.TopicTbl
 
 
 @Database(entities = [TopicTbl::class, MessageTbl::class], version = 2)
