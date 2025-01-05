@@ -24,8 +24,10 @@ import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
+import com.example.topics2.ui.screens.NoteScreen
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
+import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -38,8 +40,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TopicsApp(context: Context) {
-    val database = AppDatabase.getDatabase(context)
     val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
+    val messageViewModel: MessageViewModel = viewModel( factory = MessageViewModel.Factory )
     val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
@@ -72,10 +74,16 @@ fun TopicsApp(context: Context) {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
+                    composable("navnotescreen/{topicId}") {
+                            backStackEntry ->
+                        val topicId = (backStackEntry).arguments?.getInt("topicId")
+                        if (topicId != -1) {
+                            NoteScreen(navController, messageViewModel, topicId)
+                        }
+
+                    }
                 }
             }
         }
     )
-
-
 }

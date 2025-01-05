@@ -113,7 +113,12 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .pointerInput(Unit) {
                 detectTapGestures(
                     //onTap = { onClick() },
-                    onTap = { },
+                    onTap = {
+                        //passMessageData.setTopicId(topic.topicId)
+                        //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
+                        navController.navigate("navnotescreen/{topic.topicId}")
+
+                    },
                     //onLongPress = { showMenu = true }
                     onLongPress = { }
                 )

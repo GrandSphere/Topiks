@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topics2.model.enitities.MessageTbl
 import com.example.topics2.ui.components.noteDisplay.InputBarNoteScreen
+import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -45,8 +46,8 @@ import java.util.Locale
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun NoteScreen(navController: NavController, viewModel: TopicViewModel) {
-    val topicId = "changethis"
+fun NoteScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?) {
+    //val topicId = "changethis"
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val messages = remember { mutableStateListOf<MessageTbl>() }
