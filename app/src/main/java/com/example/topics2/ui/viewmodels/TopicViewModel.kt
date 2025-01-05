@@ -22,7 +22,10 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     //val TopicColor: StateFlow<Color> = _TopicColor  // Expose as immutable StateFlow
     //fun setTopicColor(newColor: Color) { _TopicColor.value = newColor }
 
-
+    // File URI for image imports
+    private val _fileURI = MutableStateFlow<String>("")
+    val fileURI: StateFlow<String> = _fileURI
+    fun setURI(newURI: String) { _fileURI.value = newURI }
 
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
     val topics: StateFlow<List<TopicTbl>> = _topics

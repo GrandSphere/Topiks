@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,8 +36,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.topics.utilities.ImportImageWithPicker
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
@@ -93,6 +99,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 onClick = {
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
+                    viewModel.setURI("")
                     navController.navigate("navaddtopic")
                           },
                 modifier = Modifier
@@ -134,31 +141,53 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                //color = colors.primaryContainer,
-                shape = CircleShape, // Ensures the Surface is circular
-                modifier = Modifier
-                    .size(35.dp)
-                    .heightIn(max = 35.dp),
-
-                ) {
-                Box(
-                    contentAlignment = Alignment.Center,
+            // TODO check image validity AND compress images
+            val imageUrl = topic.topicIcon
+            if (imageUrl != "") {
+                Log.d("THIS IS NOT NULL", imageUrl )
+                // Load and display the image
+                Image(
+                    painter = rememberAsyncImagePainter(imageUrl),
+                    contentDescription = "Circular Image",
+                    contentScale = ContentScale.Crop, // Crop the image to fill the circle
                     modifier = Modifier
+                        .size(35.dp)
                         .fillMaxSize()
-                        .background(argbToColor(topic.topicColour))
-                        //.background(argbToColor(topic.topicColour))
+                        .clip(CircleShape) // Clip the image into a circular shape
+                )
+            } else {
+
+                // Show an icon as a fallback if no image URL is provided
+                Surface(
+                    //color = colors.primaryContainer,
+                    shape = CircleShape, // Ensures the Surface is circular
+                    modifier = Modifier
+                        .size(35.dp)
                         .heightIn(max = 35.dp),
-                ) {
-                    Text(
-                        text = topic.topicName.first().toString(),
-                        //color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        color = chooseColorBasedOnLuminance(argbToColor(topic.topicColour)),
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
+
+                    ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(argbToColor(topic.topicColour))
+                            //.background(argbToColor(topic.topicColour))
+                            .heightIn(max = 35.dp),
+                    ) {
+                        Text(
+                            text = topic.topicName.first().toString(),
+                            //color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = chooseColorBasedOnLuminance(argbToColor(topic.topicColour)),
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
+
+
+
+
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = topic.topicName,
