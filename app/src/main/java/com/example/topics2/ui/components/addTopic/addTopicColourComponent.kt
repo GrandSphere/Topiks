@@ -31,12 +31,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
-import com.example.topics.utilities.ImportImageWithPicker
+
+import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.coroutineScope
 
@@ -74,14 +76,8 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                  contentAlignment = Alignment.Center
         ) {
             if (showImagePicker) {
-                ImportImageWithPicker(
-                    onImportComplete = {
-                        // Reset the picker state after import is complete
-                        showImagePicker = false
-                    },
-                    topicViewModel = viewModel
-                )
-
+                SelectImageWithPicker(topicViewModel = viewModel)
+                showImagePicker = false
             }
 
             if (imageUrl != "") {

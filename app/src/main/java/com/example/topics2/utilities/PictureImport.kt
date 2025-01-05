@@ -18,7 +18,7 @@ import java.io.File
 import java.io.IOException
 
 @Composable
-fun ImportImageWithPicker(onImportComplete: () -> Unit, topicViewModel: TopicViewModel) {
+fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
     var fileUri by remember { mutableStateOf<Uri?>(null) }
 
     if (fileUri == null) {
@@ -30,30 +30,38 @@ fun ImportImageWithPicker(onImportComplete: () -> Unit, topicViewModel: TopicVie
     val context = LocalContext.current
     LaunchedEffect(fileUri) {
         fileUri?.let { uri ->
-            importImageFromUri(context, uri, topicViewModel)
-            fileUri = null // Reset state after import
-            onImportComplete()
+            // Set the URI path from the original location to the ViewModel
+            topicViewModel.setURI(uri.toString())
+            fileUri = null // Reset state after selection
+            Toast.makeText(context, "File selected: $uri", Toast.LENGTH_SHORT).show()
         }
     }
 }
 
-fun importImageFromUri(context: Context, uri: Uri, topicViewModel: TopicViewModel) {
+fun copyImageToAppFolder(context: Context, topicViewModel: TopicViewModel) {
+    val currentUri = topicViewModel.fileURI.value // Assuming ViewModel exposes URI as LiveData or StateFlow
+    if (currentUri.isNullOrBlank()) {
+        Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    val uri = Uri.parse(currentUri)
     try {
         val iconsDir = File(context.filesDir, "icons")
         if (!iconsDir.exists()) iconsDir.mkdirs()
 
-        // Extract the file name from the URI using ContentResolver
-        val resolver: ContentResolver = context.contentResolver
+        // Extract the file name from the URI
         val imageName = getFileNameFromUri(context, uri)
-    Log.d("ZZZ IMAGE NAME", imageName)
+        Log.d("ZZZ IMAGE NAME", imageName)
 
         val targetImageFile = File(iconsDir, imageName)
+        // Update ViewModel URI path to the app folder path
+        topicViewModel.setURI(targetImageFile.absolutePath)
 
-        resolver.openInputStream(uri)?.use { inputStream ->
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
             targetImageFile.outputStream().use { outputStream ->
                 copyStream(inputStream, outputStream)
-                // Use absolute path to ensure correct file path
-                topicViewModel.setURI(targetImageFile.absolutePath)
+
                 Toast.makeText(context, "Image imported successfully to /icons/ directory!", Toast.LENGTH_SHORT).show()
             }
         } ?: run {
@@ -63,6 +71,7 @@ fun importImageFromUri(context: Context, uri: Uri, topicViewModel: TopicViewMode
         Toast.makeText(context, "Error importing image: ${e.message}", Toast.LENGTH_LONG).show()
     }
 }
+
 
 // Function to get the file name from URI using ContentResolver
 fun getFileNameFromUri(context: Context, uri: Uri): String {
