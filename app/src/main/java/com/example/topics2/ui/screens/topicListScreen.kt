@@ -113,16 +113,10 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    //onTap = { onClick() },
                     onTap = {
-
-                        Log.d("aabbcc sent topic ID", topic.topicId.toString())
-                        //passMessageData.setTopicId(topic.topicId)
-                        //"navnotescreen/{topicId}/{topicName}/{topicColour}" -> {
-                        navController.navigate("navnotescreen/${topic.topicId}")
+                        navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
                     },
                     onLongPress = { showMenu = true }
-
                 )
             }
             .padding(8.dp)
@@ -147,7 +141,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 ) {
                     Text(
                         text = topic.topicName.first().toString(),
-                        //text = topic.topicName.toString(),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center
