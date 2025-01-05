@@ -28,9 +28,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.topics2.db.enitities.MessageTbl
-import com.example.topics2.model.Message
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -41,11 +39,14 @@ fun MessageBubble(
     message: MessageTbl,
     cColor: Color = MaterialTheme.colorScheme.secondary,  // Default to secondary color from theme
     topicId: Int?,
-    messageViewModel: MessageViewModel
+    viewModel: MessageViewModel
 ) {
     var showMenu by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     // Format timestamp (you can format this as needed)
+
+
+    //var inputText by remember { mutableStateOf(viewModel.tempMessage.value ) }
 
     val clipboardManager = LocalClipboardManager.current
     val formattedTimestamp =
@@ -113,16 +114,18 @@ fun MessageBubble(
             DropdownMenuItem(
                 text = { Text("Edit") },
                 onClick = {
-
-                    coroutineScope.launch {
-                        messageViewModel.editMessage(
-                            message.id,
-                            topicId,
-                            "I was edited",
-                            message.messagePriority
-                        )
-                        showMenu = false
-                    }
+                    viewModel.setTempMessage(message.messageContent)
+                    viewModel.setShouldUpdate(true)
+                    viewModel.setTempMessageId(message.id)
+                   // coroutineScope.launch {
+                   //     viewModel.editMessage(
+                   //         message.id,
+                   //         topicId,
+                   //         "I was edited",
+                   //         message.messagePriority
+                   //     )
+                   // }
+                    showMenu = false
                 }
             )
 
@@ -130,7 +133,7 @@ fun MessageBubble(
                 text = { Text("Delete Message") },
                 onClick = {
                     coroutineScope.launch {
-                        messageViewModel.deleteMessage(message.id, topicId,)
+                        viewModel.deleteMessage(message.id, topicId,)
                         showMenu = false
                     }
                 }
