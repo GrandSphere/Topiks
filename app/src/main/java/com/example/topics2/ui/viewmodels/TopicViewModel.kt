@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val cTopicID: Int = 1
     var cTopicColor: Color = Color.Red
+    var cFontColor: Color = Color.Red
 
     //private val _TopicColor = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
     //val TopicColor: StateFlow<Color> = _TopicColor  // Expose as immutable StateFlow

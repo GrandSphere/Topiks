@@ -9,5 +9,7 @@ data class MessageTbl(
     val topicId: Int?,  // Foreign key to the Topic table
     val messageContent: String,
     val messageTimestamp: Long,
-    val messagePriority: Int
+    val messagePriority: Int,
+    val filePath: String="",
+    val fileType: Int = 0,
 )
