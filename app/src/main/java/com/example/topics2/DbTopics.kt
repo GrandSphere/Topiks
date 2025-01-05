@@ -8,12 +8,13 @@ import com.example.topics2.db.dao.TopicDao
 
 class DbTopics : Application() {
 
-    val db = AppDatabase.getDatabase(this)  // Get database instance
     val topicDao: TopicDao by lazy {
+    val db = AppDatabase.getDatabase(this)  // Get database instance
         db.topicDao()
     }
 
     val messageDao: MessageDao by lazy {
+        val db = AppDatabase.getDatabase(this)  // Get database instance
         db.messageDao()
     }
     override fun onCreate() {

@@ -3,7 +3,7 @@ package com.example.topics2.ui.screens
 import android.content.Context
 import android.util.Log
 import com.example.topics2.db.AppDatabase
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

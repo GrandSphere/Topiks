@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.TopicDao
-import com.example.topics2.model.enitities.TopicTbl
+import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.MessageDao
-import com.example.topics2.model.enitities.MessageTbl
+import com.example.topics2.db.enitities.MessageTbl
 
 
 class MessageViewModel (private val messageDoa: MessageDao): ViewModel() {
@@ -46,7 +46,7 @@ class MessageViewModel (private val messageDoa: MessageDao): ViewModel() {
 
                 // Get the TopicDao from the Application class
                 val myApplication = application as DbTopics
-                return TopicViewModel(myApplication.topicDao) as T
+                return MessageViewModel(myApplication.messageDao) as T
             }
         }
     }

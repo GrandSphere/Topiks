@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.topics2.model.enitities.MessageTbl
+import com.example.topics2.db.enitities.MessageTbl
 
 @Dao
 interface MessageDao {

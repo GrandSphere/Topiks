@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.topics2.model.enitities.MessageTbl
+import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.components.noteDisplay.InputBarNoteScreen
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
