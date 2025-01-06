@@ -1,9 +1,12 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,9 +50,11 @@ import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -66,7 +71,7 @@ fun InputBarMessageScreen(
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
-    val showFilePicker = viewModel.showPicker.collectAsState().value
+    val showPicker: Boolean = viewModel.showPicker.collectAsState().value
 
     var isFocused by remember { mutableStateOf(false) }
 
@@ -77,14 +82,10 @@ fun InputBarMessageScreen(
     val focusRequester2 = remember { FocusRequester() }
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
-
             focusManager.clearFocus()
-
             focusRequester.requestFocus()
             viewModel.setToFocusTextbox(false)
         } else {
-            //focusRequester.restoreFocusedChild()
-            //focusManager.clearFocus()
         }
     }
 
@@ -102,7 +103,7 @@ fun InputBarMessageScreen(
     // }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+       // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
         viewModel.setToFocusTextbox(true)
     }
 
@@ -161,24 +162,20 @@ fun InputBarMessageScreen(
         )
 
         Spacer(modifier = Modifier.width(8.dp))
+        if(showPicker)
+        {
+            SelectFileWithPicker(navController, viewModel)
+        }
+
         IconButton( // ADD BUTTON
             onClick = {
-
-                Log.d("inside message file picker"," ontap")
-                // Clear focus when tapping outside
-                viewModel.setShowPicker(true) },
+                Log.d("AABBCCDD", "THIS IS BEFORE SETTING IT TRUE INSIDE THE CLICK: value: $showPicker")
+                    viewModel.setShowPicker(true)
+                      },
             modifier = Modifier
-
                 .size(vButtonSize)
                 .align(Alignment.Bottom)
         ) {
-            if (showFilePicker) {
-
-                Log.d("inside message file picker"," inside")
-                SelectFileWithPicker(messageViewModel = viewModel)
-
-            }
-
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Attach",

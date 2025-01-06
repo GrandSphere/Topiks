@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.compressImageToUri
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -22,7 +24,7 @@ import java.io.IOException
 // TODO: Add to settings where user want app folder
 
 @Composable
-fun SelectFileWithPicker(messageViewModel: MessageViewModel) {
+fun SelectFileWithPicker(navController: NavController, messageViewModel: MessageViewModel) {
     var fileUri by remember { mutableStateOf<Uri?>(null) }
 
     if (fileUri == null) {
@@ -36,11 +38,20 @@ fun SelectFileWithPicker(messageViewModel: MessageViewModel) {
         fileUri?.let { uri ->
             // Set the URI path from the original location to the ViewModel
               messageViewModel.setURI(uri.toString())
-              messageViewModel.setShowPicker(false)
+            //  messageViewModel.setShowPicker(false)
             fileUri = null // Reset state after selection
             Toast.makeText(context, "File selected: $uri", Toast.LENGTH_SHORT).show()
+
+
         }
     }
+    BackHandler(enabled = true, onBack = {
+         messageViewModel.setShowPicker(false)
+
+        navController.popBackStack()
+
+    })
+
 }
 
 fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel) {
