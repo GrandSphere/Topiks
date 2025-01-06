@@ -12,7 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 //import com.example.topics.model.db.AppDatabase
@@ -24,17 +27,18 @@ import java.io.OutputStream
 // Called from topAppBar
 // TODO:: REFRESH UI SOMEHOW
 @Composable
-fun ImportDatabaseWithPicker(onImportComplete: () -> Unit) {
+fun ImportDatabaseWithPicker(onImportComplete: () -> Unit, navController: NavController) {
     // State to hold the selected file URI
     var fileUri by remember { mutableStateOf<Uri?>(null) }
 
     // Use the FilePicker composable to pick a file
     if (fileUri == null) {
         Log.d("ZZZ Import URI", "EMPTY")
-        FilePicker(onFileSelected = { selectedUri ->
-            fileUri = selectedUri
-            Log.d("ZZZ Import URI", fileUri.toString())
-        }, fileTypes = arrayOf("*/*")) // Restrict to image types
+        FilePickerIcon(onFileSelected = { selectedUri ->
+            fileUri = selectedUri },
+            fileTypes = arrayOf("*/*"),
+            navController = navController,
+        )
     }
     val context = LocalContext.current
     LaunchedEffect(fileUri) {

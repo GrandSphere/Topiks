@@ -1,7 +1,9 @@
 package com.example.topics2.activities
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -12,8 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+
 import com.example.topics.utilities.SelectFileWithPicker
 
 import com.example.topics2.db.AppDatabase
@@ -54,7 +61,7 @@ fun TopicsApp(context: Context) {
     val backStackEntry = navController.currentBackStackEntryAsState()
 
     //messageViewModel.insertTestMessages()
-    Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
+  //  Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
 
     // Listen for changes in the navController's back stack and update the title accordingly
     LaunchedEffect(backStackEntry.value) {
@@ -68,7 +75,8 @@ fun TopicsApp(context: Context) {
                 title = topBarTitle,
                 onSettingsClick = { /* Handle settings click here */ },
                 reloadTopics = {//topicController.loadTopics()
-                }
+                },
+                navController= navController,
             )
         },
 

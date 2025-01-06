@@ -26,10 +26,20 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val showPicker: StateFlow<Boolean> = _showPicker
     fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
 
-    // File URI for image imports
+    // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
+    private val _filePicked = MutableStateFlow<Boolean>(false)
+    val filePicked: StateFlow<Boolean> = _filePicked
+    fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
+
+    // File URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
     fun setURI(newURI: String) { _fileURI.value = newURI }
+
+    // File URI for file imports
+    private val _destURI = MutableStateFlow<String>("")
+    val destURI: StateFlow<String> = _destURI
+    fun setdestURI(newURI: String) { _destURI.value = newURI }
 
     private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox
