@@ -15,6 +15,7 @@ material = "1.4.0"
 material3 = "1.0.0"
 navigationCompose = "2.8.5"
 navigationComposeVersion = "2.5.0"
+picasso = "2.71828"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 roomKtxVersion = "2.6.0"
@@ -58,6 +59,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtxVersion" }
 room-runtime = { module = "androidx.room:room-runtime" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
