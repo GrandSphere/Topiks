@@ -41,7 +41,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val messages by viewModel.messages.collectAsState()
     viewModel.fetchMessages(topicId)
-    LocalContext.current
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
