@@ -79,5 +79,7 @@ dependencies {
     kapt (libs.room.compiler) // Add this for kapt
     testImplementation(libs.junit)
 
+        // Lifecycle components (if not already included)
+        implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
 
 }
