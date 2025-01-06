@@ -100,6 +100,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
         ) {
             IconButton(
                 onClick = {
+                    viewModel.settempColour(noteColour)
                     navController.navigate("navcolourpicker")
                 },
                 modifier = Modifier.size(40.dp)

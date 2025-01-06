@@ -66,7 +66,9 @@ fun ColorGridScreen(colors: List<Color>, navController: NavController, viewModel
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = {
-                                    Log.d("zzzSelectedColour", "Selected color: ${combinedColors[index]}")
+                                    viewModel.settempColour(combinedColors[index])
+                                    //Log.d("zzzSelectedColour", "Selected color: ${combinedColors[index]}")
+                                    navController.popBackStack()
                                 }
                             )
                         },
@@ -77,6 +79,7 @@ fun ColorGridScreen(colors: List<Color>, navController: NavController, viewModel
                 }
             }
         }
+
 
         // IconButton placed at the bottom center of the screen
         IconButton(

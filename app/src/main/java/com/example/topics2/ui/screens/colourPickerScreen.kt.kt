@@ -44,11 +44,13 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
-    val noteColour by viewModel.colour.collectAsState()
+    //val noteColour by viewModel.colour.collectAsState()
+    val noteColour by viewModel.tempColour.collectAsState()
 
     //initialColor: Color = MaterialTheme.colorScheme.tertiary
     var initialColor: Color = Color.Red
     //val colors = MaterialTheme.colorScheme
+    //val hsv = colorToHsv(noteColour)
     val hsv = colorToHsv(noteColour)
     val initialHue = hsv[0] // Hue
     val initialSaturation = hsv[1] // Saturation
