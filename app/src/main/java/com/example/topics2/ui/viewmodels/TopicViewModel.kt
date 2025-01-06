@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,10 +17,10 @@ import kotlinx.coroutines.launch
 
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val cTopicID: Int = 1
-    var cTopicColor: Color = Color.Red
+    var cTopicColor: Color = Color.Cyan
     var cFontColor: Color = Color.Red
 
-    private val _tempColour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
+    private val _tempColour = MutableStateFlow<Color>(Color.Cyan)  // Default color as Gray
     val tempColour: StateFlow<Color> = _tempColour  // Expose as immutable StateFlow
     fun settempColour(newColor: Color) { _tempColour.value = newColor }
 
@@ -44,7 +45,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     fun setCategory(newCategory: String) { _category.value = newCategory }
 
     // This is when adding topic colour
-    private val _colour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
+    private val _colour = MutableStateFlow<Color>(Color.Cyan)  // Default color as Gray
     val colour: StateFlow<Color> = _colour  // Expose as immutable StateFlow
     fun setColour(newColor: Color) { _colour.value = newColor }
 

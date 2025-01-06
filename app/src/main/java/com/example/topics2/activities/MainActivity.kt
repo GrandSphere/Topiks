@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
     }
 }
-
+//val Purple200 = Color(0xFFBB86FC) FIX THIS
 @Composable
 fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
