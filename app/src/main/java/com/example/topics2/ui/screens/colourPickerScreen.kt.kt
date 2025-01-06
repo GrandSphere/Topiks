@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -93,10 +95,16 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             // Color preview Box
             Box( // Colour previewer
                 modifier = Modifier
+                    .pointerInput(Unit) { detectTapGestures(
+                        onTap = {
+                            navController.navigate("navrecentcolours")
+                            //Log.d("zzzSelectedColour", "Selected color: ${combinedColors[index]}")
+                        }
+                    ) }
                     .size(100.dp)
                     .clip(CircleShape) // Make the box circular
-                    .background(newNoteColour)
-                    //.align(Alignment.Center)
+                    .background(newNoteColour),
+                //.align(Alignment.Center)
             ){
 
                 Text(
@@ -104,12 +112,11 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                     color = chooseColorBasedOnLuminance(newNoteColour),
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center,
-                            modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
             Spacer(modifier = Modifier.width(vSpacer))
-            IconButton(
-                // ADD BUTTON
+            IconButton( //
                 onClick = {
                     viewModel.setColour(newNoteColour)
                     navController.popBackStack()

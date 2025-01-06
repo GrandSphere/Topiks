@@ -34,9 +34,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.draw.clip
+import androidx.navigation.NavController
+import androidx.navigation.Navigator
+import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun ColorGridScreen(colors: List<Color>) {
+fun ColorGridScreen(colors: List<Color>, navController: NavController, viewModel: TopicViewModel) {
     // Get screen width and calculate block size (5 blocks per row
     val combinedColors = getColorsWithMaterialColors(MaterialTheme.colorScheme, colors)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -77,11 +80,11 @@ fun ColorGridScreen(colors: List<Color>) {
 
         // IconButton placed at the bottom center of the screen
         IconButton(
-            onClick = { /* Handle button click */ },
+            onClick = { navController.popBackStack() },
             modifier = Modifier
                 .align(Alignment.BottomCenter) // Align the button at the bottom center
                 .padding(16.dp) // Add padding around the button
-                .size(0.dp) // Adjust the size of the button as needed
+                .size(30.dp) // Adjust the size of the button as needed
         ) {
             Icon(
                 modifier = Modifier.size(30.dp),
