@@ -76,11 +76,11 @@ fun TopicsApp(context: Context) {
             ) {
                 // Setting up the NavHost with two screens
                 NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                //NavHost(navController = navController, startDestination = "navabc") {
+                //NavHost(navController = navController, startDestination = "navrecentcolours") {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
-                    composable("navrecentcolours") { ColorGridScreen(myNonsenseColours, navController, topicViewModel )}
+                    composable("navrecentcolours") { ColorGridScreen(navController, topicViewModel )}
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
