@@ -1,6 +1,5 @@
 package com.example.topics2.ui.components.noteDisplay
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,44 +43,31 @@ import kotlinx.coroutines.launch
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int?
 ) {
-    var inputText by remember { mutableStateOf("" ) }
-
-    val shouldUpdate by viewModel.shouldupdate.collectAsState()
-    //val inputText by viewModel.tempMessage.collectAsState(tempAbc)
-    val messagePriority = 0
-    val colors = MaterialTheme.colorScheme
-    val density = LocalDensity.current.density // Get screen density
-    //var inputText by remember { mutableStateOf("" ) }
-
-    val sPlaceHolder = "Type a message..."
-    //val iMaxLines = 5
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
     val vButtonSize: Dp = 40.dp // You can change this value as needed
     val vIconSize: Dp = 25.dp // You can change this value as needed
-    //val vMaxLinesSize: Dp = (vFontSize.value * density).dp *iMaxLines+ 6.dp
     val vMaxLinesSize: Dp = 80.dp
 
-    val vLineHeight : TextUnit = 20.sp // You can change this value as needed
-    //val iButtonSize=40.dp
+    var inputText by remember { mutableStateOf("" ) }
+    val messagePriority = 0
+    val colors = MaterialTheme.colorScheme
 
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
 
     // Focus change listener to update isFocused state
-    val focusModifier = Modifier
+    val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
             isFocused = focusState.isFocused
         }
 
-
-
     var tempMessageID by remember { mutableStateOf(-1 ) }
-    //var tempMessageID: Int// = -1
-    LaunchedEffect(shouldUpdate) {
-        if (viewModel.shouldupdate.value) {
+    val amEditing by viewModel.amEditing.collectAsState()
+    LaunchedEffect(amEditing) {
+        if (viewModel.amEditing.value) {
             inputText = viewModel.tempMessage.value
-            viewModel.setShouldUpdate(false)
+            viewModel.setAmEditing(false)
             tempMessageID=viewModel.tempMessageId.value
             viewModel.setTempMessageId(-1)
 
@@ -91,36 +77,31 @@ fun InputBarMessageScreen(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-
-            //.background(Color.Red)
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp),
-            //verticalAlignment = Alignment.CenterVertically
     ) {
         CustomTextBox(
             inputText = inputText,
             onValueChange = { newText -> inputText = newText },
             vMaxLinesSize = vMaxLinesSize,
             vFontSize = vFontSize,
-            sPlaceHolder = sPlaceHolder,
-            isFocused = true, // Can dynamically change based on focus state
-            focusModifier = focusModifier, // Pass the focus modifier here
+            sPlaceHolder = "Type a message...",
+            isFocused = true,
+            focusModifier = focusModifier,
             boxModifier = Modifier
                 .weight(1f)
                 .padding(0.dp)
-                .align(Alignment.CenterVertically) // Align button vertically in the center
+                .align(Alignment.CenterVertically)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
         IconButton( // ADD BUTTON
-            onClick = {
-                // Handle button click (e.g., show file picker or attachment options)
-            },
-            modifier = Modifier.size(vButtonSize)
-                .align(Alignment.Bottom) // Align button vertically in the center
-
+            onClick = { },
+            modifier = Modifier
+                .size(vButtonSize)
+                .align(Alignment.Bottom)
         ) {
             Icon(
-                imageVector = Icons.Filled.Add, // Attach file icon
+                imageVector = Icons.Filled.Add,
                 contentDescription = "Attach",
                 tint = colors.tertiary,
                 modifier = Modifier
@@ -144,7 +125,6 @@ fun InputBarMessageScreen(
                             )
                             tempMessageID=-1
                         }
-
                     }
                     else { //Send Mode
                         coroutineScope.launch {
@@ -155,7 +135,6 @@ fun InputBarMessageScreen(
             },
             modifier = Modifier
                 .size(vButtonSize)
-                //.height(30.dp)
                 .fillMaxWidth(1f)
                 .background(Color.Transparent)
                 .align(Alignment.Bottom)
@@ -174,6 +153,6 @@ fun InputBarMessageScreen(
     }
     // Request focus initially
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        //focusRequester.requestFocus()
     }
 }

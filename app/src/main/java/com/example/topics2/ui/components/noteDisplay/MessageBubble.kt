@@ -1,6 +1,5 @@
 package com.example.topics2.ui.components.noteDisplay
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -117,16 +116,8 @@ fun MessageBubble(
                 text = { Text("Edit") },
                 onClick = {
                     viewModel.setTempMessage(message.messageContent)
-                    viewModel.setShouldUpdate(true)
+                    viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)
-                   // coroutineScope.launch {
-                   //     viewModel.editMessage(
-                   //         message.id,
-                   //         topicId,
-                   //         "I was edited",
-                   //         message.messagePriority
-                   //     )
-                   // }
                     showMenu = false
                 }
             )
