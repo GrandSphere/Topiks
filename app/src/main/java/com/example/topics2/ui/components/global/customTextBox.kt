@@ -9,7 +9,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -64,40 +66,26 @@ fun CustomTextBox(
     }
 }
 
-
-
-
-
 fun chooseColorBasedOnLuminance(inputColor: Color): Color {
     // Extract normalized RGB values
     val red = inputColor.red
     val green = inputColor.green
     val blue = inputColor.blue
-
     // Compute luminance using the standard formula
     var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-
-    // Debugging: Print the values
-//    Log.d("zzzzColour", red.toString() + green.toString() + blue.toString())
-//
-//    Log.d("zzzzColourLum", luminance.toString())
-//    Log.d("zzzzColourLum", "black")
-
-
-
-    // Determine the output color based on luminance
-    return when {
+    return when { // Determine the output color based on luminance
         luminance < 0.5 -> Color.White
         //luminance < 0.25 -> Color.White
         //luminance < 0.5 -> Color.Gray
         //luminance < 0.75 -> Color.DarkGray
         else -> Color.Black
     }
-
-//        }
-//         luminance < 0.25 -> Color.Black      // Very dark colors
-//        luminance < 0.5 -> Color.DarkGray   // Dark colors
-//        luminance < 0.75 -> Color.LightGray // Light colors
-//        else -> Color.White                 // Very bright colors
-//    }
 }
+
+//fun hsvToHex(hsv: FloatArray): String {
+//    // Convert HSV to RGB
+//    val rgb = android.graphics.Color.HSVToColor(hsv)
+//
+//    // Format RGB as a hex string
+//    return String.format("#%06X", (0xFFFFFF and rgb))
+//}
