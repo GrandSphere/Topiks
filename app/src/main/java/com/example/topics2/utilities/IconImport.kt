@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.global.compressImageToUri
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import java.io.File
@@ -25,7 +24,18 @@ fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
     if (fileUri == null) {
         FilePicker(onFileSelected = { selectedUri ->
             fileUri = selectedUri
-        }, fileTypes = arrayOf("*/*")) // Restrict to image types
+        }, fileTypes = arrayOf(
+                "image/jpeg",
+                "image/png",
+                "image/bmp",
+                "image/gif",
+                "image/webp",
+                "image/tiff",
+                "image/x-icon",
+                "image/heif",
+                "image/heic",
+            )
+        )
     }
 
     val context = LocalContext.current
@@ -41,7 +51,7 @@ fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
     }
 }
 
-fun copyImageToAppFolder(context: Context, topicViewModel: TopicViewModel) {
+fun copyIconToAppFolder(context: Context, topicViewModel: TopicViewModel) {
     val currentUri = topicViewModel.fileURI.value // Assuming ViewModel exposes URI as LiveData or StateFlow
     if (currentUri.isNullOrBlank()) {
         Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
@@ -78,17 +88,3 @@ fun copyImageToAppFolder(context: Context, topicViewModel: TopicViewModel) {
 
 
 
-// Function to get the file name from URI using ContentResolver
-fun getFileNameFromUri(context: Context, uri: Uri): String {
-    var fileName = "default_image.png"
-    val resolver: ContentResolver = context.contentResolver
-    val cursor = resolver.query(uri, null, null, null, null)
-
-    cursor?.use {
-        val columnIndex = it.getColumnIndexOrThrow("_display_name")
-        if (it.moveToFirst()) {
-            fileName = it.getString(columnIndex)
-        }
-    }
-    return fileName
-}
