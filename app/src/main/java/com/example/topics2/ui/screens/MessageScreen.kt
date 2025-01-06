@@ -41,7 +41,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val messages by viewModel.messages.collectAsState()
     viewModel.fetchMessages(topicId)
-    val context = LocalContext.current
+    LocalContext.current
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
@@ -49,8 +49,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     Log.d("aabbccTopicId", topicId.toString())
     val focusManager = LocalFocusManager.current // For clearing focus
-
-
 
     Box(
         modifier = Modifier
@@ -108,4 +106,3 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     }
 
 }
-
