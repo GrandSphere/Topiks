@@ -47,6 +47,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
+    //val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
+
+
 //
 //
 //    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
@@ -78,8 +81,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             .fillMaxSize()
             //.background(Color.Red)
             .pointerInput(Unit) {
-
-                detectTapGestures(onTap = { })
+                detectTapGestures(onTap = {
+                    viewModel.setToFocusTextbox(false)
+                })
             }
     ) {
         LazyColumn(
