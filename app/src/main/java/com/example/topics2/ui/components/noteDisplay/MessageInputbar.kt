@@ -2,6 +2,8 @@ package com.example.topics2.ui.components.noteDisplay
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 
@@ -44,10 +46,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.topics.utilities.SelectFileWithPicker
 import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics.utilities.copyFileToUserFolder
+
+
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 
@@ -62,6 +68,7 @@ import kotlinx.coroutines.launch
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int?
 ) {
+
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
     val vButtonSize: Dp = 40.dp // You can change this value as needed
     val vIconSize: Dp = 25.dp // You can change this value as needed
@@ -71,8 +78,6 @@ fun InputBarMessageScreen(
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
-    val showPicker: Boolean = viewModel.showPicker.collectAsState().value
-
     var isFocused by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current // For clearing focus
@@ -80,6 +85,13 @@ fun InputBarMessageScreen(
     val toUnFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
+
+
+
+    val showPicker: Boolean = viewModel.showPicker.collectAsState().value
+    val filePicked: Boolean = viewModel.filePicked.collectAsState().value
+
+
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
@@ -162,15 +174,24 @@ fun InputBarMessageScreen(
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-        if(showPicker)
-        {
+
+        // Open File picker
+        if (showPicker) {
             SelectFileWithPicker(navController, viewModel)
         }
+        // Write file to user directory as file is picked
+        if (filePicked)
+        {
+           Log.d("AABBCCDD", " COPY IS NOW RAN")
+          // copyFileToUserFolder(LocalContext.current, viewModel)
+            copyFileToUserFolder(context = LocalContext.current, viewModel
+            )
+        }
+
 
         IconButton( // ADD BUTTON
             onClick = {
-                Log.d("AABBCCDD", "THIS IS BEFORE SETTING IT TRUE INSIDE THE CLICK: value: $showPicker")
-                    viewModel.setShowPicker(true)
+                         viewModel.setShowPicker(true)
                       },
             modifier = Modifier
                 .size(vButtonSize)

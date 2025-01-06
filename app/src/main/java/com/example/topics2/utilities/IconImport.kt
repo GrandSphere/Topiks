@@ -12,17 +12,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.compressImageToUri
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import java.io.File
 import java.io.IOException
 
 @Composable
-fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
+fun SelectImageWithPicker(topicViewModel: TopicViewModel, navController: NavController) {
     var fileUri by remember { mutableStateOf<Uri?>(null) }
 
     if (fileUri == null) {
-        FilePicker(onFileSelected = { selectedUri ->
+        FilePickerIcon(onFileSelected = { selectedUri ->
             fileUri = selectedUri
         }, fileTypes = arrayOf(
                 "image/jpeg",
@@ -34,7 +36,8 @@ fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
                 "image/x-icon",
                 "image/heif",
                 "image/heic",
-            )
+            ),
+            navController = navController
         )
     }
 
@@ -53,6 +56,7 @@ fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
 
 fun copyIconToAppFolder(context: Context, topicViewModel: TopicViewModel) {
     val currentUri = topicViewModel.fileURI.value // Assuming ViewModel exposes URI as LiveData or StateFlow
+    Log.d("AABBCCDD", "THIS IS THE URI BEFORE COPY: $currentUri")
     if (currentUri.isNullOrBlank()) {
         Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
         return

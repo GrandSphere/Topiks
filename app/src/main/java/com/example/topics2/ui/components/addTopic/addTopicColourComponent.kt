@@ -69,7 +69,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                  contentAlignment = Alignment.Center
         ) {
             if (showFilePicker) {
-                SelectImageWithPicker(topicViewModel = viewModel)
+                SelectImageWithPicker(topicViewModel = viewModel, navController = navController)
             }
 
             if (imageUrl.length > 4) { // Load and display the image

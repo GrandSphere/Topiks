@@ -19,14 +19,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.topics.utilities.ImportDatabaseWithPicker
+import com.example.topics2.ui.viewmodels.MessageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
     title: String,
     onSettingsClick: () -> Unit,
-    reloadTopics:() -> Unit
+    reloadTopics:() -> Unit,
+    navController: NavController,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
@@ -47,7 +51,8 @@ fun CustomTopAppBar(
             CustomTopMenu (
                 isMenuExpanded = isMenuExpanded,
                 onDismiss = { isMenuExpanded = false },
-                reloadTopics = reloadTopics
+                reloadTopics = reloadTopics,
+                navController = navController,
             )
         },
     )
@@ -58,7 +63,8 @@ fun CustomTopAppBar(
 fun CustomTopMenu(
     isMenuExpanded: Boolean,
     onDismiss: () -> Unit,
-    reloadTopics: () -> Unit
+    reloadTopics: () -> Unit,
+    navController: NavController,
 ) {
     val colors = MaterialTheme.colorScheme // Use the theme color scheme
 
@@ -76,7 +82,10 @@ fun CustomTopMenu(
         ImportDatabaseWithPicker(onImportComplete = {
             showImportPicker = false
             reloadTopics()
-        })
+
+        }, navController = navController,
+        )
+
     }
 
 
