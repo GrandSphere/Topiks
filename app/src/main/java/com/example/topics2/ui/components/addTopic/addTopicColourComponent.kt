@@ -31,12 +31,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
-import com.example.topics.utilities.ImportImageWithPicker
+
+import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.coroutineScope
 
@@ -45,6 +47,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
 
 
     val noteColour by viewModel.colour.collectAsState()
+    val showFilePicker = viewModel.showPicker.collectAsState().value
 
     val colors = MaterialTheme.colorScheme
     var categoryText by remember { mutableStateOf("Topics") }
@@ -65,7 +68,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                        // Clear focus when tapping outside
-                        showImagePicker = true;
+                        viewModel.setShowPicker(true);
                     })
                 }
                 .clip(CircleShape) // Clip the image into a circular shape
@@ -73,15 +76,8 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
-            if (showImagePicker) {
-                ImportImageWithPicker(
-                    onImportComplete = {
-                        // Reset the picker state after import is complete
-                        showImagePicker = false
-                    },
-                    topicViewModel = viewModel
-                )
-
+            if (showFilePicker) {
+                SelectImageWithPicker(topicViewModel = viewModel)
             }
 
             if (imageUrl != "") {

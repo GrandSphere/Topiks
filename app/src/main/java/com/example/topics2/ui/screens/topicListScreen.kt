@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.topics.utilities.ImportImageWithPicker
+
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
@@ -100,6 +100,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
                     viewModel.setURI("")
+                    viewModel.setShowPicker(false)
                     navController.navigate("navaddtopic")
                           },
                 modifier = Modifier

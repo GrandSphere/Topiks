@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.topics.utilities.copyImageToAppFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -99,7 +101,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                     .height(vIconSize)
             )
         }
-
+        val context = LocalContext.current
         Spacer(modifier = Modifier.width(5.dp))
         IconButton( // CONFIRM BUTTON
             onClick = {
@@ -109,6 +111,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 if (inputText.isNotBlank()) {
                     //viewModel.setCategory(viewModel.tempcategory.value)
                     //viewModel.set(viewModel.temptopicname)
+                    copyImageToAppFolder(context, viewModel)
+
                     viewModel.addTopic(
                         //topicName = inputText,
                         topicName = viewModel.temptopicname.value,
@@ -117,6 +121,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                         topicIcon = viewModel.fileURI.value,
                         topicPriority = 0,
                     )
+
                     viewModel.setURI("")
                     inputText = ""
                     navController.popBackStack()
