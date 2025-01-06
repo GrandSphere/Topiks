@@ -12,29 +12,38 @@ fun compressImageToUri(
     context: Context,
     originalUri: Uri,
     compressedUri: Uri,
-    width: Int = 100,   // Default width value
-    height: Int = 100   // Default height value
+    maxWidth: Int = 100,
+    maxHeight: Int = 100,
 ): Boolean {
-    // Decode the original image from URI
-    val originalBitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(originalUri))
+    val originalBitmap = BitmapFactory.decodeStream(
+        context.contentResolver.openInputStream(originalUri)
+    )
 
-    // Resize the bitmap to the desired dimensions
-    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false)
+    if (originalBitmap == null) return false
 
+    // Calculate aspect ratio
+    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+    val newWidth: Int
+    val newHeight: Int
+
+    if (originalBitmap.width > originalBitmap.height) {
+        newWidth = maxWidth
+        newHeight = (maxWidth / aspectRatio).toInt()
+    } else {
+        newHeight = maxHeight
+        newWidth = (maxHeight * aspectRatio).toInt()
+    }
+    // Resize the bitmap while keeping the aspect ratio
+    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
     var outputStream: FileOutputStream? = null
     try {
-        // Open a FileOutputStream to the destination compressed URI
         val outputFile = File(compressedUri.path) // Assuming compressedUri is a file path URI
         outputStream = FileOutputStream(outputFile)
-
-        // Compress the resized image and write it to the output stream (JPEG format, 90% quality)
+        // Compress the resized image
         resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-
-        // Flush and close the stream
         outputStream.flush()
 
-        // Successful compression and save
-        return true
+        return true // Successful compression and save
     } catch (e: IOException) {
         e.printStackTrace()
         return false // In case of an error

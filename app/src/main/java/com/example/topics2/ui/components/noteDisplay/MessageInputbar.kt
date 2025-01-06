@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,11 +44,6 @@ import kotlinx.coroutines.launch
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int?
 ) {
-
-
-    //var vIsEdited by remember { mutableStateOf(messageViewModel.tempMessage.value) }
-
-    //val tempAbc by viewModel.tempMessage.collectAsState()
     var inputText by remember { mutableStateOf("" ) }
 
     val shouldUpdate by viewModel.shouldupdate.collectAsState()
@@ -57,7 +52,7 @@ fun InputBarMessageScreen(
     val colors = MaterialTheme.colorScheme
     val density = LocalDensity.current.density // Get screen density
     //var inputText by remember { mutableStateOf("" ) }
-    
+
     val sPlaceHolder = "Type a message..."
     //val iMaxLines = 5
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -127,14 +122,13 @@ fun InputBarMessageScreen(
             Icon(
                 imageVector = Icons.Filled.Add, // Attach file icon
                 contentDescription = "Attach",
-                tint = Color.White, // Set the icon color to white
+                tint = colors.tertiary,
                 modifier = Modifier
                     .height(vIconSize)
             )
         }
         val coroutineScope = rememberCoroutineScope()
         Spacer(modifier = Modifier.width(5.dp))
-
         IconButton( // SEND BUTTON
             onClick = {
                 if (inputText.isNotBlank()) {
@@ -157,25 +151,20 @@ fun InputBarMessageScreen(
                             viewModel.addMessage(topicId, tempInput, messagePriority)
                         }
                     }
-
-
                 }
-                // Handle button click (e.g., show file picker or attachment options)
             },
             modifier = Modifier
                 .size(vButtonSize)
                 //.height(30.dp)
                 .fillMaxWidth(1f)
                 .background(Color.Transparent)
-                .align(Alignment.Bottom) // Align button vertically in the center
-
+                .align(Alignment.Bottom)
         ) {
             Icon(
-
-                imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.Filled.Send,
+                imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
                 //imageVector = Icons.Filled.Send, // Attach file icon
                 contentDescription = "Attach",
-                tint = colors.primaryContainer, // Set the icon color to white
+                tint = colors.tertiary,
                 modifier = Modifier
                     .size(vIconSize)
                 //.aspectRatio(2.5f)

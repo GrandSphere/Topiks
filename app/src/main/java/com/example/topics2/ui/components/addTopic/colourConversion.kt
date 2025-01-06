@@ -17,43 +17,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-
-fun hsvToHex(hsv: FloatArray): String {
-    // Convert HSV to RGB
-    val rgb = android.graphics.Color.HSVToColor(hsv)
-
-    // Format RGB as a hex string
-    return String.format("#%06X", (0xFFFFFF and rgb))
-}
-
 fun colorToHsv(color: Color): FloatArray {
     val r = (color.red * 255).toInt()
     val g = (color.green * 255).toInt()
     val b = (color.blue * 255).toInt()
-
     // Convert RGB to HSV
     val hsv = FloatArray(3)
     android.graphics.Color.RGBToHSV(r, g, b, hsv)
-
     return hsv
 }
 
 fun hexToHsv(hex: String): FloatArray {
     // Remove the leading '#' if present
     val cleanedHex = hex.removePrefix("#")
-
     // Convert the hex string to an integer color value
     val colorInt = cleanedHex.toIntOrNull(16) ?: throw IllegalArgumentException("Invalid hex color string")
-
     // Extract RGB components
     val r = (colorInt shr 16) and 0xFF
     val g = (colorInt shr 8) and 0xFF
     val b = colorInt and 0xFF
-
     // Convert RGB to HSV
     val hsv = FloatArray(3)
     android.graphics.Color.RGBToHSV(r, g, b, hsv)
-
     return hsv
 }
 
@@ -71,7 +56,6 @@ fun argbToColor(argb: Int): Color {
     val red = ((argb shr 16) and 0xFF) / 255f
     val green = ((argb shr 8) and 0xFF) / 255f
     val blue = (argb and 0xFF) / 255f
-
     return Color(red, green, blue, alpha)
 }
 

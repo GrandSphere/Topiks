@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 
 import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -44,17 +43,10 @@ import kotlinx.coroutines.coroutineScope
 
 @Composable
 fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
-
-
     val noteColour by viewModel.colour.collectAsState()
     val showFilePicker = viewModel.showPicker.collectAsState().value
-
     val colors = MaterialTheme.colorScheme
-    var categoryText by remember { mutableStateOf("Topics") }
-    var selectedColor by remember { mutableStateOf(colors.secondary) }
-    //var imageUrl by remember { mutableStateOf<String?>(null) } // Add the imageUrl variable
     var imageUrl = viewModel.fileURI.collectAsState().value
-    var showImagePicker by remember { mutableStateOf(false) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,12 +59,12 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
             modifier = Modifier
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
-                       // Clear focus when tapping outside
-                        viewModel.setShowPicker(true);
+                        // Clear focus when tapping outside
+                        viewModel.setShowPicker(true)
                     })
                 }
-                .clip(CircleShape) // Clip the image into a circular shape
-                .background(colors.secondary) // Optional: background color in case the image is not loaded
+                .clip(CircleShape)
+                .background(colors.secondary)
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
@@ -80,33 +72,28 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 SelectImageWithPicker(topicViewModel = viewModel)
             }
 
-            if (imageUrl != "") {
-                Log.d("THIS IS NOT NULL", imageUrl )
-                // Load and display the image
+            if (imageUrl.length > 4) { // Load and display the image
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = "Circular Image",
                     contentScale = ContentScale.Crop, // Crop the image to fill the circle
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(CircleShape) // Clip the image into a circular shape
+                        .clip(CircleShape)
                 )
-            } else {
-                Log.d("THIS IS NOT GOOD", "$imageUrl" )
-                // Show an icon as a fallback if no image URL is provided
+            } else {  // Show an icon as a fallback if no image URL is provided
                 Icon(
-                    imageVector = Icons.Filled.Add, // Example icon
+                    imageVector = Icons.Filled.Add,
                     contentDescription = "Add Image",
                     tint = colors.onPrimary,
                     modifier = Modifier
-                        .clip(CircleShape) // Clip the image into a circular shape
-                        //.background(Color.Gray) // Optional: background color in case the image is not loaded
+                        .clip(CircleShape)
                         .size(24.dp)
-                        .padding(0.dp) // Optional padding to adjust the icon size
+                        .padding(0.dp)
                 )
             }
         }
-        Spacer(modifier = Modifier.width(16.dp)) // Spacer to add some space between the rows
+        Spacer(modifier = Modifier.width(16.dp))
         Box(
             modifier = Modifier .size(60.dp),
             contentAlignment = Alignment.CenterStart
@@ -125,6 +112,5 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 )
             }
         }
-
     }
 }

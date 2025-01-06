@@ -40,8 +40,7 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun TopicName(navController: NavController, viewModel: TopicViewModel) {
-    val category: String by viewModel.category.collectAsState()
-    val density = LocalDensity.current.density // Get screen density
+    //val category: String by viewModel.category.collectAsState()
     val sPlaceHolder = "Topic Name..."
 //val iMaxLines = 5
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -49,12 +48,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
     val vIconSize: Dp = 30.dp // You can change this value as needed
     val vMaxLinesSize: Dp = 80.dp
     val vLineHeight: TextUnit = 20.sp // You can change this value as needed
-
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
-
-    //var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
-    // DELETE THESE 2 LINES
     var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
     viewModel.settemptopicname(inputText)
 
@@ -105,7 +100,6 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
         Spacer(modifier = Modifier.width(5.dp))
         IconButton( // CONFIRM BUTTON
             onClick = {
-
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
@@ -149,4 +143,3 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
         focusRequester.requestFocus()
     }
 }
-
