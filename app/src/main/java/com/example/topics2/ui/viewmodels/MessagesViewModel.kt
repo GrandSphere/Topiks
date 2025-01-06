@@ -21,6 +21,15 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
 
+    // States whether file picker is done
+    private val _showPicker = MutableStateFlow<Boolean>(false)
+    val showPicker: StateFlow<Boolean> = _showPicker
+    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
+
+    // File URI for image imports
+    private val _fileURI = MutableStateFlow<String>("")
+    val fileURI: StateFlow<String> = _fileURI
+    fun setURI(newURI: String) { _fileURI.value = newURI }
 
     private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox

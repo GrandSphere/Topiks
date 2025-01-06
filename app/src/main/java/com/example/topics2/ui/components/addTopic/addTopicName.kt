@@ -15,7 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,14 +26,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.topics.utilities.copyImageToAppFolder
+import com.example.topics.utilities.copyIconToAppFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -104,7 +101,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
                     if (viewModel.fileURI.value.length > 4) {
-                        copyImageToAppFolder(context, viewModel)
+                        copyIconToAppFolder(context, viewModel)
                     }
 
                     viewModel.addTopic(

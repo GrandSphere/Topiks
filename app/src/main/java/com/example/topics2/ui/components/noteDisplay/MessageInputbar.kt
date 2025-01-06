@@ -1,6 +1,8 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +32,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -38,6 +42,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.topics.utilities.SelectFileWithPicker
+import com.example.topics.utilities.SelectImageWithPicker
+import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +66,7 @@ fun InputBarMessageScreen(
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
-
+    val showFilePicker = viewModel.showPicker.collectAsState().value
 
     var isFocused by remember { mutableStateOf(false) }
 
@@ -155,11 +162,23 @@ fun InputBarMessageScreen(
 
         Spacer(modifier = Modifier.width(8.dp))
         IconButton( // ADD BUTTON
-            onClick = { },
+            onClick = {
+
+                Log.d("inside message file picker"," ontap")
+                // Clear focus when tapping outside
+                viewModel.setShowPicker(true) },
             modifier = Modifier
+
                 .size(vButtonSize)
                 .align(Alignment.Bottom)
         ) {
+            if (showFilePicker) {
+
+                Log.d("inside message file picker"," inside")
+                SelectFileWithPicker(messageViewModel = viewModel)
+
+            }
+
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Attach",
