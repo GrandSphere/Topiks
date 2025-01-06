@@ -15,6 +15,12 @@ import kotlinx.coroutines.launch
 
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
+
+    // Function to update focus state
+    private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
+    val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
+    fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
+
     // States whether you are editing or sending
     private val _amEditing = MutableStateFlow<Boolean>(false)
     val amEditing: StateFlow<Boolean> = _amEditing

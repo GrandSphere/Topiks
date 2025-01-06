@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -46,8 +47,31 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
-    Log.d("aabbccTopicId", topicId.toString())
-    val focusManager = LocalFocusManager.current // For clearing focus
+//
+//
+//    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
+//    val focusRequester = remember { FocusRequester() }
+
+//    LaunchedEffect(toFocusTextbox) {
+//        if (toFocusTextbox) {
+//            //focusRequester.requestFocus()
+//            // Reset focus state to false after focus is requested
+//            viewModel.setToFocusTextbox(false)
+//        }
+//        else{
+//            //focusManager.clearFocus()
+//
+//        }
+//    }
+
+//    LaunchedEffect(Unit) {
+//
+//        viewModel.setToFocusTextbox(true)
+//        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+//        viewModel.setToFocusTextbox(false)
+//        focusManager.clearFocus()
+//    }
+
 
     Box(
         modifier = Modifier
@@ -55,7 +79,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             //.background(Color.Red)
             .pointerInput(Unit) {
 
-                detectTapGestures(onTap = { focusManager.clearFocus() })
+                detectTapGestures(onTap = { })
             }
     ) {
         LazyColumn(
@@ -93,14 +117,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     inputBarHeightPx = size.height
                 }
         ) {
-           InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId)
+            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId)
         }
     }
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             //scrollState.animateScrollToItem(messages.size - 1)
-                    scrollState.scrollToItem(messages.size - 1)
+            scrollState.scrollToItem(messages.size - 1)
         }
     }
 
