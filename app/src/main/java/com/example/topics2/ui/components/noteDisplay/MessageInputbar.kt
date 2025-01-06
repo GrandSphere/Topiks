@@ -76,8 +76,6 @@ fun InputBarMessageScreen(
             focusRequester.requestFocus()
             viewModel.setToFocusTextbox(false)
         } else {
-            //focusRequester.restoreFocusedChild()
-            //focusManager.clearFocus()
         }
     }
 

@@ -1,7 +1,6 @@
 package com.example.topics2.activities
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,7 +22,6 @@ import androidx.navigation.navArgument
 
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-import com.example.topics2.ui.components.addTopic.colorToArgb
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
@@ -47,23 +44,13 @@ fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
     val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
     val messageViewModel: MessageViewModel = viewModel( factory = MessageViewModel.Factory )
-    //val messageViewModel: Messaag
     val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
 
-    val colors3 : List<Color> = listOf(
-        Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan,
-        Color.Magenta, Color.Black, Color.Gray, Color.White, Color(0xFFFFA500), Color.Red, Color.Magenta
-        // Add more colors as needed
-    )
-
-    val colors4 = topicViewModel.loadDistinctColors()
-
-
-    //messageViewModel.insertTestMessages()
-    Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
+    val myNonsenseColours = topicViewModel.recentColorsList.collectAsState().value
+    //Log.d("aabbccd", myNonsenseColours.size.toString())
 
     // Listen for changes in the navController's back stack and update the title accordingly
     LaunchedEffect(backStackEntry.value) {
@@ -88,12 +75,12 @@ fun TopicsApp(context: Context) {
                     .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
             ) {
                 // Setting up the NavHost with two screens
-           //NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                    NavHost(navController = navController, startDestination = "navabc") {
+                NavHost(navController = navController, startDestination = "navtopicListScreen") {
+                //NavHost(navController = navController, startDestination = "navabc") {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
-                    composable("navabc") { ColorGridScreen(topicViewModel.loadDistinctColors() )}
+                    composable("navrecentcolours") { ColorGridScreen(myNonsenseColours, navController, topicViewModel )}
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->

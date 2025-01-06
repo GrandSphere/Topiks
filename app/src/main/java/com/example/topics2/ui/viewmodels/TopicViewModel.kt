@@ -1,9 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -73,41 +70,40 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     }
 
 //suspend fun loadDistinctColors() : List<Color> {
-//        // Launch a coroutine in the ViewModel scope
-//     var colorList : List<Color> =emptyList()
-//        viewModelScope.launch {
-//            // Get the colors using the function defined earlier
-//            colorList = getColorsFromDistinctARGB()
+//       // Launch a coroutine in the ViewModel scope
+//    var colorList : List<Color> =emptyList()
+//       viewModelScope.launch {
+//           // Get the colors using the function defined earlier
+//           colorList = getColorsFromDistinctARGB()
 //
-//            Log.d("zzz colorlist",colorList.size.toString())
-//            // Update the LiveData with the result
-//            //_colors.value =
-//        }
-//     return colorList
-//    }
+//           Log.d("zzz colorlist",colorList.size.toString())
+//           // Update the LiveData with the result
+//           //_colors.value =
+//       }
+//    return colorList
+//   }
 //
-private val _colors = MutableLiveData<List<Color>>()
-val colors: LiveData<List<Color>> get() = _colors
+//private val _colors = MutableLiveData<List<Color>>()
+//val colors: LiveData<List<Color>> get() = _colors
 
 // Suspend function to get the colors
-suspend fun loadDistinctColors() {
-    val colorList = getColorsFromDistinctARGB()
-    _colors.postValue(colorList) // Update LiveData with the new colors
-}
+//suspend fun loadDistinctColors() {
+//    val colorList = getColorsFromDistinctARGB()
+//    _colors.postValue(colorList) // Update LiveData with the new colors
+//}
 
 
 
    suspend fun getColorsFromDistinctARGB(): List<Color> {
        // Retrieve the distinct ordered colors (ARGB as Int)
-
        val distinctColors = topicDao.getDistinctColorsOrdered()
-       Log.d("zzz My original array size before",distinctColors.size.toString())
-
        // Convert each ARGB value to a Color and return the list
        return distinctColors.map { argbToColor( it) }
    }
 
-
+        private val _colors = MutableStateFlow<List<Color>>(emptyList())
+        val recentColorsList: StateFlow<List<Color>> = _colors
+        init { viewModelScope.launch { _colors.value = getColorsFromDistinctARGB() } }
 
 
 // Set a new category
