@@ -19,9 +19,9 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     var cTopicColor: Color = Color.Red
     var cFontColor: Color = Color.Red
 
-    //private val _TopicColor = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
-    //val TopicColor: StateFlow<Color> = _TopicColor  // Expose as immutable StateFlow
-    //fun setTopicColor(newColor: Color) { _TopicColor.value = newColor }
+    private val _tempColour = MutableStateFlow<Color>(Color.Red)  // Default color as Gray
+    val tempColour: StateFlow<Color> = _tempColour  // Expose as immutable StateFlow
+    fun settempColour(newColor: Color) { _tempColour.value = newColor }
 
     // States whether file picker is done
     private val _showPicker = MutableStateFlow<Boolean>(false)
