@@ -22,6 +22,11 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     //val TopicColor: StateFlow<Color> = _TopicColor  // Expose as immutable StateFlow
     //fun setTopicColor(newColor: Color) { _TopicColor.value = newColor }
 
+    // States whether file picker is done
+    private val _showPicker = MutableStateFlow<Boolean>(false)
+    val showPicker: StateFlow<Boolean> = _showPicker
+    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
+
     // File URI for image imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
