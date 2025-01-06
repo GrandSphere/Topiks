@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.CustomSlider
+import com.example.topics2.ui.components.addTopic.argbToColor
+import com.example.topics2.ui.components.addTopic.colorToArgb
 import com.example.topics2.ui.components.addTopic.colorToHsv
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -101,7 +103,12 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                         onTap = {
                             navController.navigate("navrecentcolours")
                             //Log.d("zzzSelectedColour", "Selected color: ${combinedColors[index]}")
+                        },
+
+                        onLongPress = {
+                            //argbToColor()
                         }
+
                     ) }
                     .size(100.dp)
                     .clip(CircleShape) // Make the box circular
@@ -133,36 +140,37 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
         }
-        // Hue Slider
         Text(text = "Hue: ${hue.toInt()}")
-        CustomSlider(
+        CustomSlider(// Hue Slider
+
             value = hue / 360f, // Normalize hue to 0..1
             onValueChange = { hue = it * 360f }, // De-normalize back to 0..360
             valueRange = 0f..1f, // Use normalized range
         )
 
-        // Saturation Slider
         Text(text = "Saturation: ${(saturation * 100).toInt()}%")
-        CustomSlider(
+        CustomSlider(// Saturation Slider
+
             value = saturation,
             onValueChange = { saturation = it },
             valueRange = 0f..1f,
         )
 
-        // Value Slider
         Text(text = "Value: ${(value * 100).toInt()}%")
-        CustomSlider(
+        CustomSlider(// Value Slider
+
             value = value,
             onValueChange = { value = it },
             valueRange = 0f..1f,
         )
 
-        // Alpha Slider
         Text(text = "Alpha: ${(alpha * 100).toInt()}%")
-        CustomSlider(
+        CustomSlider(// Alpha Slider
             value = alpha,
             onValueChange = { alpha = it },
             valueRange = 0f..1f,
         )
+
+        Text(text = colorToArgb(newNoteColour).toString())
     }
 }

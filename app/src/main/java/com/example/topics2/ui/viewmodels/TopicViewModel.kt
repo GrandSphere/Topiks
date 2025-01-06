@@ -106,6 +106,9 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
         init { viewModelScope.launch { _colors.value = getColorsFromDistinctARGB() } }
 
 
+    fun setcolors(){
+         viewModelScope.launch { _colors.value = getColorsFromDistinctARGB() }
+    }
 // Set a new category
 
 // Add a new topic

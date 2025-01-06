@@ -120,3 +120,13 @@ fun CustomSlider(
         }
     )
 }
+
+// Convert Color to Hex (ARGB)
+fun colorToHex(color: Color): String {
+    val alpha = (color.alpha * 255).toInt()
+    val red = (color.red * 255).toInt()
+    val green = (color.green * 255).toInt()
+    val blue = (color.blue * 255).toInt()
+
+    return String.format("#%02X%02X%02X%02X", alpha, red, green, blue)
+}
