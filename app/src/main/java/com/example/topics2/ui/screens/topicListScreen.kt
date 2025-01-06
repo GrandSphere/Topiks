@@ -100,6 +100,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
                     viewModel.setURI("")
+                    viewModel.setShowPicker(false)
                     navController.navigate("navaddtopic")
                           },
                 modifier = Modifier
