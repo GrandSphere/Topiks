@@ -26,6 +26,7 @@ import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.components.addTopic.colorToArgb
 import com.example.topics2.ui.screens.AddTopicScreen
+import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
@@ -51,6 +52,15 @@ fun TopicsApp(context: Context) {
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
+
+    val colors3 : List<Color> = listOf(
+        Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan,
+        Color.Magenta, Color.Black, Color.Gray, Color.White, Color(0xFFFFA500), Color.Red, Color.Magenta
+        // Add more colors as needed
+    )
+
+    val colors4 = topicViewModel.loadDistinctColors()
+
 
     //messageViewModel.insertTestMessages()
     Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
@@ -78,10 +88,12 @@ fun TopicsApp(context: Context) {
                     .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
             ) {
                 // Setting up the NavHost with two screens
-                NavHost(navController = navController, startDestination = "navtopicListScreen") {
+           //NavHost(navController = navController, startDestination = "navtopicListScreen") {
+                    NavHost(navController = navController, startDestination = "navabc") {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
+                    composable("navabc") { ColorGridScreen(topicViewModel.loadDistinctColors() )}
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
@@ -97,3 +109,8 @@ fun TopicsApp(context: Context) {
         }
     )
 }
+
+//@Composable
+//fun ColorGridScreen(colors: List<Color>) {
+//    TODO("Not yet implemented")
+//}
