@@ -1,6 +1,5 @@
 package com.example.topics2.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -16,10 +15,21 @@ import kotlinx.coroutines.launch
 
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
+
+    // Function to update focus state
+    private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
+    val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
+    fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
+
+
+    private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
+    val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox
+    fun setToUnFocusTextbox(newValue: Boolean) { _ToUnFocusTextbox.value = newValue }
+
     // States whether you are editing or sending
-    private val _shouldupdate = MutableStateFlow<Boolean>(false)
-    val shouldupdate: StateFlow<Boolean> = _shouldupdate
-    fun setShouldUpdate(newValue: Boolean) { _shouldupdate.value = newValue }
+    private val _amEditing = MutableStateFlow<Boolean>(false)
+    val amEditing: StateFlow<Boolean> = _amEditing
+    fun setAmEditing(newValue: Boolean) { _amEditing.value = newValue }
 
     // TempID, used only for editing a message
     private val _tempMessageId = MutableStateFlow<Int>(0)
@@ -98,5 +108,3 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
         }
     }
 }
-
-

@@ -30,9 +30,7 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 @Composable
 fun TopicCategory(viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
-
     var isFocused by remember { mutableStateOf(false) }
-
     val colors = MaterialTheme.colorScheme
     // Focus change listener to update isFocused state
     val focusModifier = Modifier
@@ -51,19 +49,17 @@ fun TopicCategory(viewModel: TopicViewModel) {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Start, // Align items to the start of the row
         verticalAlignment = Alignment.CenterVertically // Vertically center the text and TextField
-    ) {
-        // Label "Category"
+    ) { // Label "Category"
         Text(
             text = "Category:",
             modifier = Modifier
                 .padding(start = 3.dp, top = 3.dp, end = 8.dp),
             style = TextStyle(
                 fontSize = 18.sp, // Set the font size
-                color = colors.onSecondary, // Set the text color
+                color = colors.onSecondary,
             )
         )
 
-        // BasicTextField with the "Topics" initial value
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -71,34 +67,32 @@ fun TopicCategory(viewModel: TopicViewModel) {
                 .align(Alignment.CenterVertically) // Align the text field vertically in the center
         ) {
             BasicTextField(
-
-                value = inputText, // Bind value to inputText
+                value = inputText,
                 onValueChange = { newText ->
-                    inputText = newText // Update inputText when the user types
+                    inputText = newText
                 },
                 modifier = focusModifier
-                    .fillMaxWidth() // Ensure the text field takes full width
+                    .fillMaxWidth()
                     .padding(start = 3.dp, top = 3.dp), // Padding inside text field
                 textStyle = TextStyle(
                     fontSize = 18.sp,
-                    color = colors.onPrimary, // Set font color for the input text
+                    color = colors.onPrimary,
                     lineHeight = 20.sp,
                 ),
                 cursorBrush = if (isFocused) SolidColor(colors.tertiary) else SolidColor(Color.Transparent), // Show cursor only when focused
                 decorationBox = @Composable { innerTextField ->
-                    if (inputText.isEmpty()) {
-                        // Show "Category..." text only when the input is empty
+                    if (inputText.isEmpty()) { // Show "Category..." text only when the input is empty
                         Text(
-                            text = "Category...", // Placeholder text
+                            text = "Category...",
                             style = TextStyle(
                                 color = colors.secondary, // Placeholder color
                                 fontSize = 18.sp,
                                 lineHeight = 20.sp
                             ),
-                            modifier = Modifier.padding(start = 0.dp, top = 0.dp) // Adjust placeholder padding
+                            modifier = Modifier.padding(start = 0.dp, top = 0.dp)
                         )
                     }
-                    innerTextField() // This is where the input text goes
+                    innerTextField()
                 }
             )
         }

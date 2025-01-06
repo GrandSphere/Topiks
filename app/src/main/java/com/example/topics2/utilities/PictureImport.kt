@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.ui.components.global.compressImageToUri
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import java.io.File
 import java.io.IOException
@@ -56,23 +57,25 @@ fun copyImageToAppFolder(context: Context, topicViewModel: TopicViewModel) {
         val imageName = getFileNameFromUri(context, uri)
         Log.d("ZZZ IMAGE NAME", imageName)
 
-        val targetImageFile = File(iconsDir, imageName)
-        // Update ViewModel URI path to the app folder path
-        topicViewModel.setURI(targetImageFile.absolutePath)
+        // Create the URI for the new location of the compressed image
+        val compressedUri = Uri.fromFile(File(iconsDir, imageName))
 
-        context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            targetImageFile.outputStream().use { outputStream ->
-                copyStream(inputStream, outputStream)
+        // Compress and copy the image to the app folder
+        val success = compressImageToUri(context, uri, compressedUri)
 
-                Toast.makeText(context, "Image imported successfully to /icons/ directory!", Toast.LENGTH_SHORT).show()
-            }
-        } ?: run {
-            Toast.makeText(context, "Unable to open the selected file for import.", Toast.LENGTH_SHORT).show()
+        if (success) {
+            // Update ViewModel URI path to the app folder path
+            topicViewModel.setURI(compressedUri.path?:"")
+
+            Toast.makeText(context, "Image imported and compressed successfully!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Error compressing and saving the image.", Toast.LENGTH_SHORT).show()
         }
     } catch (e: IOException) {
         Toast.makeText(context, "Error importing image: ${e.message}", Toast.LENGTH_LONG).show()
     }
 }
+
 
 
 // Function to get the file name from URI using ContentResolver

@@ -1,6 +1,5 @@
 package com.example.topics2.ui.components.noteDisplay
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -42,13 +44,15 @@ fun MessageBubble(
     topicId: Int?,
     viewModel: MessageViewModel
 ) {
+
     var showMenu by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     // Format timestamp (you can format this as needed)
 
-
     //var inputText by remember { mutableStateOf(viewModel.tempMessage.value ) }
 
+    //val focusManager = LocalFocusManager.current // For clearing focus
+    //focusManager.clearFocus()
     val clipboardManager = LocalClipboardManager.current
     val formattedTimestamp =
         SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.messageTimestamp)
@@ -101,7 +105,9 @@ fun MessageBubble(
         }
         DropdownMenu(
             expanded = showMenu,
-            onDismissRequest = { showMenu = false }
+            onDismissRequest = {
+                //viewModel.setToFocusTextbox(false)
+                showMenu = false },
         ) {
 
             DropdownMenuItem(
@@ -116,18 +122,13 @@ fun MessageBubble(
             DropdownMenuItem(
                 text = { Text("Edit") },
                 onClick = {
+
+                    viewModel.setToUnFocusTextbox(true)
                     viewModel.setTempMessage(message.messageContent)
-                    viewModel.setShouldUpdate(true)
+                    viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)
-                   // coroutineScope.launch {
-                   //     viewModel.editMessage(
-                   //         message.id,
-                   //         topicId,
-                   //         "I was edited",
-                   //         message.messagePriority
-                   //     )
-                   // }
                     showMenu = false
+                    viewModel.setToFocusTextbox(true)
                 }
             )
 
