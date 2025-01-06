@@ -56,7 +56,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     val noteColour by viewModel.tempColour.collectAsState()
 
     //initialColor: Color = MaterialTheme.colorScheme.tertiary
-    var initialColor: Color = Color.Red
+    var initialColor: Color = Color.Cyan
     //val colors = MaterialTheme.colorScheme
     //val hsv = colorToHsv(noteColour)
     val hsv = colorToHsv(noteColour)
@@ -190,6 +190,8 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = "Hue: ${hue.toInt()}")
         CustomSlider(// Hue Slider
 
@@ -223,6 +225,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
 
         Text(text = colorToHex(newNoteColour).toString(),
             modifier = Modifier
+                .padding(top = 5.dp, bottom = 20.dp)
                 .pointerInput(Unit) { detectTapGestures(
                     onLongPress = {
                         bShouldCopy =true
