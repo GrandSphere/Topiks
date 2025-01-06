@@ -30,6 +30,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -52,9 +54,43 @@ fun InputBarMessageScreen(
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
+    val focusManager = LocalFocusManager.current // For clearing focus
+    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
     val focusRequester = remember { FocusRequester() }
+
+
     var isFocused by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        //viewModel.setToFocusTextbox(true)
+    }
+    LaunchedEffect(toFocusTextbox) {
+        if (toFocusTextbox) {
+            focusRequester.requestFocus()
+            // Reset focus state to false after focus is requested
+            viewModel.setToFocusTextbox(false)
+        } else {
+            focusManager.clearFocus()
+
+        }
+    }
+
+//    LaunchedEffect(toFocusTextbox) {
+//        if (toFocusTextbox) {
+//            focusRequester.requestFocus()
+//            // Reset focus state to false after focus is requested
+//            viewModel.setToFocusTextbox(false)
+//        }
+//    }
+
+
+//    LaunchedEffect(Unit) {
+////        viewModel.setToFocusTextbox(true)
+////        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+////        viewModel.setToFocusTextbox(false)
+//        //viewModel.setToFocusTextbox(false)
+//        //focusRequester.requestFocus()
+//    }
     // Focus change listener to update isFocused state
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
@@ -86,7 +122,7 @@ fun InputBarMessageScreen(
             vFontSize = vFontSize,
             sPlaceHolder = "Type a message...",
             isFocused = true,
-            focusModifier = focusModifier,
+            focusModifier = focusModifier.focusRequester(focusRequester),
             boxModifier = Modifier
                 .weight(1f)
                 .padding(0.dp)
@@ -112,6 +148,7 @@ fun InputBarMessageScreen(
         Spacer(modifier = Modifier.width(5.dp))
         IconButton( // SEND BUTTON
             onClick = {
+                viewModel.setToFocusTextbox(false)
                 if (inputText.isNotBlank()) {
                     val tempInput = inputText
                     inputText = ""
@@ -152,7 +189,4 @@ fun InputBarMessageScreen(
         Spacer(modifier = Modifier.width(12.dp))
     }
     // Request focus initially
-    LaunchedEffect(Unit) {
-        //focusRequester.requestFocus()
-    }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.topics2.db.enitities.MessageTbl
@@ -41,13 +42,15 @@ fun MessageBubble(
     topicId: Int?,
     viewModel: MessageViewModel
 ) {
+
     var showMenu by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     // Format timestamp (you can format this as needed)
 
-
     //var inputText by remember { mutableStateOf(viewModel.tempMessage.value ) }
 
+    //val focusManager = LocalFocusManager.current // For clearing focus
+    //focusManager.clearFocus()
     val clipboardManager = LocalClipboardManager.current
     val formattedTimestamp =
         SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.messageTimestamp)
@@ -100,7 +103,9 @@ fun MessageBubble(
         }
         DropdownMenu(
             expanded = showMenu,
-            onDismissRequest = { showMenu = false }
+            onDismissRequest = {
+                viewModel.setToFocusTextbox(false)
+                showMenu = false }
         ) {
 
             DropdownMenuItem(
@@ -115,10 +120,12 @@ fun MessageBubble(
             DropdownMenuItem(
                 text = { Text("Edit") },
                 onClick = {
+
                     viewModel.setTempMessage(message.messageContent)
                     viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)
                     showMenu = false
+                    viewModel.setToFocusTextbox(true)
                 }
             )
 
