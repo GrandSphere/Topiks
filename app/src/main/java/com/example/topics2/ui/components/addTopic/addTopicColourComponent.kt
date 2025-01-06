@@ -47,6 +47,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
 
 
     val noteColour by viewModel.colour.collectAsState()
+    val showFilePicker = viewModel.showPicker.collectAsState().value
 
     val colors = MaterialTheme.colorScheme
     var categoryText by remember { mutableStateOf("Topics") }
@@ -67,7 +68,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                        // Clear focus when tapping outside
-                        showImagePicker = true;
+                        viewModel.setShowPicker(true);
                     })
                 }
                 .clip(CircleShape) // Clip the image into a circular shape
@@ -75,9 +76,8 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
-            if (showImagePicker) {
+            if (showFilePicker) {
                 SelectImageWithPicker(topicViewModel = viewModel)
-                showImagePicker = false
             }
 
             if (imageUrl != "") {

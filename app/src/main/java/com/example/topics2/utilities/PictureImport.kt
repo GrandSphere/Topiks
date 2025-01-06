@@ -32,8 +32,10 @@ fun SelectImageWithPicker(topicViewModel: TopicViewModel) {
         fileUri?.let { uri ->
             // Set the URI path from the original location to the ViewModel
             topicViewModel.setURI(uri.toString())
+            topicViewModel.setShowPicker( false )
             fileUri = null // Reset state after selection
             Toast.makeText(context, "File selected: $uri", Toast.LENGTH_SHORT).show()
+
         }
     }
 }
