@@ -102,7 +102,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 Text(
                     text = "Sample",
                     color = chooseColorBasedOnLuminance(newNoteColour),
-                    fontSize = 30.sp,
+                    fontSize = 25.sp,
                     textAlign = TextAlign.Center,
                             modifier = Modifier.align(Alignment.Center)
                 )

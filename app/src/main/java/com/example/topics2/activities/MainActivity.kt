@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.topics.utilities.SelectFileWithPicker
 
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
@@ -85,8 +86,11 @@ fun TopicsApp(context: Context) {
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
+
                         val topicId = backStackEntry.arguments?.getInt("topicId")
-                        if (topicId != -1) { MessageScreen(
+                        if (topicId != -1) {
+                            messageViewModel.setShowPicker(false)
+                            MessageScreen(
                             navController, messageViewModel, topicId,
                             topicColor = topicViewModel.cTopicColor,
                         ) }
