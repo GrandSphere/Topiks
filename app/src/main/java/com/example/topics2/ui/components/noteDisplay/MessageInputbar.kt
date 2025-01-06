@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -39,8 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int?
@@ -54,25 +59,44 @@ fun InputBarMessageScreen(
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
-    val focusManager = LocalFocusManager.current // For clearing focus
-    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-    val focusRequester = remember { FocusRequester() }
 
 
     var isFocused by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        //viewModel.setToFocusTextbox(true)
-    }
+    val focusManager = LocalFocusManager.current // For clearing focus
+    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
+    val toUnFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
+    val focusRequester = remember { FocusRequester() }
+    val focusRequester2 = remember { FocusRequester() }
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
-            focusRequester.requestFocus()
-            // Reset focus state to false after focus is requested
-            viewModel.setToFocusTextbox(false)
-        } else {
+
             focusManager.clearFocus()
 
+            focusRequester.requestFocus()
+            viewModel.setToFocusTextbox(false)
+        } else {
+            //focusRequester.restoreFocusedChild()
+            //focusManager.clearFocus()
         }
+    }
+
+
+    // LaunchedEffect(toUnFocusTextbox) {
+    //     if (toUnFocusTextbox) {
+    //         focusRequester.requestFocus()
+    //         viewModel.setToUnFocusTextbox(false)
+    //     }
+    //kotlinx.coroutines.delay(100)
+
+    //viewModel.setToFocusTextbox(false)
+    // else {
+    //         focusManager.clearFocus()
+    // }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+        viewModel.setToFocusTextbox(true)
     }
 
 //    LaunchedEffect(toFocusTextbox) {
@@ -113,7 +137,7 @@ fun InputBarMessageScreen(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp),
+            .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp)
     ) {
         CustomTextBox(
             inputText = inputText,
@@ -145,7 +169,8 @@ fun InputBarMessageScreen(
             )
         }
         val coroutineScope = rememberCoroutineScope()
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = focusModifier.width(5.dp).focusRequester(focusRequester)
+        )
         IconButton( // SEND BUTTON
             onClick = {
                 viewModel.setToFocusTextbox(false)

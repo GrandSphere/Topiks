@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -104,8 +106,8 @@ fun MessageBubble(
         DropdownMenu(
             expanded = showMenu,
             onDismissRequest = {
-                viewModel.setToFocusTextbox(false)
-                showMenu = false }
+                //viewModel.setToFocusTextbox(false)
+                showMenu = false },
         ) {
 
             DropdownMenuItem(
@@ -121,6 +123,7 @@ fun MessageBubble(
                 text = { Text("Edit") },
                 onClick = {
 
+                    viewModel.setToUnFocusTextbox(true)
                     viewModel.setTempMessage(message.messageContent)
                     viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)

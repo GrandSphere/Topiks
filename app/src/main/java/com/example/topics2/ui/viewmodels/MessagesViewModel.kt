@@ -21,6 +21,11 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
 
+
+    private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
+    val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox
+    fun setToUnFocusTextbox(newValue: Boolean) { _ToUnFocusTextbox.value = newValue }
+
     // States whether you are editing or sending
     private val _amEditing = MutableStateFlow<Boolean>(false)
     val amEditing: StateFlow<Boolean> = _amEditing
