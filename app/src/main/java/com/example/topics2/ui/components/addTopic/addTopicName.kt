@@ -109,9 +109,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
-                    //viewModel.setCategory(viewModel.tempcategory.value)
-                    //viewModel.set(viewModel.temptopicname)
-                    copyImageToAppFolder(context, viewModel)
+                    if (viewModel.fileURI.value.length > 4) {
+                        copyImageToAppFolder(context, viewModel)
+                    }
 
                     viewModel.addTopic(
                         //topicName = inputText,
