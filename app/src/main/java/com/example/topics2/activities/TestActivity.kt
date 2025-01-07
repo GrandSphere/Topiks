@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -84,7 +83,7 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTest") {
+                NavHost(navController = navController, startDestination = "navtopicListScreen") {
 
                     composable("navTest") { testScreen() }
                     composable("navTest2") { ImageGridScreen() }
@@ -118,7 +117,7 @@ fun TestApp(context: Context) {
                         if (topicId != -1) {
                             messageViewModel.setShowPicker(false)
                             MessageScreen(
-                                navController, messageViewModel, topicId,
+                                navController, messageViewModel, topicId!!,
                                 topicColor = topicViewModel.cTopicColor,
                             )
                         }

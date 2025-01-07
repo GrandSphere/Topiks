@@ -1,9 +1,10 @@
 package com.example.topics2.db.enitities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
-import com.example.topics2.db.entities.CategoryTbl
+import androidx.room.PrimaryKey
+import com.example.topics2.db.entities.CategoriesTbl
+
 
 @Entity(
     tableName = "message_tbl",
@@ -15,7 +16,7 @@ import com.example.topics2.db.entities.CategoryTbl
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = CategoryTbl::class, // Reference to CategoryTbl
+            entity = CategoriesTbl::class, // Reference to CategoryTbl
             parentColumns = ["id"],
             childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE

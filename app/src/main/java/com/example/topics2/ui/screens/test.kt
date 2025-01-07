@@ -1,14 +1,6 @@
 package com.example.topics2.ui.screens
 
-import android.content.Context
-import android.util.Log
-import com.example.topics2.db.AppDatabase
-import com.example.topics2.db.enitities.TopicTbl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
+/*
 fun insertTestData(context: Context) {
     // Create some test data
     val topics = listOf(
@@ -63,4 +55,7 @@ fun insertTestData(context: Context) {
         }
     }
     Log.d("aabbcc","we got to the end")
+
 }
+*/
+
