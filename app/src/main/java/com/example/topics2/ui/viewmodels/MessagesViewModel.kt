@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
-
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
@@ -31,12 +30,12 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val filePicked: StateFlow<Boolean> = _filePicked
     fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
 
-    // File URI for file imports
+    // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
     fun setURI(newURI: String) { _fileURI.value = newURI }
 
-    // File URI for file imports
+    // File destination URI for file imports
     private val _destURI = MutableStateFlow<String>("")
     val destURI: StateFlow<String> = _destURI
     fun setdestURI(newURI: String) { _destURI.value = newURI }
@@ -54,7 +53,6 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     private val _tempMessageId = MutableStateFlow<Int>(0)
     val tempMessageId: StateFlow<Int> = _tempMessageId
     fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
-
 
     //Temp message, used only for editing a message
     private val _tempMessage = MutableStateFlow<String>("")

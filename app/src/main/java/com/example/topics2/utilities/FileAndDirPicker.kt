@@ -21,9 +21,7 @@ fun FilePickerIcon(onFileSelected: (Uri?) -> Unit, fileTypes: Array<String> = ar
     val openFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
-            Log.d("AABBCC", "FAILED")
             uri?.let { selectedUri ->
-                Log.d("AASSDD IMPORT INSIDE FILE PICKER", selectedUri.toString())
                 // ex content://com.android.providers.media.documents/document/image%3A1000084819
                 // Persist access permission to the URI
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -48,14 +46,11 @@ fun FilePickerMessage(onFileSelected: (Uri?) -> Unit, fileTypes: Array<String> =
     val openFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
-            Log.d("AABBCC", "FAILED")
             if (uri == null){ messageViewModel.setShowPicker(false)}
             uri?.let { selectedUri ->
-                Log.d("IMPORT INSIDE FILE PICKER", selectedUri.toString())
                 // Persist access permission to the URI
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 context.contentResolver.takePersistableUriPermission(selectedUri, takeFlags)
-
                 // Return the selected file URI to the caller
                 onFileSelected(selectedUri)
             } ?: run {

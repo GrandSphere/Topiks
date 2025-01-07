@@ -86,8 +86,6 @@ fun InputBarMessageScreen(
     val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
 
-
-
     val showPicker: Boolean = viewModel.showPicker.collectAsState().value
     val filePicked: Boolean = viewModel.filePicked.collectAsState().value
 
@@ -100,7 +98,6 @@ fun InputBarMessageScreen(
         } else {
         }
     }
-
 
     // LaunchedEffect(toUnFocusTextbox) {
     //     if (toUnFocusTextbox) {
