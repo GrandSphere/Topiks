@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,8 @@ import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import androidx.activity.compose.BackHandler
+import androidx.compose.material3.Text
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -44,6 +47,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.fetchMessages(topicId)
     val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
+   
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
@@ -121,7 +125,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     inputBarHeightPx = size.height
                 }
         ) {
-            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId)
+            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
     }
 
@@ -131,5 +135,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             scrollState.scrollToItem(messages.size - 1)
         }
     }
+
+
+
 
 }
