@@ -73,10 +73,11 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel) {
 
         // Extract the file name from the URI
         val fileName = getFileNameFromUri(context, uri)
-        Log.d("AABBCCD", "Filename: $fileName")
+        messageViewModel.setfileName(uri.toString())
+
         // Create the file in the accessible directory
         val destinationFile = File(externalDir, fileName)
-        Log.d("AABBCCD", "destinationFile: $destinationFile")
+
         if (destinationFile.exists()) {
             Toast.makeText(context, "File already exists in destination folder.", Toast.LENGTH_SHORT).show()
             return
@@ -95,7 +96,6 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel) {
         Toast.makeText(context, "File imported successfully! You can find it in Documents/topics/files.", Toast.LENGTH_SHORT).show()
         messageViewModel.setfilePicked(false)
     } catch (e: IOException) {
-        Log.e("AABBCCDD", "Error copying file: ${e.message}")
         messageViewModel.setfilePicked(false)
         Toast.makeText(context, "Error importing file: ${e.message}", Toast.LENGTH_LONG).show()
     }

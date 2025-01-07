@@ -13,3 +13,8 @@ data class MessageTbl(
     val filePath: String="",
     val fileType: Int = 0,
 )
+/*
+    fileType 0 = message
+    fileType 1 = image
+    fileType 2 = rest
+ */
