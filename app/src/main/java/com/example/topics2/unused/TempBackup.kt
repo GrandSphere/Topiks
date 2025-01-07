@@ -1,4 +1,5 @@
 package com.example.topics2.unused
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun ImageGridScreen() {
+fun ImageGridScreenBackup() {
     val colors = MaterialTheme.colorScheme
 
     // Get image paths by calling the separate function

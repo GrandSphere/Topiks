@@ -84,7 +84,7 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTest") {
+                NavHost(navController = navController, startDestination = "navTest2") {
 
                     composable("navTest") { testScreen() }
                     composable("navTest2") { ImageGridScreen() }

@@ -45,11 +45,11 @@ fun testScreen() {
         selectedFileUri.value = uri
     })
 
-    //val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
-    //getTestImagePaths()[0]
-   val selectedFilePath = getTestImagePaths()[6]
+    val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+    //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F24.jpg"
+   //val selectedFilePath = getTestImagePaths()[2]
 
-    //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg"
+
     //val selectedFilePath =   getTestImagePaths()[0]
     Log.d("aabbcc",selectedFilePath)
 
