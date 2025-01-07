@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.documentfile.provider.DocumentFile
-import com.example.topics.utilities.DirectoryPicker
+//import com.example.topics.utilities.DirectoryPicker
 import com.example.topics2.db.AppDatabase
 //import com.example.topics.model.db.AppDatabase
 import kotlinx.coroutines.coroutineScope
@@ -30,15 +30,16 @@ fun ExportDatabaseWithPicker(onExportComplete: () -> Unit) {
         var selectedDirectoryUri by remember { mutableStateOf<Uri?>(null) }
 
         // Show the directory picker when the function is called
-        DirectoryPicker(onDirectorySelected = { uri ->
-            selectedDirectoryUri = uri
-            // Once a directory is selected, trigger the export
-            if (uri != null) {
-                Log.d("Export Database to: ","$uri")
-                exportDatabaseToUri(context, uri)
-                onExportComplete()
-            }
-        })
+    // TODO I broke this
+ //       DirectoryPicker(onDirectorySelected = { uri ->
+ //           selectedDirectoryUri = uri
+ //           // Once a directory is selected, trigger the export
+ //           if (uri != null) {
+ //               Log.d("Export Database to: ","$uri")
+ //               exportDatabaseToUri(context, uri)
+ //               onExportComplete()
+ //           }
+ //       })
     }
 
 fun exportDatabaseToUri(context: Context, uri: Uri) {

@@ -1,4 +1,5 @@
 package com.example.topics2.activities
+import MyScreen
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -28,7 +29,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
-import com.example.topics.utilities.SelectFileWithPicker
 
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
@@ -88,8 +88,9 @@ fun TopicsApp(context: Context) {
                     .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
             ) {
                 // Setting up the NavHost with two screens
-                NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                //NavHost(navController = navController, startDestination = "navrecentcolours") {
+                //NavHost(navController = navController, startDestination = "navtopicListScreen") {
+                NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
+                    composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }

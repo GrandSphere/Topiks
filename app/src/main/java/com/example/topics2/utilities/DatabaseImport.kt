@@ -34,11 +34,12 @@ fun ImportDatabaseWithPicker(onImportComplete: () -> Unit, navController: NavCon
     // Use the FilePicker composable to pick a file
     if (fileUri == null) {
         Log.d("ZZZ Import URI", "EMPTY")
-        FilePickerIcon(onFileSelected = { selectedUri ->
-            fileUri = selectedUri },
-            fileTypes = arrayOf("*/*"),
-            navController = navController,
-        )
+        // TODO I broke this
+        //FilePickerIcon(onFileSelected = { selectedUri ->
+        //    fileUri = selectedUri },
+        //    fileTypes = arrayOf("*/*"),
+        //    navController = navController,
+        //)
     }
     val context = LocalContext.current
     LaunchedEffect(fileUri) {

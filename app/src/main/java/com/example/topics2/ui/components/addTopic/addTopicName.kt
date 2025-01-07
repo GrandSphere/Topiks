@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.topics.utilities.copyIconToAppFolder
+//import com.example.topics.utilities.copyIconToAppFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -101,7 +101,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
                     if (viewModel.fileURI.value.length > 4) {
-                        copyIconToAppFolder(context, viewModel)
+
+                        // TODO I BROKE THIS
+                        //copyIconToAppFolder(context, viewModel)
                     }
 
                     viewModel.addTopic(

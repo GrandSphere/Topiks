@@ -49,9 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.topics.utilities.SelectFileWithPicker
-import com.example.topics.utilities.SelectImageWithPicker
-import com.example.topics.utilities.copyFileToUserFolder
+//import com.example.topics.utilities.SelectFileWithPicker
+//import com.example.topics.utilities.SelectImageWithPicker
+//import com.example.topics.utilities.copyFileToUserFolder
 
 
 import com.example.topics2.ui.components.global.CustomTextBox
@@ -176,13 +176,17 @@ fun InputBarMessageScreen(
 
         // Open File picker
         if (showPicker) {
-            SelectFileWithPicker(navController, viewModel)
+
+            // TODO I BROKE THIS
+            //SelectFileWithPicker(navController, viewModel)
         }
         // Write file to user directory as file is picked
         if (filePicked)
         {
             viewModel.setfilePicked(false)
-            copyFileToUserFolder(context = LocalContext.current, viewModel)
+
+            // TODO I BROKE THIS
+            //copyFileToUserFolder(context = LocalContext.current, viewModel)
             LaunchedEffect(filePicked) {
                 coroutineScope.launch {
                     viewModel.addMessage(

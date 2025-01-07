@@ -37,7 +37,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
-import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.coroutineScope
 
@@ -69,7 +68,8 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                  contentAlignment = Alignment.Center
         ) {
             if (showFilePicker) {
-                SelectImageWithPicker(topicViewModel = viewModel, navController = navController)
+                // TODO I BROKE THIS
+                //SelectImageWithPicker(topicViewModel = viewModel, navController = navController)
             }
 
             if (imageUrl.length > 4) { // Load and display the image
