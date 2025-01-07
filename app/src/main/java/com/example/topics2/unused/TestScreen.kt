@@ -31,6 +31,8 @@ import myFilePicker
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.selects.select
+
 @Composable
 fun testScreen() {
     val colors = MaterialTheme.colorScheme
@@ -43,7 +45,15 @@ fun testScreen() {
         selectedFileUri.value = uri
     })
 
-    val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+    //val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+    //getTestImagePaths()[0]
+   val selectedFilePath = getTestImagePaths()[6]
+
+    //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg"
+    //val selectedFilePath =   getTestImagePaths()[0]
+    Log.d("aabbcc",selectedFilePath)
+
+
     //val selectedFilePath: String = selectedFileUri.value.toString()?: ""
 
     Column(

@@ -30,7 +30,7 @@
             android:name=".activities.TestActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="Topics2-Test"
             android:theme="@style/Theme.Topics">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

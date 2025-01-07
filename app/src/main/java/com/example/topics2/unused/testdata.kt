@@ -3,11 +3,14 @@ package com.example.topics2.unused
 fun getTestImagePaths(): List<String> {
     // Example paths (you would replace these with actual file paths)
     return listOf(
-        "file:///path/to/image1.jpg",
-        "file:///path/to/image2.jpg",
-        "file:///path/to/image3.jpg",
-        "file:///path/to/image4.jpg",
-        "file:///path/to/image5.jpg",
-        "file:///path/to/image6.jpg"
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F20.png",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F21.png",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F23.jpg",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F24.jpg",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F25.png",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F26.png",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F27.jpg",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F28.jpg",
     )
 }
