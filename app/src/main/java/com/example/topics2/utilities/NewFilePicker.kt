@@ -50,34 +50,3 @@ fun myFilePicker(
     // Return the launcher to be used outside
     return openFileLauncher
 }
-
-@Composable
-fun MyScreen() {
-    // Holds the URI of the selected file
-    val selectedFileUri: MutableState<Uri?> = remember { mutableStateOf(null) }
-    val openFileLauncher = myFilePicker(onFileSelected = {uri->selectedFileUri.value=uri})
-
-    // Get the file picker launcher from the FilePicker composable
-    // Update the selected URI when a file is chosen
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(Color.Red)
-    ) {
-        // IconButton to trigger the file picker
-        IconButton(onClick = {
-            // Trigger the file picker using the returned launcher
-            // TODO THIS IS USED
-            openFileLauncher.launch(arrayOf("*/*")) // Launch the file picker
-        }) {
-            Icon(Icons.Default.Add, contentDescription = "Pick a File")
-        }
-        // Display the selected file URI or a message if none is selected
-        Text(
-            text = "Selected file: ${selectedFileUri.value?.path ?: "None"}",
-            modifier = Modifier.padding(top = 16.dp)
-        )
-    }
-}
