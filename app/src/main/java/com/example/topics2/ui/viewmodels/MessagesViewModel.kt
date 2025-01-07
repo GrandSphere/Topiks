@@ -3,14 +3,12 @@ package com.example.topics2.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.enitities.MessageTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
@@ -67,19 +65,19 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
-    fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
+ //   fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
 
 
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
-        messageDao.deleteMessage(messageId)
-        fetchMessages(topicId)
+      //  messageDao.deleteMessage(messageId)
+      //  fetchMessages(topicId)
     }
 
     // Add Message
     suspend fun addMessage(
-        topicId: Int?,
+        topicId: Int,
         content: String,
         priority: Int,
         filePath: String = "",
@@ -87,31 +85,35 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     ) {
         val newMessage = MessageTbl(
             topicId = topicId,
-            messageContent = content,
-            messagePriority = priority,
-            filePath = filePath,
-            fileType = fileType,
-            messageTimestamp = System.currentTimeMillis()
+            content = content,
+            priority = priority,
+            type = fileType,
+            createTime = System.currentTimeMillis(),
+            lastEditTime =  System.currentTimeMillis(),
+            categoryId = 1
             )
         messageDao.insertMessage(newMessage) // Insert the message into the database
-        fetchMessages(topicId)
+      //  fetchMessages(topicId)
     }
 
     //Edit Message
     suspend fun editMessage(
         messageId: Int,
-        topicId: Int?, content: String, priority: Int,
+        topicId: Int, content: String, priority: Int,
         messageTimestamp: Long = System.currentTimeMillis() )
     {
         val editedMessage = MessageTbl(
             id = messageId,
             topicId = topicId,
-            messageContent = content,
-            messageTimestamp = messageTimestamp,
-            messagePriority = priority,
+            content = content,
+            createTime = messageTimestamp,
+            priority = priority,
+            lastEditTime =  messageTimestamp,
+            categoryId = 1,
+            type =  1
         )
         messageDao.updateMessage(editedMessage)
-        fetchMessages(topicId)
+      //  fetchMessages(topicId)
     }
 
     companion object {

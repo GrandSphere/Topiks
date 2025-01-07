@@ -22,7 +22,7 @@ import com.example.topics2.db.enitities.TopicTbl
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = CategoryTbl::class, // Reference to CategoryTbl
+            entity = CategoriesTbl::class, // Reference to CategoryTbl
             parentColumns = ["id"],
             childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE

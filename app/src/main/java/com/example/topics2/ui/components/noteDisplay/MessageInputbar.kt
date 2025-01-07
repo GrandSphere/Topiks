@@ -1,17 +1,17 @@
 package com.example.topics2.ui.components.noteDisplay
 
 
+//import com.example.topics.utilities.SelectFileWithPicker
+//import com.example.topics.utilities.SelectImageWithPicker
+//import com.example.topics.utilities.copyFileToUserFolder
+
+
 import android.net.Uri
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.MutableState
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,37 +37,21 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-//import com.example.topics.utilities.SelectFileWithPicker
-//import com.example.topics.utilities.SelectImageWithPicker
-//import com.example.topics.utilities.copyFileToUserFolder
-
-
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import myFilePicker
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController, viewModel: MessageViewModel, topicId: Int?,
+    navController: NavController, viewModel: MessageViewModel, topicId: Int,
     topicColour: Color = MaterialTheme.colorScheme.onPrimary
 ) {
 

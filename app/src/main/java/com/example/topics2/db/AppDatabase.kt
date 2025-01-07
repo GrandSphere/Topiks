@@ -10,9 +10,11 @@ import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.enitities.TopicTbl
+import com.example.topics2.db.entities.CategoriesTbl
+import com.example.topics2.db.entities.FileTbl
 
 
-@Database(entities = [TopicTbl::class, MessageTbl::class], version = 2)
+@Database(entities = [TopicTbl::class, MessageTbl::class, CategoriesTbl::class, FileTbl::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun topicDao(): TopicDao
     abstract fun messageDao(): MessageDao

@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -45,10 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
@@ -129,13 +125,13 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { // Go to specific Topic
-                        viewModel.cTopicColor=argbToColor(topic.topicColour)
+                        viewModel.cTopicColor=argbToColor(topic.colour)
                         //viewModel
                         //viewModel.setTopicColor(topic)
 
                         // SET MESSAGEVIEWMODEL showpicker false
 
-                        navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
+                        navController.navigate("navnotescreen/${topic.id}/${topic.name}")
                     },
                     onLongPress = { showMenu = true }
                 )
@@ -146,7 +142,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             verticalAlignment = Alignment.CenterVertically
         ) {
             // TODO check image validity AND compress images
-            val imageUrl = topic.topicIcon
+            val imageUrl = topic.iconPath
             if (imageUrl != "") {
                 Log.d("THIS IS NOT NULL", imageUrl )
                 // Load and display the image
@@ -174,14 +170,14 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(argbToColor(topic.topicColour))
+                            .background(argbToColor(topic.colour))
                             //.background(argbToColor(topic.topicColour))
                             .heightIn(max = 35.dp),
                     ) {
                         Text(
-                            text = topic.topicName.first().toString(),
+                            text = topic.name.first().toString(),
                             //color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            color = chooseColorBasedOnLuminance(argbToColor(topic.topicColour)),
+                            color = chooseColorBasedOnLuminance(argbToColor(topic.colour)),
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center
                         )
@@ -194,7 +190,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
 
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = topic.topicName,
+                text = topic.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = colors.onBackground
@@ -208,8 +204,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
-                    viewModel.deleteTopic(topic.topicId)
-                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.topicId)}
+                    viewModel.deleteTopic(topic.id)
+                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
                     showMenu = false
                 }
             )

@@ -1,9 +1,9 @@
 package com.example.topics2.activities
+
+
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -14,12 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,22 +22,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-
-
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
-
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
+import com.example.topics2.ui.viewmodels.CategoryViewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.ImageGridScreen
-import com.example.topics2.unused.MyScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +47,21 @@ fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
     val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
     val messageViewModel: MessageViewModel = viewModel( factory = MessageViewModel.Factory )
+    val categoryViewModel: CategoryViewModel = viewModel( factory = CategoryViewModel.Factory )
 
     val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
+    Log.d("AABBCC","ADDED B")
 
+  //  database.close()
+    //Add test category
+    LaunchedEffect(true)
+    {
+        Log.d("AABBCC","ADDED CAT")
+        categoryViewModel.addtestcat()
+    }
     //messageViewModel.insertTestMessages()
   //  Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
 
@@ -102,7 +102,7 @@ fun TopicsApp(context: Context) {
                         if (topicId != -1) {
                             messageViewModel.setShowPicker(false)
                             MessageScreen(
-                            navController, messageViewModel, topicId,
+                            navController, messageViewModel, topicId!!,
                             topicColor = topicViewModel.cTopicColor,
                         ) }
 

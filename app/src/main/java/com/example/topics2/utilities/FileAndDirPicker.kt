@@ -1,18 +1,5 @@
 package com.example.topics.utilities
 
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.topics2.ui.viewmodels.MessageViewModel
-
 //@Composable
 //fun FilePickerIcon(onFileSelected: (Uri?) -> Unit, fileTypes: Array<String> = arrayOf("*/*"), navController: NavController) {
     //val context = LocalContext.current

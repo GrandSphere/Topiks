@@ -105,13 +105,12 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                         // TODO I BROKE THIS
                         //copyIconToAppFolder(context, viewModel)
                     }
-
                     viewModel.addTopic(
-                        //topicName = inputText,
-                        topicName = viewModel.temptopicname.value,
+                        topicName = inputText,
                         topicColour = iColor,
-                        topicCategory = viewModel.tempcategory.value,
-                        topicIcon = viewModel.fileURI.value,
+                       // topicCategory = viewModel.tempcategory.value,
+                        topicCategory = 1,
+                        topicIconPath = viewModel.fileURI.value,
                         topicPriority = 0,
                     )
 

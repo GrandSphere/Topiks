@@ -18,7 +18,7 @@ interface MessageDao {
     fun getAllMessages(): Flow<List<MessageTbl>>
 
     @Query("SELECT * FROM message_tbl WHERE topicId = :topicId")
-    suspend fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
+    fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
 
     @Delete
     suspend fun deleteMessage(message: MessageTbl)

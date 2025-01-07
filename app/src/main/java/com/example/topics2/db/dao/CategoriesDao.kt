@@ -1,6 +1,11 @@
 package com.example.topics2.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.example.topics2.db.entities.CategoriesTbl
 import kotlinx.coroutines.flow.Flow
 

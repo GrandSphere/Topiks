@@ -1,31 +1,5 @@
 package com.example.topics.utilities
 
-import android.content.ContentResolver
-import android.content.Context
-import android.net.Uri
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.topics2.ui.components.global.compressImageToUri
-import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.ui.viewmodels.TopicViewModel
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 // TODO: Add to settings where user want app folder
 
 //@Composable
