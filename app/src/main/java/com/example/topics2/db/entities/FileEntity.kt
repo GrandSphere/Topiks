@@ -1,17 +1,24 @@
-package com.example.topics2.db.enitities
+package com.example.topics2.db.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
-import com.example.topics2.db.entities.CategoryTbl
+import androidx.room.PrimaryKey
+import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.enitities.TopicTbl
 
 @Entity(
-    tableName = "message_tbl",
+    tableName = "file_tbl",
     foreignKeys = [
         ForeignKey(
             entity = TopicTbl::class, // Reference to TopicTbl
             parentColumns = ["id"],
             childColumns = ["topicId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = MessageTbl::class, // Reference to MessageTbl
+            parentColumns = ["id"],
+            childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -22,20 +29,15 @@ import com.example.topics2.db.entities.CategoryTbl
         )
     ]
 )
-data class MessageTbl(
+data class FileTbl(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val topicId: Int, // Foreign key from TopicTbl
-    val content: String,
-    val lastEditTime: Long,
-    val createTime: Long,
+    val messageId: Int, // Foreign key from MessageTbl
+    val fileType: String,
+    val filePath: String,
+    val description: String,
+    val iconPath: String,
     val categoryId: Int, // Foreign key from CategoryTbl
-    val priority: Int,
-    val type: Int
+    val createTime: Long
 )
 
-
-/*
-    fileType 0 = message
-    fileType 1 = image
-    fileType 2 = rest
- */
