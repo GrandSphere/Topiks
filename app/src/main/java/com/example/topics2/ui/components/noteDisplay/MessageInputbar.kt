@@ -1,18 +1,17 @@
 package com.example.topics2.ui.components.noteDisplay
 
-import android.content.Intent
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.OnBackPressedDispatcherOwner
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 
+import android.net.Uri
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Row
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -62,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import myFilePicker
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -91,6 +91,10 @@ fun InputBarMessageScreen(
     val filePicked: Boolean = viewModel.filePicked.collectAsState().value
     val filePath: String = viewModel.fileURI.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
+
+    // FilePicker Logic
+    val selectedFileUri: MutableState<Uri?> = remember { mutableStateOf(null) }
+    val openFileLauncher = myFilePicker(onFileSelected = {uri->selectedFileUri.value=uri})
 
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
@@ -205,8 +209,9 @@ fun InputBarMessageScreen(
 
         IconButton( // ADD BUTTON
             onClick = {
-                         viewModel.setShowPicker(true)
-                      },
+                //viewModel.setShowPicker(true)
+                openFileLauncher.launch(arrayOf("*/*")) // Launch the file picker
+            },
             modifier = Modifier
                 .size(vButtonSize)
                 .align(Alignment.Bottom)
@@ -229,7 +234,8 @@ fun InputBarMessageScreen(
             onClick = {
                 viewModel.setToFocusTextbox(false)
                 if (inputText.isNotBlank()) {
-                    val tempInput = inputText
+                    //val tempDescription = selectedFileUri.value.toString()
+                    val tempInput =inputText
                     inputText = ""
                     if (tempMessageID > -1){ // Edit Mode
                         coroutineScope.launch {
@@ -237,6 +243,8 @@ fun InputBarMessageScreen(
                                 messageId = tempMessageID,
                                 topicId = topicId,
                                 content = tempInput,
+                                //description= tempDescription
+                                //content = selectedFileUri.toString(),
                                 priority = messagePriority
                             )
                             tempMessageID=-1
