@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.appcompat)
     val room_version = "2.6.0"
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
@@ -79,5 +80,7 @@ dependencies {
     kapt (libs.room.compiler) // Add this for kapt
     testImplementation(libs.junit)
 
+        // Lifecycle components (if not already included)
+        implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
 
 }
