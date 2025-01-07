@@ -176,7 +176,7 @@ fun InputBarMessageScreen(
 
             // TODO I BROKE THIS
             //copyFileToUserFolder(context = LocalContext.current, viewModel)
-            LaunchedEffect(filePicked) {
+         /*   LaunchedEffect(filePicked) {
                 coroutineScope.launch {
                     viewModel.addMessage(
                         topicId = topicId,
@@ -186,7 +186,7 @@ fun InputBarMessageScreen(
                         filePath = filePath
                     )
                 }
-            }
+            }*/
 
 
         }
@@ -194,7 +194,6 @@ fun InputBarMessageScreen(
 
         IconButton( // ADD BUTTON
             onClick = {
-                //viewModel.setShowPicker(true)
                 openFileLauncher.launch(arrayOf("*/*")) // Launch the file picker
             },
             modifier = Modifier
@@ -219,7 +218,6 @@ fun InputBarMessageScreen(
             onClick = {
                 viewModel.setToFocusTextbox(false)
                 if (inputText.isNotBlank()) {
-                    //val tempDescription = selectedFileUri.value.toString()
                     val tempInput =inputText
                     inputText = ""
                     if (tempMessageID > -1){ // Edit Mode
@@ -240,7 +238,9 @@ fun InputBarMessageScreen(
                             viewModel.addMessage(
                                 topicId = topicId,
                                 content = tempInput,
-                                priority = messagePriority
+                                priority = messagePriority,
+                                type = 1, //based on if check to see what type - message or image or file etc
+                                categoryID = 1
                             )
                         }
                     }

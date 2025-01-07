@@ -20,10 +20,17 @@ interface MessageDao {
     @Query("SELECT * FROM message_tbl WHERE topicId = :topicId")
     fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
 
-    @Delete
-    suspend fun deleteMessage(message: MessageTbl)
+    @Query("DELETE FROM message_tbl WHERE topicId = :topicId")
+    suspend fun deleteMessagesForTopic(topicId: Int)
+
+    @Query("DELETE FROM message_tbl WHERE id = :messageID")
+    suspend fun deleteMessagesWithID(messageID: Int)
 
     @Update
     suspend fun updateMessage(message: MessageTbl)
+
+    // Update the last modified date for a specific topic by topicId
+    @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
+    suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
 
 }

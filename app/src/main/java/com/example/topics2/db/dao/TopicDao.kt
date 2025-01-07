@@ -22,13 +22,11 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("DELETE FROM topic_tbl WHERE id = :topicId")
  suspend fun deleteTopicById(topicId: Int)
 
- // Update the last modified date for a specific topic by topicId
- @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
- suspend fun updateLastModified(topicId: Int, lastEdit: Long)
 
 
- @Query("DELETE FROM message_tbl WHERE topicId = :topicId")
- suspend fun deleteMessagesForTopic(topicId: Int)
+
+ //@Query("DELETE FROM message_tbl WHERE topicId = :topicId")
+ //suspend fun deleteMessagesForTopic(topicId: Int)
 
  // selects the last 50 unique colours from data base to populate recent colours
  @Query("SELECT DISTINCT Colour FROM topic_tbl ORDER BY CreateTime DESC LIMIT 50")

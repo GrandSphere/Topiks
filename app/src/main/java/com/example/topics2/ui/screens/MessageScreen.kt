@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,18 +36,18 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 
 @Composable
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
-    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
+
+    viewModel.collectMessages(topicId)
+    Log.d("TOPICID", "$topicId")
+   // viewModel.setTopicId(topicId)
     val messages by viewModel.messages.collectAsState()
-  //  viewModel.fetchMessages(topicId)
-    val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
-   
+
+    val scrollState = rememberLazyListState()
+    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
-
     //val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-
-
 //
 //
 //    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
