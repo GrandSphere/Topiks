@@ -1,12 +1,8 @@
 package com.example.topics2.unused
 
 
-import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -31,7 +26,8 @@ import myFilePicker
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.selects.select
+
+import multipleFilePicker
 
 @Composable
 fun testScreen() {
@@ -40,18 +36,41 @@ fun testScreen() {
     // Holds the URI of the selected file
     val selectedFileUri: MutableState<Uri?> = remember { mutableStateOf(null) }
 
+
+
+    ///This is my code
+    val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
+    val openFileLauncher1 = multipleFilePicker(
+       // fileTypes = arrayOf("*/*"),
+        onFilesSelected = { uris -> selectedFileUris.value = uris }
+    )
+
+    selectedFileUris.value?.forEach { uri ->
+        Log.d("multipleFile", uri.toString())  // Log each Uri
+    }
+    ///This is the end of my code
+
+
+    val selectedFilePath2 = ""
+   // Log.d("multipleFile: ", "${selectedFileUris.value?.toString()}")
+  //   Log.d("multipleFile: ", "${selectedFilePath2}")
+
+
     // File picker launcher
     val openFileLauncher = myFilePicker(onFileSelected = { uri ->
         selectedFileUri.value = uri
     })
 
-    //val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+  //  val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+
+
+
+
     //getTestImagePaths()[0]
-   val selectedFilePath = getTestImagePaths()[6]
+  // val selectedFilePath = getTestImagePaths()[6]
 
     //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg"
     //val selectedFilePath =   getTestImagePaths()[0]
-    Log.d("aabbcc",selectedFilePath)
 
 
     //val selectedFilePath: String = selectedFileUri.value.toString()?: ""
@@ -64,7 +83,9 @@ fun testScreen() {
     ) {
         // IconButton to trigger the file picker
         IconButton(onClick = {
-            openFileLauncher.launch(arrayOf("*/*")) // Launch the file picker
+            openFileLauncher1.launch(arrayOf("*/*")) // Launch the file picker
+         //   openFileLauncher.launch(arrayOf("image/*", "application/pdf"))
+          //  openFileLauncher.
         })
         {
             Icon(
@@ -77,7 +98,7 @@ fun testScreen() {
 
         // Display the selected file URI or a message if none is selected
         Text(
-            text = selectedFilePath,
+            text = selectedFilePath2,
             color = colors.onBackground,
             modifier = Modifier.padding(top = 16.dp)
         )
@@ -85,7 +106,7 @@ fun testScreen() {
         // Display the image
         Image(
             //painter = rememberAsyncImagePainter(selectedFilePath),
-            painter = rememberAsyncImagePainter(selectedFilePath),
+            painter = rememberAsyncImagePainter(selectedFilePath2),
             contentDescription = "Selected Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
