@@ -216,7 +216,3 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
         }
     }
 }
-
-
-
-
