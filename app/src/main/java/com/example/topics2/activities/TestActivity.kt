@@ -33,6 +33,7 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.unused.ImageGridScreen
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.testScreen
+import com.example.topics2.unused.testScreen3
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,9 +85,10 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTest2") {
+                NavHost(navController = navController, startDestination = "navTest3") {
 
                     composable("navTest") { testScreen() }
+                    composable("navTest3") { testScreen3() }
                     composable("navTest2") { ImageGridScreen() }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
