@@ -9,20 +9,26 @@ import com.example.topics2.db.enitities.TopicTbl
 @Dao
 interface TopicDao {
 
-    @Insert
-    suspend fun insertTopic(topic: TopicTbl)
 
-    @Query("SELECT * FROM topics ORDER BY topicLastEdit DESC")
-    suspend fun getAllTopics(): List<TopicTbl>
+ @Insert
+ suspend fun insertTopic(topic: TopicTbl)
 
-    @Query("DELETE FROM topics WHERE topicID = :topicId")
-    suspend fun deleteTopicById(topicId: Int)
+ @Query("SELECT * FROM topics ORDER BY topicLastEdit DESC")
+ suspend fun getAllTopics(): List<TopicTbl>
 
-    // Update the last modified date for a specific topic by topicId
-    @Query("UPDATE topics SET topicLastEdit = :lastEdit WHERE topicId = :topicId")
-    suspend fun updateLastModified(topicId: Int, lastEdit: Long)
+ @Query("DELETE FROM topics WHERE topicID = :topicId")
+ suspend fun deleteTopicById(topicId: Int)
+
+ // Update the last modified date for a specific topic by topicId
+ @Query("UPDATE topics SET topicLastEdit = :lastEdit WHERE topicId = :topicId")
+ suspend fun updateLastModified(topicId: Int, lastEdit: Long)
 
 
-    @Query("DELETE FROM messages WHERE topicId = :topicId")
-    suspend fun deleteMessagesForTopic(topicId: Int)
+ @Query("DELETE FROM messages WHERE topicId = :topicId")
+ suspend fun deleteMessagesForTopic(topicId: Int)
+
+ // selects the last 50 unique colours from data base to populate recent colours
+ @Query("SELECT DISTINCT topicColour FROM topics ORDER BY topicCreated DESC LIMIT 50")
+ suspend fun getDistinctColorsOrdered(): List<Int>
+
 }

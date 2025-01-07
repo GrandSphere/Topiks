@@ -32,8 +32,8 @@ import com.example.topics.utilities.SelectFileWithPicker
 
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-import com.example.topics2.ui.components.addTopic.colorToArgb
 import com.example.topics2.ui.screens.AddTopicScreen
+
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
@@ -48,13 +48,13 @@ class MainActivity : ComponentActivity() {
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
     }
 }
-
+//val Purple200 = Color(0xFFBB86FC) FIX THIS
 @Composable
 fun TopicsApp(context: Context) {
     val database = AppDatabase.getDatabase(context)
     val topicViewModel: TopicViewModel = viewModel( factory = TopicViewModel.Factory )
     val messageViewModel: MessageViewModel = viewModel( factory = MessageViewModel.Factory )
-    //val messageViewModel: Messaag
+
     val topBarViewModel: TopBarViewModel = viewModel()
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
@@ -88,13 +88,14 @@ fun TopicsApp(context: Context) {
             ) {
                 // Setting up the NavHost with two screens
                 NavHost(navController = navController, startDestination = "navtopicListScreen") {
+                //NavHost(navController = navController, startDestination = "navrecentcolours") {
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
+                    composable("navrecentcolours") { ColorGridScreen(navController, topicViewModel )}
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->
-
                         val topicId = backStackEntry.arguments?.getInt("topicId")
                         if (topicId != -1) {
                             messageViewModel.setShowPicker(false)
