@@ -38,6 +38,7 @@ import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.TopicListScreen
+import com.example.topics2.ui.screens.testScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
@@ -89,7 +90,9 @@ fun TopicsApp(context: Context) {
             ) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
-                NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
+                //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
+                    NavHost(navController = navController, startDestination = "navTest") {
+                        composable("navTest") { testScreen()}
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") { TopicListScreen( navController, topicViewModel ) }
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
