@@ -181,9 +181,7 @@ fun InputBarMessageScreen(
         // Write file to user directory as file is picked
         if (filePicked)
         {
-           Log.d("AABBCCDD", " COPY IS NOW RAN")
-          // copyFileToUserFolder(LocalContext.current, viewModel)
-
+            viewModel.setfilePicked(false)
             copyFileToUserFolder(context = LocalContext.current, viewModel)
             LaunchedEffect(filePicked) {
                 coroutineScope.launch {

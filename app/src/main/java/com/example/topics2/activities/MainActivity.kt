@@ -33,6 +33,7 @@ import com.example.topics.utilities.SelectFileWithPicker
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
+import com.example.topics2.ui.screens.ColorGridScreen
 
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen

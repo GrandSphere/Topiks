@@ -41,12 +41,13 @@ fun FilePickerIcon(onFileSelected: (Uri?) -> Unit, fileTypes: Array<String> = ar
 @Composable
 fun FilePickerMessage(onFileSelected: (Uri?) -> Unit, fileTypes: Array<String> = arrayOf("*/*"), navController: NavController, messageViewModel: MessageViewModel) {
     val context = LocalContext.current
-
+  //  messageViewModel.setfilePicked(false)
+   // messageViewModel.setShowPicker(false)
     // Register the launcher for opening a document picker
     val openFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
-            if (uri == null){ messageViewModel.setShowPicker(false)}
+           if (uri == null){ messageViewModel.setShowPicker(false)}
             uri?.let { selectedUri ->
                 // Persist access permission to the URI
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
