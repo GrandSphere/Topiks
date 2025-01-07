@@ -105,11 +105,6 @@ suspend fun loadDistinctColors() {
         topicDao.deleteTopicById(topicId)
     }
 
-
-
-
-
-
 // Delete a topic by its ID
 fun deleteTopic(topicId: Int) {
     viewModelScope.launch (Dispatchers.IO){
