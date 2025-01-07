@@ -88,7 +88,8 @@ fun InputBarMessageScreen(
 
     val showPicker: Boolean = viewModel.showPicker.collectAsState().value
     val filePicked: Boolean = viewModel.filePicked.collectAsState().value
-
+    val filePath: String = viewModel.fileURI.collectAsState().value
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
@@ -181,8 +182,21 @@ fun InputBarMessageScreen(
         {
            Log.d("AABBCCDD", " COPY IS NOW RAN")
           // copyFileToUserFolder(LocalContext.current, viewModel)
-            copyFileToUserFolder(context = LocalContext.current, viewModel
-            )
+
+            copyFileToUserFolder(context = LocalContext.current, viewModel)
+            LaunchedEffect(filePicked) {
+                coroutineScope.launch {
+                    viewModel.addMessage(
+                        topicId = topicId,
+                        content = "",
+                        priority = messagePriority,
+                        fileType = 112,
+                        filePath = filePath
+                    )
+                }
+            }
+
+
         }
 
 
@@ -202,8 +216,10 @@ fun InputBarMessageScreen(
                     .height(vIconSize)
             )
         }
-        val coroutineScope = rememberCoroutineScope()
-        Spacer(modifier = focusModifier.width(5.dp).focusRequester(focusRequester)
+
+        Spacer(modifier = focusModifier
+            .width(5.dp)
+            .focusRequester(focusRequester)
         )
         IconButton( // SEND BUTTON
             onClick = {
@@ -214,17 +230,21 @@ fun InputBarMessageScreen(
                     if (tempMessageID > -1){ // Edit Mode
                         coroutineScope.launch {
                             viewModel.editMessage(
-                                tempMessageID,
-                                topicId,
-                                tempInput,
-                                messagePriority
+                                messageId = tempMessageID,
+                                topicId = topicId,
+                                content = tempInput,
+                                priority = messagePriority
                             )
                             tempMessageID=-1
                         }
                     }
                     else { //Send Mode
                         coroutineScope.launch {
-                            viewModel.addMessage(topicId, tempInput, messagePriority)
+                            viewModel.addMessage(
+                                topicId = topicId,
+                                content = tempInput,
+                                priority = messagePriority
+                            )
                         }
                     }
                 }

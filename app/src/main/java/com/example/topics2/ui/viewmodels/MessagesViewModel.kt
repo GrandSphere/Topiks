@@ -35,6 +35,11 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val fileURI: StateFlow<String> = _fileURI
     fun setURI(newURI: String) { _fileURI.value = newURI }
 
+    // File Name for file imports
+    private val _fileName = MutableStateFlow<String>("")
+    val fileName: StateFlow<String> = _fileName
+    fun setfileName(newFileName: String) { _fileName.value = newFileName }
+
     // File destination URI for file imports
     private val _destURI = MutableStateFlow<String>("")
     val destURI: StateFlow<String> = _destURI
@@ -73,8 +78,21 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     }
 
     // Add Message
-    suspend fun addMessage(topicId: Int?, content: String, priority: Int) {
-        val newMessage = createMessage(topicId, content, priority)
+    suspend fun addMessage(
+        topicId: Int?,
+        content: String,
+        priority: Int,
+        filePath: String = "",
+        fileType: Int = 0
+    ) {
+        val newMessage = MessageTbl(
+            topicId = topicId,
+            messageContent = content,
+            messagePriority = priority,
+            filePath = filePath,
+            fileType = fileType,
+            messageTimestamp = System.currentTimeMillis()
+            )
         messageDao.insertMessage(newMessage) // Insert the message into the database
         fetchMessages(topicId)
     }
@@ -94,20 +112,6 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
         )
         messageDao.updateMessage(editedMessage)
         fetchMessages(topicId)
-    }
-
-
-    // New Message
-    private fun createMessage(
-        topicId: Int?, content: String, priority: Int,
-        messageTimestamp: Long = System.currentTimeMillis() ): MessageTbl
-    {
-        return MessageTbl(
-            topicId = topicId,
-            messageContent = content,
-            messageTimestamp = messageTimestamp,
-            messagePriority = priority
-        )
     }
 
     companion object {
