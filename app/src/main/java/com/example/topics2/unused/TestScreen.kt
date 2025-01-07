@@ -1,4 +1,5 @@
-package com.example.topics2.ui.screens
+package com.example.topics2.unused
+
 
 import android.content.Intent
 import android.net.Uri
@@ -30,7 +31,6 @@ import myFilePicker
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
-
 @Composable
 fun testScreen() {
     val colors = MaterialTheme.colorScheme
@@ -43,13 +43,13 @@ fun testScreen() {
         selectedFileUri.value = uri
     })
 
-    // Get the file path from the selected URI (only if valid)
-    val selectedFilePath = selectedFileUri.value?.path ?: "nothing"
+    val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+    //val selectedFilePath: String = selectedFileUri.value.toString()?: ""
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            //.padding(16.dp)
             .background(Color.DarkGray)
     ) {
         // IconButton to trigger the file picker
@@ -72,12 +72,13 @@ fun testScreen() {
             modifier = Modifier.padding(top = 16.dp)
         )
         // Check if selectedFilePath has a valid file path and is not the fallback value ("nothing")
-            // Display the image
-            Image(
-                painter = rememberAsyncImagePainter(selectedFilePath),
-                contentDescription = "Selected Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        // Display the image
+        Image(
+            //painter = rememberAsyncImagePainter(selectedFilePath),
+            painter = rememberAsyncImagePainter(selectedFilePath),
+            contentDescription = "Selected Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
