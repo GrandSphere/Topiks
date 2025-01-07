@@ -66,7 +66,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController, viewModel: MessageViewModel, topicId: Int?
+    navController: NavController, viewModel: MessageViewModel, topicId: Int?,
+    topicColour: Color = MaterialTheme.colorScheme.onPrimary
 ) {
 
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -211,7 +212,8 @@ fun InputBarMessageScreen(
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Attach",
-                tint = colors.tertiary,
+                //tint = colors.tertiary,
+                tint = topicColour,
                 modifier = Modifier
                     .height(vIconSize)
             )
@@ -252,14 +254,15 @@ fun InputBarMessageScreen(
             modifier = Modifier
                 .size(vButtonSize)
                 .fillMaxWidth(1f)
-                .background(Color.Transparent)
+                //.background(Color.Transparent)
                 .align(Alignment.Bottom)
         ) {
             Icon(
                 imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
                 //imageVector = Icons.Filled.Send, // Attach file icon
                 contentDescription = "Attach",
-                tint = colors.tertiary,
+                //tint = colors.tertiary,
+                tint = topicColour,
                 modifier = Modifier
                     .size(vIconSize)
                 //.aspectRatio(2.5f)

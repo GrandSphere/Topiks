@@ -1,4 +1,8 @@
 package com.example.topics2.ui.components.addTopic
+import android.content.ClipboardManager
+import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -119,4 +122,42 @@ fun CustomSlider(
             }
         }
     )
+}
+
+// Convert Color to Hex (ARGB)
+fun colorToHex(color: Color): String {
+    val red = (color.red * 255).toInt()
+    val green = (color.green * 255).toInt()
+    val blue = (color.blue * 255).toInt()
+
+    return String.format("#%02X%02X%02X", red, green, blue)
+}
+
+
+// Convert Hex to Color (RGB), with input sanitization
+fun hexToColor(hex: String): Color {
+    // Step 1: Remove '#' if it exists
+    // Step 2: Filter out any characters that are not valid hex digits
+    val cleanHex = hex.removePrefix("#").filter { it.isDigit() || it in 'A'..'F' || it in 'a'..'f' }
+
+    // Step 3: Take the first 6 characters
+    // Step 4: If the string is shorter than 6 characters, pad with '0's
+    val sanitizedHex = cleanHex.take(6).padEnd(6, '0')
+
+    // Step 5: Convert the hex string to RGB values
+    val red = Integer.valueOf(sanitizedHex.substring(0, 2), 16) / 255f
+    val green = Integer.valueOf(sanitizedHex.substring(2, 4), 16) / 255f
+    val blue = Integer.valueOf(sanitizedHex.substring(4, 6), 16) / 255f
+
+    return Color(red, green, blue)
+}
+
+@Composable
+fun getClipboardText(): String? {
+    val context = LocalContext.current
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    // Get the primary clip (the first item on the clipboard)
+    val clip = clipboardManager.primaryClip
+    return clip?.getItemAt(0)?.text?.toString()  // Retrieve the text and convert it to String
 }

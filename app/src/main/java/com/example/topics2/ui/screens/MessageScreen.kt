@@ -125,7 +125,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     inputBarHeightPx = size.height
                 }
         ) {
-            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId)
+            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
     }
 
