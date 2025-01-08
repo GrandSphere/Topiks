@@ -34,6 +34,9 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
 import com.example.topics2.unused.MyScreen
+import com.example.topics2.unused.PreviewChatBubble
+import com.example.topics2.unused.PreviewOverflowingLayout
+import com.example.topics2.unused.PreviewResizedComponentsView
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
 
@@ -88,13 +91,14 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTest2") {
-
+                NavHost(navController = navController, startDestination = "navTest3") {
+                    composable("navTest3") { PreviewOverflowingLayout () }
+                    composable("navTest2") { PreviewChatBubble () }
                     composable("navTest") { testScreen () }
                     composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { MessageBubble(navController) }
+                    composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
