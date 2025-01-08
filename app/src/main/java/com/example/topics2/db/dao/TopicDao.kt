@@ -1,10 +1,8 @@
 package com.example.topics2.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.flow.Flow
 
