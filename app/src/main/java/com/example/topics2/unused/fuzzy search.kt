@@ -1,7 +1,9 @@
 package com.example.topics2.unused
 
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
@@ -13,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -200,6 +203,8 @@ fun App() {
     FuzzySearchScreen()
 }*/
 
+
+/* // working ONE
 @Composable
 fun FuzzySearchScreen(viewModel: FuzzySearchViewModel = viewModel()) {
     var query by remember { mutableStateOf("") }
@@ -248,6 +253,136 @@ class FuzzySearchViewModel : ViewModel() {
             }
 
             _searchResults.value = results
+        }
+    }
+}
+
+ */
+
+
+//fun generateSampleList(): List<String> {
+//    return listOf(
+//        "Apple Banana Orange", "Blueberry Strawberry Blackberry", "Beetroot Spinach Carrot",
+//        "Strawberry Grapes", "Grapes Pineapple Mango", "Orange Mango Smoothie",
+//        "Banana Split Dessert", "Apple Pie", "Blackberry Jam", "Carrot Cake", "Beetroot Juice",
+//        "Strawberry Ice Cream", "Blueberry Pancakes", "Blackberry Tart", "Pineapple Upside Down Cake",
+//        "Grape Jelly", "Orange Sorbet", "Mango Lassi", "Peach Cobbler", "Cherry Pie",
+//        "Watermelon Salad", "Coconut Water", "Pear Tart", "Kiwi Smoothie", "Lemonade",
+//        "Lime Margarita", "Guava Jam", "Papaya Salad", "Plum Sauce", "Raspberry Tart",
+//        "Cranberry Sauce", "Fig Newtons", "Pomegranate Juice", "Apricot Jam", "Dragonfruit Bowl",
+//        "Lychee Martini", "Passionfruit Cake", "Tangerine Sorbet", "Starfruit Salad",
+//        "Durian Pudding", "Avocado Toast", "Jackfruit Chips", "Tomato Soup", "Cucumber Sandwich",
+//        "Pumpkin Pie", "Carrot Muffin", "Broccoli Salad", "Cauliflower Mash", "Spinach Lasagna",
+//        "Lettuce Wrap", "Zucchini Bread", "Eggplant Parmesan", "Potato Gratin", "Onion Rings",
+//        "Garlic Bread", "Radish Pickle", "Beetroot Hummus", "Asparagus Soup", "Artichoke Dip",
+//        "Celery Sticks", "Turnip Mash", "Parsnip Chips", "Leek Tart", "Okra Stew", "Chilli Sauce",
+//        "Peas Soup", "Beans Salad", "Cornbread", "Squash Soup", "Brussels Sprouts Casserole",
+//        "Kale Chips", "Collard Greens Stir Fry", "Swiss Chard Salad", "Arugula Pesto", "Cabbage Slaw"
+//        // Add more strings as needed to reach 500
+//    )
+//}
+
+class FuzzySearchViewModel : ViewModel() {
+    private val _searchResults = MutableStateFlow<List<String>>(emptyList())
+    val searchResults: StateFlow<List<String>> = _searchResults
+
+    private val dataList = generateSampleList()
+
+    fun performMixedSearch(query: String) {
+        viewModelScope.launch {
+            // Split the query into substrings and handle exclusion with "!"
+            val keywords = query.lowercase().split(" ").filter { it.isNotBlank() }
+
+            val results = dataList.filter { item ->
+                val lowercasedItem = item.lowercase()
+
+                // Process each keyword to check for exclusion
+                keywords.all { keyword ->
+                    if (keyword.startsWith("!")) {
+                        // If keyword starts with "!", exclude results containing this substring
+                        !lowercasedItem.contains(keyword.substring(1)) // Remove the "!"
+                    } else {
+                        // Otherwise, include results that contain the substring
+                        lowercasedItem.contains(keyword)
+                    }
+                }
+            }
+
+            _searchResults.value = results
+        }
+    }
+}
+
+/*
+@Composable
+fun FuzzySearchScreen(viewModel: FuzzySearchViewModel = viewModel()) {
+    var query by remember { mutableStateOf("") }
+    val searchResults by viewModel.searchResults.collectAsState()
+
+    Column(modifier = Modifier.padding(16.dp).background(Color.Red)) {
+        BasicTextField(
+            value = query,
+            onValueChange = {
+                query = it
+                viewModel.performMixedSearch(it)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn {
+            items(searchResults.size) { index ->
+                Text(text = searchResults[index], modifier = Modifier
+                    .padding(8.dp)
+                    .clickable(onClick = {Log.d("aaccdd",""})
+
+                )
+
+            }
+        }
+    }
+}
+*/
+@Composable
+fun App() {
+    FuzzySearchScreen()
+}
+
+
+@Composable
+fun FuzzySearchScreen(viewModel: FuzzySearchViewModel = viewModel()) {
+    var query by remember { mutableStateOf("") }
+    val searchResults by viewModel.searchResults.collectAsState()
+
+    Column(modifier = Modifier.padding(16.dp).background(Color.Red)) {
+        BasicTextField(
+            value = query,
+            onValueChange = {
+                query = it
+                viewModel.performMixedSearch(it)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn {
+            items(searchResults) { item ->
+                Text(
+                    text = item,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable(onClick = {
+                            // Log the clicked text value
+                            Log.d("aaccdd", "Clicked on: $item")
+                        })
+                )
+            }
         }
     }
 }
