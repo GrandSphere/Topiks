@@ -7,9 +7,12 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
+import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
+import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.enitities.TopicTbl
+import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -17,7 +20,11 @@ import kotlinx.coroutines.flow.onEach
 
 // TODO Fix category add when adding message
 // TODO Fix created time when  editing when adding message
-class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
+class MessageViewModel (
+    private val messageDao: MessageDao,
+    private val topicDao: TopicDao,
+    private val filesDao: FilesDao
+): ViewModel() {
 
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
@@ -96,7 +103,40 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
             categoryId = categoryID
             )
         messageDao.insertMessage(newMessage) // Insert the message into the database
-        messageDao.updateLastModifiedTopic(topicId, timestamp)
+        topicDao.updateLastModifiedTopic(topicId, timestamp)
+    }
+
+    // Retrieve files for specific messageID
+    suspend fun getFilesByMessageId(messageId: Int)
+    {
+        filesDao.getFilesByMessageId(messageId)
+    }
+
+    // Add File to File_tbl
+    suspend fun addFile(
+        topicId: Int,
+        messageId: Int,
+        fileType: String,
+        filePath: String,
+        description: String,
+        iconPath: String = "",
+        categoryId: Int,
+        createTime: Long = System.currentTimeMillis()
+
+    ) {
+        val value = filesDao.insertFile(
+            FileTbl(
+                topicId = topicId,
+                messageId = messageId,
+                fileType = fileType,
+                filePath = filePath,
+                description = description,
+                iconPath = iconPath,
+                categoryId = categoryId,
+                createTime = createTime
+        )
+
+        )
     }
 
     //Edit Message
@@ -132,7 +172,7 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
                 // Get the TopicDao from the Application class
                 val myApplication = application as DbTopics
-                return MessageViewModel(myApplication.messageDao) as T
+                return MessageViewModel(myApplication.messageDao, myApplication.topicDao, myApplication.filesDao) as T
             }
         }
     }

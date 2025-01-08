@@ -22,7 +22,9 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("DELETE FROM topic_tbl WHERE id = :topicId")
  suspend fun deleteTopicById(topicId: Int)
 
-
+ // Update the last modified date for a specific topic by topicId
+ @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
+ suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
 
 
  //@Query("DELETE FROM message_tbl WHERE topicId = :topicId")
