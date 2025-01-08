@@ -218,6 +218,7 @@ fun InputBarMessageScreen(
         IconButton( // SEND BUTTON
             onClick = {
                 viewModel.setToFocusTextbox(false)
+
                 if (inputText.isNotBlank()) {
                     val tempInput =inputText
                     inputText = ""
