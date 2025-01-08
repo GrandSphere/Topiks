@@ -46,7 +46,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     // File URI for image imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
-    fun setURI(newURI: String) { _fileURI.value = newURI }
+    fun setFileURI(newURI: String) { _fileURI.value = newURI }
 
     // Only used in addTopic, to store values before adding to DB
     private val _category = MutableStateFlow<String>("")
@@ -72,14 +72,6 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
             loadDistinctColours()
         }
     }
-
-// TO DELETE AFTER NEW FILE PICKER IMPLEMENTATION
-    // States whether file picker is done
-    private val _showPicker = MutableStateFlow<Boolean>(false)
-    val showPicker: StateFlow<Boolean> = _showPicker
-    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
-// TO DELETE AFTER NEW FILE PICKER IMPLEMENTATION
-
 
 // Suspend function to get distinct recent colors
 suspend fun loadDistinctColors() {

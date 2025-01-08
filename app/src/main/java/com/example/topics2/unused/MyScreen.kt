@@ -17,14 +17,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import myFilePicker
+import iconFilePicker
 
 
 @Composable
 fun MyScreen() {
     // Holds the URI of the selected file
     val selectedFileUri: MutableState<Uri?> = remember { mutableStateOf(null) }
-    val openFileLauncher = myFilePicker(onFileSelected = {uri->selectedFileUri.value=uri})
+    val openFileLauncher = iconFilePicker(onFileSelected = { uri->selectedFileUri.value=uri})
 
     // Get the file picker launcher from the FilePicker composable
     // Update the selected URI when a file is chosen

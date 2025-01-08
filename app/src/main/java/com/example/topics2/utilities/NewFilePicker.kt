@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 // Utility function for handling the file picking
 // FilePicker Composable that returns the ActivityResultLauncher
 @Composable
-fun myFilePicker(
+fun iconFilePicker(
     onFileSelected: (Uri?) -> Unit,
     fileTypes: Array<String> = arrayOf("*/*") // Default file types (all files)
 ): ActivityResultLauncher<Array<String>> {

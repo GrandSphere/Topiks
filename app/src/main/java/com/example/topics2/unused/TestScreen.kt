@@ -1,12 +1,8 @@
 package com.example.topics2.unused
 
 
-import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,18 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import myFilePicker
+import iconFilePicker
 
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
 import multipleFilePicker
-import myFilePicker
 
 @Composable
 fun testScreen() {
@@ -62,7 +56,7 @@ fun testScreen() {
 
 
     // File picker launcher
-    val openFileLauncher = myFilePicker(onFileSelected = { uri ->
+    val openFileLauncher = iconFilePicker(onFileSelected = { uri ->
         selectedFileUri.value = uri
     })
 

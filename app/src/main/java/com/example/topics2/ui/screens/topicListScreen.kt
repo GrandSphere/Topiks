@@ -52,7 +52,6 @@ import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
@@ -60,7 +59,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 
     //val inputColor = Color.Gray     // Example input color
     //val outputColor = chooseColorBasedOnLuminance(inputColor)
-    //println(outputColor) // This will print the output color
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -95,8 +94,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 onClick = {
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
-                    viewModel.setURI("")
-                    viewModel.setShowPicker(false)
+                    viewModel.setFileURI("")
                     navController.navigate("navaddtopic")
                           },
                 modifier = Modifier
@@ -126,11 +124,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 detectTapGestures(
                     onTap = { // Go to specific Topic
                         viewModel.cTopicColor=argbToColor(topic.colour)
-                        //viewModel
                         //viewModel.setTopicColor(topic)
-
-                        // SET MESSAGEVIEWMODEL showpicker false
-
                         navController.navigate("navnotescreen/${topic.id}/${topic.name}")
                     },
                     onLongPress = { showMenu = true }
@@ -144,7 +138,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             // TODO check image validity AND compress images
             val imageUrl = topic.iconPath
             if (imageUrl != "") {
-                Log.d("THIS IS NOT NULL", imageUrl )
                 // Load and display the image
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
@@ -156,7 +149,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         .clip(CircleShape) // Clip the image into a circular shape
                 )
             } else {
-
                 // Show an icon as a fallback if no image URL is provided
                 Surface(
                     //color = colors.primaryContainer,
@@ -184,9 +176,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     }
                 }
             }
-
-
-
 
             Spacer(modifier = Modifier.width(16.dp))
             Text(

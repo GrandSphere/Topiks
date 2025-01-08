@@ -27,7 +27,7 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
     private val _filePicked = MutableStateFlow<Boolean>(false)
     val filePicked: StateFlow<Boolean> = _filePicked
-    fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
+    // fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
 
     // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
