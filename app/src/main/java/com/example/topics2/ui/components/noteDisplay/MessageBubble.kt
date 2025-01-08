@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -55,7 +52,7 @@ fun MessageBubble(
     //focusManager.clearFocus()
     val clipboardManager = LocalClipboardManager.current
     val formattedTimestamp =
-        SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.messageTimestamp)
+        SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.createTime)
 
     Row(
         modifier = Modifier
@@ -88,7 +85,7 @@ fun MessageBubble(
                     .padding(6.dp), //space around message
             ) {
                 Text(
-                    text = message.messageContent,
+                    text = message.content,
                     color=topicFontColor,
                     style = MaterialTheme.typography.bodyMedium,
                     //color = MaterialTheme.colorScheme.onPrimary
@@ -114,7 +111,7 @@ fun MessageBubble(
                 text = { Text("Copy") },
                 onClick = {
 
-                    clipboardManager.setText(annotatedString = (AnnotatedString(message.messageContent)))
+                    clipboardManager.setText(annotatedString = (AnnotatedString(message.content)))
                    showMenu = false
                 }
             )
@@ -124,7 +121,7 @@ fun MessageBubble(
                 onClick = {
 
                     viewModel.setToUnFocusTextbox(true)
-                    viewModel.setTempMessage(message.messageContent)
+                    viewModel.setTempMessage(message.content)
                     viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)
                     showMenu = false
