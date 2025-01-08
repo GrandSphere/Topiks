@@ -7,7 +7,6 @@ package com.example.topics2.ui.components.noteDisplay
 
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +47,6 @@ import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
 import multipleFilePicker
-import myFilePicker
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -75,7 +73,7 @@ fun InputBarMessageScreen(
     val focusRequester2 = remember { FocusRequester() }
 
 
-    val filePicked: Boolean = viewModel.filePicked.collectAsState().value
+    // val filePicked: Boolean = viewModel.filePicked.collectAsState().value
     val filePath: String = viewModel.fileURI.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
 
@@ -85,7 +83,7 @@ fun InputBarMessageScreen(
         fileTypes = arrayOf("*/*"),
         onFilesSelected = { uris -> selectedFileUris.value = uris }
     )
-    Log.d("THISISMYTAG", selectedFileUris.value.toString())
+    // Log.d("THISISMYTAG", selectedFileUris.value.toString())
 
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
