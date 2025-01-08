@@ -38,8 +38,8 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
 
     viewModel.collectMessages(topicId)
-    Log.d("TOPICID", "$topicId")
-   // viewModel.setTopicId(topicId)
+
+
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 

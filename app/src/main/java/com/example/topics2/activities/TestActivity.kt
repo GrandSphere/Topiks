@@ -29,7 +29,8 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.ImageGridScreen
+import com.example.topics2.unused.DisplayState2
+import com.example.topics2.unused.testScreen2
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
@@ -87,9 +88,11 @@ fun TestApp(context: Context) {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
                 NavHost(navController = navController, startDestination = "navTest2") {
 
+                    composable("navTest") { testScreen () }
+                    composable("navState2") { DisplayState2 (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { ImageGridScreen() }
+                    composable("navTest2") { testScreen2(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
@@ -118,10 +121,9 @@ fun TestApp(context: Context) {
                     ) { backStackEntry ->
                         val topicId = backStackEntry.arguments?.getInt("topicId")
                         if (topicId != -1) {
-                            messageViewModel.setShowPicker(false)
                             MessageScreen(
                                 // TODO: Check topicId!!
-                                navController, messageViewModel, topicId!!,
+                                navController, messageViewModel, topicId ?: -1,
                                 topicColor = topicViewModel.cTopicColor,
                             )
                         }

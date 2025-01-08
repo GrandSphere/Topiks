@@ -100,21 +100,21 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
-                    if (viewModel.fileURI.value.length > 4) {
+                 //   if (viewModel.fileURI.value.length > 4) {
 
                         // TODO I BROKE THIS
                         //copyIconToAppFolder(context, viewModel)
-                    }
+                  //  }
                     viewModel.addTopic(
                         topicName = inputText,
                         topicColour = iColor,
-                       // topicCategory = viewModel.tempcategory.value,
+//                        topicCategory = viewModel.tempcategory.value,
                         topicCategory = 1,
                         topicIconPath = viewModel.fileURI.value,
                         topicPriority = 0,
                     )
 
-                    viewModel.setURI("")
+                    viewModel.setFileURI("")
                     inputText = ""
                     navController.popBackStack()
                 }
