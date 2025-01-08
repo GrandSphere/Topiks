@@ -1,9 +1,11 @@
 package com.example.topics2.unused
 import android.R
 import android.util.Log
+import android.view.Surface
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -65,7 +68,7 @@ fun testScreen2(
     val columnHeight = 300.dp
 
     // Image size for preview
-    val imageSize = 30.dp
+    //val imageSize = 30.dp
     val imageSpacing = 2.dp // Spacing between images
 
     // Calculate the maximum number of images to show
@@ -82,7 +85,7 @@ fun testScreen2(
             DisplayState1(
                 imagePaths = imagePaths,
                 maxImagesVisible = maxImagesVisible,
-                imageSize = imageSize,
+                //imageSize = imageSize,
                 imageSpacing = imageSpacing,
                 columnWidth = columnWidth,
                 columnHeight = columnHeight,
@@ -103,67 +106,6 @@ fun testScreen2(
     }
 }
 
-@Composable
-fun DisplayState1(
-    topicColor: Color,
-    topicFontColor: Color,
-    imagePaths: List<String>,
-    maxImagesVisible: Int,
-    imageSize: Dp,
-    imageSpacing: Dp,
-    columnWidth: Dp,
-    columnHeight: Dp,
-    onShowMore: () -> Unit // Pass a lambda to update the state
-) {
-    Box(
-
-        modifier = Modifier
-            //.fillMaxSize()
-            .width(columnWidth)
-            //.height(columnHeight)
-            .background(Color.Red)
-
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2), // 2 images per row
-            modifier = Modifier
-                //.fillMaxSize()
-                .width(columnWidth)
-                //.height(columnHeight)
-                .background(Color.Red)
-        ) {
-            items(imagePaths.take(maxImagesVisible)) { imagePath ->
-                Image(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .width(imageSize)
-                        //.height(50.dp)
-
-                        //.size(imageSize)
-                        .padding(end = imageSpacing, bottom = imageSpacing),
-                    painter = rememberAsyncImagePainter(imagePath),
-                    contentDescription = "Image",
-                    //contentScale = ContentScale.Fit, // Ensures aspect ratio is maintained
-                    contentScale = ContentScale.Crop, // Ensures aspect ratio is maintained
-                )
-            }
-
-            // Show More button if there are more than 4 images
-            item {
-                if (imagePaths.size > maxImagesVisible) {
-                    Button(
-                        onClick = onShowMore, // Call the lambda passed from the parent
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
-                    ) {
-                        Text("Show More")
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun DisplayState2( // State 2
@@ -181,7 +123,7 @@ fun DisplayState2( // State 2
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                //.background(Color.Red)
+            //.background(Color.Red)
         ) {
             items(imagePaths) { imagePath ->
                 SubcomposeAsyncImage(
@@ -198,7 +140,7 @@ fun DisplayState2( // State 2
                     modifier = Modifier
                         .fillMaxWidth() // Take full width
                         .padding(bottom = 2.dp)
-                        //.border(2.dp, Color.Black) // Add border around the image
+                    //.border(2.dp, Color.Black) // Add border around the image
                 )
             }
         }
@@ -209,7 +151,7 @@ fun DisplayState2( // State 2
                 .align(Alignment.BottomEnd) // Align to the bottom end
                 .padding(16.dp), // Add padding to the edge
             //containerColor = topicColor,
-                //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
+            //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
             shape = CircleShape, // Change the shape to rounded corners
 
         ) {
@@ -218,6 +160,76 @@ fun DisplayState2( // State 2
                 contentDescription = "Add",
                 tint = topicFontColor
             )
+        }
+    }
+}
+
+
+@Composable
+fun DisplayState1( // State 1
+    topicColor: Color,
+    topicFontColor: Color,
+    imagePaths: List<String>,
+    maxImagesVisible: Int,
+    //imageSize: Dp,
+    imageSpacing: Dp,
+    columnWidth: Dp,
+    columnHeight: Dp,
+    onShowMore: () -> Unit // Pass a lambda to update the state
+) {
+    val iNumber: Int = 1 // Number of images to show initially
+    val iNumberColumns: Int = 2 // Number of columns (2 per row)
+
+
+    Box(
+        modifier = Modifier
+            .width(columnWidth)
+            .background(Color.Red)
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(iNumberColumns), // 2 images per row
+            modifier = Modifier
+                .width(columnWidth)
+                .background(Color.Red)
+        ) {
+            // Display the images
+            items(imagePaths.take(iNumber)) { imagePath ->
+                Image(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        //.width(imageSize)
+                        .padding(end = imageSpacing, bottom = imageSpacing),
+                    painter = rememberAsyncImagePainter(imagePath),
+                    contentDescription = "Image",
+                    contentScale = ContentScale.Crop, // Crops the image if necessary
+                )
+            }
+
+            // Show More button in the 4th slot
+            item {
+                if (imagePaths.size > maxImagesVisible) {
+                    Box(
+                        modifier = Modifier
+
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            //.height(100.dp)
+                            .padding(end = imageSpacing, bottom = imageSpacing)
+                            .background(Color.Gray) // Background color for the "Show More" area
+                            .clickable(onClick = onShowMore) // Trigger the show more action
+                            .align(Alignment.Center) // Center the content inside the Box
+                    ) {
+                        Text(
+                            text = "Show More",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize(Alignment.Center), // Center the text
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
         }
     }
 }
