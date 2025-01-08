@@ -1,6 +1,4 @@
 package com.example.topics2.unused
-import android.util.Log
-import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,28 +8,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 //import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -43,37 +32,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Divider
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun testScreen2(
+fun testScreen2( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
     navController: NavController,
-    topicColor: Color = Color.Cyan ,
+    topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black
 ) { // Main screen
     val iPictureCount: Int =5
-        val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
+    val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
     val imagePaths = getTestImagePaths()
     var showMore by remember { mutableStateOf(false) }
-    var messagecontent="aaaaaa\naaaaaaaaaaaaaaaaa\naaa\nnnnnnnnnnnnnnna"
+    var messagecontent="This is my first sentence\nThis is my second sentence\n\nthis nothing"
     var containsPictures: Boolean = true
     var containsAttachments: Boolean = false
     val withContentWidth: Float = 0.8f
@@ -96,45 +74,22 @@ fun testScreen2(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(0.dp)
-                //.width(200.dp)
-//                    .onSizeChanged { size ->
-//                        componentWidth = size.width
-//                        Log.d("aabbcc width changed", componentWidth.toString())
-//                    }
             )
 
             if (containsAttachments) {
-                Column(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                //.border(2.dp, Color.Red)
-                                .background(topicFontColor.copy(opacity)) // 50% transparent blue
-                                .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
-                                .fillMaxWidth(withContentWidth)
-                                .padding(vertical =5.dp)
-                                .padding(5.dp)
-                    //.padding(20.dp),
-                ) { //Divider(color = Color.Red, thickness = 2.dp)
-                    listOfAttachments.forEach { attachment ->
-                        Text( // get text name from path
-                            text = attachment,
-                            modifier = Modifier
-                                .widthIn(min=200.dp)
-                                .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
-                            style = TextStyle(
-                                fontSize = 16.sp, // Set font size as needed
-                                color = topicFontColor, // Set text color
-                                textDecoration = TextDecoration.Underline // Underline text
-                            )
-                        )
+                showAttachments(
+                    topicFontColor = topicFontColor,
+                    topicColor = topicColor,
+                    opacity= opacity,
+                    newBubbleWidth = withContentWidth,
+                    attachments = listOfAttachments,
+                )
 
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             if (containsPictures) {
                 if (!showMore) {
-                    DisplayState1(
+                    picturesPreview(
                         modifiera = Modifier
                             //.widthIn(min=200.dp)
                             //.width(componentWidth.dp),
@@ -149,7 +104,7 @@ fun testScreen2(
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             Text(
-                text = "my timestamp",
+                text = "02:07 08/01/25",
                 color=topicFontColor,
                 style = MaterialTheme.typography.bodySmall,
                 // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
@@ -164,11 +119,8 @@ fun testScreen2(
 
 }
 
-
-
-
 @Composable
-fun DisplayState1( // State 1
+fun picturesPreview( // State 1
     topicColor: Color,
     topicFontColor: Color,
     imagePaths: List<String>,
@@ -191,10 +143,16 @@ fun DisplayState1( // State 1
             iNumberColumns=2 }
         else -> { iPicturesToShow = 3
             iNumberColumns=2 } }
-    Box(
+    Column(
         modifiera
     ) {
+
+        //Spacer(modifier = Modifier.height(8.dp)) //space between message and date
+        //Divider(color = topicFontColor, thickness = 3.dp)
+        //Spacer(modifier = Modifier.height(5.dp)) //space between message and date
+
         LazyVerticalGrid(
+
             horizontalArrangement = Arrangement.spacedBy(1.dp), // Horizontal space between items
             verticalArrangement = Arrangement.spacedBy(1.dp),
 
@@ -226,7 +184,7 @@ fun DisplayState1( // State 1
                             .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
                             .aspectRatio(1f)
                             .clickable(onClick = onShowMore) // Trigger the show more action
-                            .align(Alignment.Center) // Center the content inside the Box
+                            //.align(Alignment.Center) // Center the content inside the Box
                     ) {
                         Text(
                             text = "Show More...",
@@ -239,6 +197,42 @@ fun DisplayState1( // State 1
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun showAttachments(
+    topicFontColor: Color,
+    topicColor: Color,
+    opacity: Float = 0.0f,
+    newBubbleWidth: Float = 1f,
+    attachments: List<String>,
+) {
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            //.border(2.dp, Color.Red)
+            .background(topicFontColor.copy(opacity)) // 50% transparent blue
+            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
+            .fillMaxWidth(newBubbleWidth)
+            .padding(vertical =5.dp)
+            .padding(5.dp)
+        //.padding(20.dp),
+    ) { //Divider(color = Color.Red, thickness = 2.dp)
+        attachments.forEach { attachment ->
+            Text( // get text name from path
+                text = attachment,
+                modifier = Modifier
+                    .widthIn(min=200.dp)
+                    .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
+                style = TextStyle(
+                    fontSize = 16.sp, // Set font size as needed
+                    color = topicFontColor, // Set text color
+                    textDecoration = TextDecoration.Underline // Underline text
+                )
+            )
+
         }
     }
 }
