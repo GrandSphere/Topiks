@@ -1,5 +1,6 @@
 package com.example.topics2.activities
 
+
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -29,11 +30,10 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.ImageGridScreen
+import com.example.topics2.unused.testScreen2
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
-import com.example.topics2.unused.testScreen3
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,7 +89,7 @@ fun TestApp(context: Context) {
 
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { ImageGridScreen() }
+                    composable("navTest2") { testScreen2() }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
