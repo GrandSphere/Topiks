@@ -29,8 +29,9 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
-    // Update the last modified date for a specific topic by topicId
-    @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
-    suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
+
+
+
+
 
 }

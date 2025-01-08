@@ -34,7 +34,7 @@ import com.example.topics2.unused.testScreen2
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
-import com.example.topics2.unused.testScreen3
+
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,7 +127,6 @@ fun TestApp(context: Context) {
                                 topicColor = topicViewModel.cTopicColor,
                             )
                         }
-
                     }
                 }
             }
