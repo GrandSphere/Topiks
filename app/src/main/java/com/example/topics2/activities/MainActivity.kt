@@ -100,9 +100,8 @@ fun TopicsApp(context: Context) {
                     ) { backStackEntry ->
                         val topicId = backStackEntry.arguments?.getInt("topicId")
                         if (topicId != -1) {
-                            messageViewModel.setShowPicker(false)
                             MessageScreen(
-                            navController, messageViewModel, topicId!!,
+                            navController, messageViewModel, topicId ?: -1,
                             topicColor = topicViewModel.cTopicColor,
                         ) }
 

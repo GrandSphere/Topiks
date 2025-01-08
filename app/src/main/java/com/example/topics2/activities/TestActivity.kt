@@ -33,7 +33,7 @@ import com.example.topics2.unused.ImageGridScreen
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
-import com.example.topics2.unused.testScreen3
+
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,10 +118,9 @@ fun TestApp(context: Context) {
                     ) { backStackEntry ->
                         val topicId = backStackEntry.arguments?.getInt("topicId")
                         if (topicId != -1) {
-                            messageViewModel.setShowPicker(false)
                             MessageScreen(
                                 // TODO: Check topicId!!
-                                navController, messageViewModel, topicId!!,
+                                navController, messageViewModel, topicId ?: -1,
                                 topicColor = topicViewModel.cTopicColor,
                             )
                         }
