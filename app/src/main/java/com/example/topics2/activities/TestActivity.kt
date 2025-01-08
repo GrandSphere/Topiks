@@ -31,6 +31,7 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.unused.FuzzySearchScreen
 
 
 import com.example.topics2.unused.MyScreen
@@ -91,7 +92,9 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTest3") {
+                NavHost(navController = navController, startDestination = "navFuzzy") {
+
+                    composable("navFuzzy") { FuzzySearchScreen () }
                     composable("navTest3") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }
                     composable("navTest") { testScreen () }
