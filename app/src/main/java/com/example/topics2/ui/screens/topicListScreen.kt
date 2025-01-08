@@ -97,6 +97,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     viewModel.setFileURI("")
                     navController.navigate("navaddtopic")
                           },
+                shape = CircleShape, // Change the shape to rounded corners
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box

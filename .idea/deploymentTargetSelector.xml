@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="testapp">
+      <SelectionState runConfigName="test keep settings">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2025-01-08T10:21:15.432983400Z">
           <Target type="DEFAULT_BOOT">

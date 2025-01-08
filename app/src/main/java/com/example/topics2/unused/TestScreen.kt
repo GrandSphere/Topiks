@@ -45,12 +45,13 @@ fun testScreen() {
     )
 
     selectedFileUris.value?.forEach { uri ->
-        Log.d("multipleFile", uri.toString())  // Log each Uri
+        Log.d("aabbcc multipleFile", uri.toString())  // Log each Uri
+        Log.d("aabbcc multipleFile got in", "abc")  // Log each Uri
     }
     ///This is the end of my code
 
 
-    val selectedFilePath2 = ""
+    //val selectedFilePath2 = ""
    // Log.d("multipleFile: ", "${selectedFileUris.value?.toString()}")
   //   Log.d("multipleFile: ", "${selectedFilePath2}")
 
@@ -69,6 +70,8 @@ fun testScreen() {
     Log.d("aabbcc",selectedFilePath)
 
 
+
+
     //val selectedFilePath: String = selectedFileUri.value.toString()?: ""
 
     Column(
@@ -79,8 +82,8 @@ fun testScreen() {
     ) {
         // IconButton to trigger the file picker
         IconButton(onClick = {
-            openFileLauncher1.launch(arrayOf("*/*")) // Launch the file picker
-         //   openFileLauncher.launch(arrayOf("image/*", "application/pdf"))
+            //openFileLauncher1.launch(arrayOf("*/*")) // Launch the file picker
+           openFileLauncher.launch(arrayOf("image/*", "application/pdf"))
           //  openFileLauncher.launch(arrayOf("*/*"))
         })
         {
