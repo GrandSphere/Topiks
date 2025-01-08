@@ -1,6 +1,5 @@
 package com.example.topics2.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import com.example.topics2.unused.OLDMessageBubble
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -93,7 +92,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-                MessageBubble(
+                OLDMessageBubble(
                     message = message,
                     topicId = topicId,
                     viewModel = viewModel,

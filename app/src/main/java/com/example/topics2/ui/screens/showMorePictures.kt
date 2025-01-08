@@ -1,5 +1,5 @@
-package com.example.topics2.unused
-/*
+package com.example.topics2.ui.screens
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,9 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import androidx.navigation.NavController
-
+import coil.compose.SubcomposeAsyncImage
+import com.example.topics2.unused.getFileNameFromString
+import com.example.topics2.unused.getTestImagePaths
 
 @Composable
 fun ShowMorePictures( // State 2
@@ -78,5 +79,3 @@ fun ShowMorePictures( // State 2
         }
     }
 }
-
- */
