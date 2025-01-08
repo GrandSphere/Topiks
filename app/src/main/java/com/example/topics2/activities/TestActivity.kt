@@ -20,17 +20,19 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
+import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
+import com.example.topics2.ui.screens.ShowMorePictures
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.DisplayState2
-import com.example.topics2.unused.testScreen2
+
+
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
@@ -89,10 +91,10 @@ fun TestApp(context: Context) {
                 NavHost(navController = navController, startDestination = "navTest2") {
 
                     composable("navTest") { testScreen () }
-                    composable("navState2") { DisplayState2 (navController) }
+                    composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { testScreen2(navController) }
+                    composable("navTest2") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(

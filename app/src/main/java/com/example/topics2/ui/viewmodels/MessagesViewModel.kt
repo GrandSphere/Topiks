@@ -78,8 +78,6 @@ class MessageViewModel (
         }.launchIn(viewModelScope)
     }
 
-
-
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
         messageDao.deleteMessagesWithID(messageId)
