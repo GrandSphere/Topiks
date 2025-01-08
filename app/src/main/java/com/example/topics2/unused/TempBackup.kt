@@ -475,11 +475,7 @@ fun testScreen2Backup(
         if (!showMore) {
             DisplayState1(
                 imagePaths = imagePaths,
-                maxImagesVisible = maxImagesVisible,
                 //imageSize = imageSize,
-                imageSpacing = imageSpacing,
-                //columnWidth = columnWidth,
-                //columnHeight = columnHeight,
                 onShowMore = { showMore = true }, // Update state when "Show More" is clicked
                 topicColor=topicColor,
                 topicFontColor=topicFontColor,
