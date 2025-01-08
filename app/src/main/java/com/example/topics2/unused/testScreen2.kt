@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 
 // ChatBubble Composable
@@ -200,6 +201,15 @@ fun OverflowingLayoutExample() {
     var isExpanded by remember { mutableStateOf(false) }
     val maxHeight = if (isExpanded) 1000.dp else 300.dp  // Adjust max height on expansion
 
+
+    val contentHeight = remember { mutableStateOf(0) }
+    val isContentScrollable = remember { mutableStateOf(false) }
+
+    // Toggle the state when the user clicks on the section (or another action)
+
+val screenHeight= 10000
+
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -210,10 +220,15 @@ fun OverflowingLayoutExample() {
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = maxHeight) // Limit the maximum height of the column
+
+                .onGloballyPositioned { layoutCoordinates ->
+                    contentHeight.value = layoutCoordinates.size.height
+                    isContentScrollable.value = contentHeight.value > screenHeight
+                }
                 //.verticalScroll(rememberScrollState()) // Make the column scrollable
         ) {
             // Simulating multiple components inside a column
-            repeat(10) {
+            repeat(30) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -229,23 +244,25 @@ fun OverflowingLayoutExample() {
 
 
 
+        if (isContentScrollable.value) {
 
-        FloatingActionButton(
-            onClick = { isExpanded = !isExpanded },
-            shape = CircleShape, // Change the shape to rounded corners
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Add Topic",
-                modifier = Modifier.size(24.dp)
-                             .graphicsLayer(
-            rotationZ = if (isExpanded) -90f else 90f
-        )
-            )
+            FloatingActionButton(
+                onClick = { isExpanded = !isExpanded },
+                shape = CircleShape, // Change the shape to rounded corners
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Add Topic",
+                    modifier = Modifier.size(24.dp)
+                        .graphicsLayer(
+                            rotationZ = if (isExpanded) -90f else 90f
+                        )
+                )
+            }
         }
 
 
