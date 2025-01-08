@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 //import androidx.compose.material.FloatingActionButton
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -59,15 +62,30 @@ fun testScreen2( // New Message Bubble
     Surface(
         shape = RoundedCornerShape(8.dp),
         color = topicColor,
-        modifier = Modifier
-            .padding(1.dp),
         tonalElevation = 0.dp, // Remove shadow
-        border = null // Remove border
+        border = null
     ) {
         Column( // Message Bubble to allign messageContent, additional Content and timpstamp
             modifier = Modifier
-                .padding(6.dp), //space around message
+                .padding(horizontal = 4.dp)
+                .padding(vertical = 3.dp), // Padding around everything
         ) {
+
+            Spacer(modifier = Modifier.height(1.dp)) //space between message and date
+            if (containsPictures) {
+                if (!showMore) {
+                    picturesPreview(
+                        modifiera = Modifier
+                            .fillMaxWidth(0.7f),
+                        imagePaths = imagePaths,
+                        iPictureCount = iPictureCount,
+                        onShowMore = { navController.navigate("navState2") },
+                        topicColor = topicColor,
+                        topicFontColor = topicFontColor,
+                    )
+                }
+            }
+
             Text( // Show Message Content.
                 text = messagecontent,
                 color = topicFontColor,
@@ -87,22 +105,6 @@ fun testScreen2( // New Message Bubble
 
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
-            if (containsPictures) {
-                if (!showMore) {
-                    picturesPreview(
-                        modifiera = Modifier
-                            //.widthIn(min=200.dp)
-                            //.width(componentWidth.dp),
-                            .fillMaxWidth(0.7f),
-                        imagePaths = imagePaths,
-                        iPictureCount = iPictureCount,
-                        onShowMore = { navController.navigate("navState2") },
-                        topicColor = topicColor,
-                        topicFontColor = topicFontColor,
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             Text(
                 text = "02:07 08/01/25",
                 color=topicFontColor,
@@ -111,12 +113,6 @@ fun testScreen2( // New Message Bubble
             )
         }
     }
-
-
-
-
-
-
 }
 
 @Composable
@@ -129,9 +125,12 @@ fun picturesPreview( // State 1
     modifiera: Modifier = Modifier,
 ) {
 
+    val opacity2: Float = 0.3f
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     val opacity: Float = 0.2f
     var iPicturesToShow= 0
+    val cPadding: Dp = 6.dp
+    val cBorder: Dp = 2.dp
     when (iPictureCount) {
         1 -> { iPicturesToShow = 1
             iNumberColumns=1 }
@@ -146,28 +145,18 @@ fun picturesPreview( // State 1
     Column(
         modifiera
     ) {
-
-        //Spacer(modifier = Modifier.height(8.dp)) //space between message and date
-        //Divider(color = topicFontColor, thickness = 3.dp)
-        //Spacer(modifier = Modifier.height(5.dp)) //space between message and date
-
         LazyVerticalGrid(
-
-            horizontalArrangement = Arrangement.spacedBy(1.dp), // Horizontal space between items
-            verticalArrangement = Arrangement.spacedBy(1.dp),
-
+            horizontalArrangement = Arrangement.spacedBy(3.dp), // Horizontal space between items
+            verticalArrangement = Arrangement.spacedBy(3.dp),
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
             modifier = Modifier
-                .padding(1.dp)
-            //.width(columnWidth)
-            //.background(Color.Red)
         ) {
-            // Display the images
-            items(imagePaths.take(iPicturesToShow)) { imagePath ->
+            items(imagePaths.take(iPicturesToShow)) { imagePath -> // Display the Images
                 Image(
-                    //clipu = RoundedCornerShape(8.dp),
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(cPadding))
+                        .background(topicFontColor.copy(opacity))
+                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                         .aspectRatio(1f),
                     painter = rememberAsyncImagePainter(imagePath),
                     contentDescription = "Image",
@@ -178,19 +167,17 @@ fun picturesPreview( // State 1
                 if (iPictureCount>iPicturesToShow) {
                     Box(
                         modifier = Modifier
-                            //.fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(cPadding))
                             .background(topicFontColor.copy(opacity)) // 50% transparent blue
-                            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
+                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding)) // Apply a rounded border
                             .aspectRatio(1f)
                             .clickable(onClick = onShowMore) // Trigger the show more action
-                            //.align(Alignment.Center) // Center the content inside the Box
                     ) {
                         Text(
                             text = "Show More...",
                             modifier = Modifier
                                 .fillMaxSize()
-                                .wrapContentSize(Alignment.Center), // Center the text
+                                .wrapContentSize(Alignment.Center),
                             color = topicFontColor,
                             style = MaterialTheme.typography.bodyLarge
                         )
@@ -198,6 +185,11 @@ fun picturesPreview( // State 1
                 }
             }
         }
+
+//        Spacer(modifier = Modifier.height(4.dp)) //space between message and date
+//        Divider(color = topicFontColor.copy(opacity2), thickness = cBorder)
+        Spacer(modifier = Modifier.height(5.dp)) //space between message and date
+
     }
 }
 
@@ -212,13 +204,11 @@ fun showAttachments(
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            //.border(2.dp, Color.Red)
-            .background(topicFontColor.copy(opacity)) // 50% transparent blue
-            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
+            .background(topicFontColor.copy(opacity))
+            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp))
             .fillMaxWidth(newBubbleWidth)
             .padding(vertical =5.dp)
             .padding(5.dp)
-        //.padding(20.dp),
     ) { //Divider(color = Color.Red, thickness = 2.dp)
         attachments.forEach { attachment ->
             Text( // get text name from path
@@ -227,12 +217,11 @@ fun showAttachments(
                     .widthIn(min=200.dp)
                     .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
                 style = TextStyle(
-                    fontSize = 16.sp, // Set font size as needed
-                    color = topicFontColor, // Set text color
-                    textDecoration = TextDecoration.Underline // Underline text
+                    fontSize = 16.sp,
+                    color = topicFontColor,
+                    textDecoration = TextDecoration.Underline
                 )
             )
-
         }
     }
 }
