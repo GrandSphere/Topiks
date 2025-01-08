@@ -1,5 +1,5 @@
 package com.example.topics2.unused
-
+/*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -607,3 +607,5 @@ fun DisplayState2Backup( // State 2
         }
     }
 }
+
+ */
