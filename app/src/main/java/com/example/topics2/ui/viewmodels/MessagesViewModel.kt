@@ -27,7 +27,7 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
     private val _filePicked = MutableStateFlow<Boolean>(false)
     val filePicked: StateFlow<Boolean> = _filePicked
-    fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
+    // fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
 
     // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
@@ -70,13 +70,6 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
         messageDao.getMessagesForTopic(topicId).onEach { messageList ->_messages.value = messageList
         }.launchIn(viewModelScope)
     }
-
-    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
-    // States whether file picker is done
-    private val _showPicker = MutableStateFlow<Boolean>(false)
-    val showPicker: StateFlow<Boolean> = _showPicker
-    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
-    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
