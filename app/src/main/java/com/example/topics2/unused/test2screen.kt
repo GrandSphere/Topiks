@@ -1,5 +1,6 @@
 package com.example.topics2.unused
 import android.R
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,24 +19,39 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+//import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun testScreen2() { // Main screen
+fun testScreen2(
+    topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    topicFontColor: Color = MaterialTheme.colorScheme.onTertiary,
+) { // Main screen
     val colors = MaterialTheme.colorScheme
 
     // Get image paths by calling the separate function
@@ -59,10 +75,10 @@ fun testScreen2() { // Main screen
     Column(
         modifier = Modifier
             .padding(8.dp)
-            .background(Color.DarkGray)
+            //.background(Color.DarkGray)
             .fillMaxSize() // Takes up all available space
     ) {
-        if (showMore) {
+        if (!showMore) {
             DisplayState1(
                 imagePaths = imagePaths,
                 maxImagesVisible = maxImagesVisible,
@@ -70,13 +86,17 @@ fun testScreen2() { // Main screen
                 imageSpacing = imageSpacing,
                 columnWidth = columnWidth,
                 columnHeight = columnHeight,
-                onShowMore = { showMore = true } // Update state when "Show More" is clicked
+                onShowMore = { showMore = true }, // Update state when "Show More" is clicked
+                topicColor=topicColor,
+                topicFontColor=topicFontColor,
             )
         } else {
             DisplayState2(
                 imagePaths = imagePaths,
-                imageSize = imageSize,
-                imageSpacing = imageSpacing,
+                topicColor=topicColor,
+                topicFontColor=topicFontColor,
+                //imageSize = imageSize,
+                //imageSpacing = imageSpacing,
                 onBack = { showMore = false } // Update state when "Back" is clicked
             )
         }
@@ -85,6 +105,8 @@ fun testScreen2() { // Main screen
 
 @Composable
 fun DisplayState1(
+    topicColor: Color,
+    topicFontColor: Color,
     imagePaths: List<String>,
     maxImagesVisible: Int,
     imageSize: Dp,
@@ -144,56 +166,58 @@ fun DisplayState1(
 }
 
 @Composable
-fun DisplayState2(
+fun DisplayState2( // State 2
+    topicColor: Color,
+    topicFontColor: Color,
     imagePaths: List<String>,
-    imageSize: Dp,
-    imageSpacing: Dp,
-    onBack: () -> Unit // Pass a lambda to update the state
+    onBack: () -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-
+//            .background(Color.Yellow)
     ) {
         LazyColumn(
             modifier = Modifier
-                //.fillMaxWidth()
-                //.fillMaxHeight()
-                //.weight(1f)
                 .fillMaxWidth()
-                .background(Color.Blue)
+                //.background(Color.Red)
         ) {
             items(imagePaths) { imagePath ->
-                Image(
+                SubcomposeAsyncImage(
+                    model = imagePath,
+                    contentDescription = getFileNameFromString(imagePath),
+                    contentScale = ContentScale.Fit, // Maintains aspect ratio
+                    loading = { // Show a placeholder while the image is loading
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
+                    },
                     modifier = Modifier
-                        .background(Color.Yellow)
-                        //.fillMaxWidth() // Full width for the images
-                        //.weight(1f)
-                        //.width(300.dp)
-                        .size(200.dp)
-                        //.fillMaxWidth()
-                        //.height(200.dp)
-                        //.fillMaxHeight()
-                        //.aspectRatio(0.5f)
-                        //.height(imageSize) // Fixed height for each image
-                        ,
-                        //.padding(end = imageSpacing, bottom = imageSpacing),
-                    painter = rememberAsyncImagePainter(imagePath),
-                    contentScale = ContentScale.FillWidth
-                    ,
-                    contentDescription = "Image",
-                    //contentScale = ContentScale.Fit, // Maintains aspect ratio
+                        .fillMaxWidth() // Take full width
+                        .padding(bottom = 2.dp)
+                        //.border(2.dp, Color.Black) // Add border around the image
                 )
             }
         }
-        Button(
-            onClick = onBack, // Call the lambda passed from the parent
+
+        FloatingActionButton(
+            onClick = onBack,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+                .align(Alignment.BottomEnd) // Align to the bottom end
+                .padding(16.dp), // Add padding to the edge
+            //containerColor = topicColor,
+                //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
+            shape = CircleShape, // Change the shape to rounded corners
+
         ) {
-            Text("Back")
+            Icon(
+                imageVector = Icons.Default.ArrowBack, // Example icon
+                contentDescription = "Add",
+                tint = topicFontColor
+            )
         }
     }
 }
