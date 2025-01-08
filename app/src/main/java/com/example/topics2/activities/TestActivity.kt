@@ -31,7 +31,9 @@ import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.unused.ImageGridScreen
 import com.example.topics2.unused.MyScreen
+import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
+import com.example.topics2.unused.testScreen3
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,9 +85,10 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navtopicListScreen") {
+                NavHost(navController = navController, startDestination = "navTest2") {
 
                     composable("navTest") { testScreen() }
+                    composable("navBottomSheetTest") { bottomSheetTest() }
                     composable("navTest2") { ImageGridScreen() }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
@@ -117,6 +120,7 @@ fun TestApp(context: Context) {
                         if (topicId != -1) {
                             messageViewModel.setShowPicker(false)
                             MessageScreen(
+                                // TODO: Check topicId!!
                                 navController, messageViewModel, topicId!!,
                                 topicColor = topicViewModel.cTopicColor,
                             )
