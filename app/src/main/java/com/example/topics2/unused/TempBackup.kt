@@ -481,14 +481,14 @@ fun testScreen2Backup(
                 topicFontColor=topicFontColor,
             )
         } else {
-            DisplayState2(
-                imagePaths = imagePaths,
-                topicColor=topicColor,
-                topicFontColor=topicFontColor,
-                //imageSize = imageSize,
-                //imageSpacing = imageSpacing,
-                onBack = { showMore = false } // Update state when "Back" is clicked
-            )
+            //DisplayState2(
+            //    imagePaths = imagePaths,
+            //    topicColor=topicColor,
+            //    topicFontColor=topicFontColor,
+            //    //imageSize = imageSize,
+            //    //imageSpacing = imageSpacing,
+            //    onBack = { showMore = false } // Update state when "Back" is clicked
+            //)
         }
     }
 }

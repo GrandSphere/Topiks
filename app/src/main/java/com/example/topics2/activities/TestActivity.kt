@@ -88,7 +88,8 @@ fun TestApp(context: Context) {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
                 NavHost(navController = navController, startDestination = "navTest2") {
 
-                    composable("navTest") { DisplayState2 (navController) }
+                    composable("navTest") { testScreen () }
+                    composable("navState2") { DisplayState2 (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
                     composable("navTest2") { testScreen2(navController) }
