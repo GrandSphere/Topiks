@@ -7,6 +7,7 @@ package com.example.topics2.ui.components.noteDisplay
 
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,12 +38,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.topics.utilities.determineFileType
+import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
@@ -60,7 +64,7 @@ fun InputBarMessageScreen(
     val vIconSize: Dp = 25.dp // You can change this value as needed
     val vMaxLinesSize: Dp = 80.dp
 
-    var inputText by remember { mutableStateOf("" ) }
+    var inputText by remember { mutableStateOf("") }
     val messagePriority = 0
     val colors = MaterialTheme.colorScheme
 
@@ -84,7 +88,7 @@ fun InputBarMessageScreen(
         onFilesSelected = { uris -> selectedFileUris.value = uris }
     )
     // Log.d("THISISMYTAG", selectedFileUris.value.toString())
-
+    val context = LocalContext.current
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
@@ -107,7 +111,7 @@ fun InputBarMessageScreen(
     // }
 
     LaunchedEffect(Unit) {
-       // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+        // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
         viewModel.setToFocusTextbox(true)
     }
 
@@ -134,13 +138,13 @@ fun InputBarMessageScreen(
             isFocused = focusState.isFocused
         }
 
-    var tempMessageID by remember { mutableStateOf(-1 ) }
+    var tempMessageID by remember { mutableStateOf(-1) }
     val amEditing by viewModel.amEditing.collectAsState()
     LaunchedEffect(amEditing) {
         if (viewModel.amEditing.value) {
             inputText = viewModel.tempMessage.value
             viewModel.setAmEditing(false)
-            tempMessageID=viewModel.tempMessageId.value
+            tempMessageID = viewModel.tempMessageId.value
             viewModel.setTempMessageId(-1)
 
         }
@@ -168,14 +172,9 @@ fun InputBarMessageScreen(
         Spacer(modifier = Modifier.width(8.dp))
 
 
-        // Write file to user directory as file is picked
-   /*     if (selectedFileUris.value.isNotEmpty())
-        {
-            viewModel.setfilePicked(false)
-
-            // TODO I BROKE THIS
-            //copyFileToUserFolder(context = LocalContext.current, viewModel)
-         /*   LaunchedEffect(filePicked) {
+        // TODO I BROKE THIS
+        //copyFileToUserFolder(context = LocalContext.current, viewModel)
+        /*   LaunchedEffect(filePicked) {
                 coroutineScope.launch {
                     viewModel.addMessage(
                         topicId = topicId,
@@ -188,83 +187,97 @@ fun InputBarMessageScreen(
             }*/
 
 
-        }
-        */
 
 
-
-        IconButton( // ADD BUTTON
-            onClick = {
-                openFileLauncher.launch(arrayOf("*/*"))
-            },
+    IconButton( // ADD BUTTON
+        onClick = {
+            openFileLauncher.launch(arrayOf("*/*"))
+        },
+        modifier = Modifier
+            .size(vButtonSize)
+            .align(Alignment.Bottom)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = "Attach",
+            //tint = colors.tertiary,
+            tint = topicColour,
             modifier = Modifier
-                .size(vButtonSize)
-                .align(Alignment.Bottom)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Attach",
-                //tint = colors.tertiary,
-                tint = topicColour,
-                modifier = Modifier
-                    .height(vIconSize)
-            )
-        }
+                .height(vIconSize)
+        )
+    }
 
-        Spacer(modifier = focusModifier
+    Spacer(
+        modifier = focusModifier
             .width(5.dp)
             .focusRequester(focusRequester)
-        )
-        IconButton( // SEND BUTTON
-            onClick = {
-                viewModel.setToFocusTextbox(false)
+    )
+    IconButton( // SEND BUTTON
+        // TODO Enable sending blank message if attachments is available
+        onClick = {
+            viewModel.setToFocusTextbox(false)
 
-                if (inputText.isNotBlank()) {
-                    val tempInput =inputText
-                    inputText = ""
-                    if (tempMessageID > -1){ // Edit Mode
-                        coroutineScope.launch {
-                            viewModel.editMessage(
-                                messageId = tempMessageID,
-                                topicId = topicId,
-                                content = tempInput,
-                                //description= tempDescription
-                                //content = selectedFileUri.toString(),
-                                priority = messagePriority
-                            )
-                            tempMessageID=-1
-                        }
+            if (inputText.isNotBlank()) {
+                val tempInput = inputText
+                inputText = ""
+                if (tempMessageID > -1) { // Edit Mode
+                    coroutineScope.launch {
+                        viewModel.editMessage(
+                            messageId = tempMessageID,
+                            topicId = topicId,
+                            content = tempInput,
+                            priority = messagePriority
+                        )
+                        tempMessageID = -1
                     }
-                    else { //Send Mode
-                        coroutineScope.launch {
-                            viewModel.addMessage(
-                                topicId = topicId,
-                                content = tempInput,
-                                priority = messagePriority,
-                                type = 1, //based on if check to see what type - message or image or file etc
-                                categoryID = 1
-                            )
+                } else { //Send Mode
+                    coroutineScope.launch {
+                        // Write message to DB
+                        val messageId = viewModel.addMessage(
+                            topicId = topicId,
+                            content = tempInput,
+                            priority = messagePriority,
+                            type = 1, //based on if check to see what type - message or image or file etc
+                            categoryID = 1
+                        )
+                        // Write file paths to DB
+                        if (!selectedFileUris.value.isNullOrEmpty()) {
+                            Log.d("room", "writing files now")
+                            selectedFileUris.value?.forEach { uri ->
+                                viewModel.addFile(
+                                    topicId = topicId,
+                                    messageId = messageId.toInt(),
+                                    fileType = determineFileType(context, uri),
+                                    filePath = uri.toString(),
+                                    description = "",
+                                    iconPath = "",
+                                    categoryId = 1,
+                                )
+                            }
                         }
+
+
                     }
                 }
-            },
+            }
+        },
+        modifier = Modifier
+            .size(vButtonSize)
+            .fillMaxWidth(1f)
+            //.background(Color.Transparent)
+            .align(Alignment.Bottom)
+    ) {
+        Icon(
+            imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
+            //imageVector = Icons.Filled.Send, // Attach file icon
+            contentDescription = "Attach",
+            //tint = colors.tertiary,
+            tint = topicColour,
             modifier = Modifier
-                .size(vButtonSize)
-                .fillMaxWidth(1f)
-                //.background(Color.Transparent)
-                .align(Alignment.Bottom)
-        ) {
-            Icon(
-                imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
-                //imageVector = Icons.Filled.Send, // Attach file icon
-                contentDescription = "Attach",
-                //tint = colors.tertiary,
-                tint = topicColour,
-                modifier = Modifier
-                    .size(vIconSize)
-                //.aspectRatio(2.5f)
-            )
-        }
+                .size(vIconSize)
+            //.aspectRatio(2.5f)
+        )
+    }
         Spacer(modifier = Modifier.width(12.dp))
     }
     // Request focus initially
