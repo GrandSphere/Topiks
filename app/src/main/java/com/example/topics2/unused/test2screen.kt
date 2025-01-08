@@ -130,7 +130,6 @@ fun testScreen2(
 
                     }
                 }
-
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             if (containsPictures) {
@@ -142,19 +141,10 @@ fun testScreen2(
                             .fillMaxWidth(0.7f),
                         imagePaths = imagePaths,
                         iPictureCount = iPictureCount,
-                        onShowMore = { showMore = true },
+                        onShowMore = { navController.navigate("navState2") },
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
                     )
-                } else {
-                   // DisplayState2(
-                   //     imagePaths = imagePaths,
-                   //     topicColor = topicColor,
-                   //     topicFontColor = topicFontColor,
-                   //     //imageSize = imageSize,
-                   //     //imageSpacing = imageSpacing,
-                   //     onBack = { showMore = false } // Update state when "Back" is clicked
-                   // )
                 }
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
@@ -175,66 +165,6 @@ fun testScreen2(
 }
 
 
-@Composable
-fun DisplayState2( // State 2
-    topicColor: Color,
-    navController: NavController,
-    topicFontColor: Color,
-    imagePaths: List<String>,
-    onBack: () -> Unit,
-    //modifier: Modifier
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()  // Make it take the full width of the parent
-        //.widthIn(min = 300.dp)    //.fillMaxWidth()
-        //.fillMaxHeight()
-//            .background(Color.Yellow)
-    ) {
-        LazyColumn(
-            modifier = Modifier
-
-            //.fillMaxWidth()
-            //.background(Color.Red)
-        ) {
-            items(imagePaths) { imagePath ->
-                SubcomposeAsyncImage(
-                    model = imagePath,
-                    contentDescription = getFileNameFromString(imagePath),
-                    contentScale = ContentScale.Fit, // Maintains aspect ratio
-                    loading = { // Show a placeholder while the image is loading
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth() // Take full width
-                        .padding(bottom = 2.dp)
-                    //.border(2.dp, Color.Black) // Add border around the image
-                )
-            }
-        }
-
-        FloatingActionButton(
-            onClick = onBack,
-            modifier = Modifier
-                //.align(Alignment.BottomEnd) // Align to the bottom end
-                .padding(16.dp), // Add padding to the edge
-            //containerColor = topicColor,
-            //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
-            shape = CircleShape, // Change the shape to rounded corners
-
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack, // Example icon
-                contentDescription = "Add",
-                tint = topicFontColor
-            )
-        }
-    }
-}
 
 
 @Composable
