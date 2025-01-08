@@ -1,8 +1,12 @@
 package com.example.topics2.unused
 
 
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,15 +17,19 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import myFilePicker
+
+
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import multipleFilePicker
 import myFilePicker
@@ -58,16 +66,13 @@ fun testScreen() {
         selectedFileUri.value = uri
     })
 
-  //  val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
-
-
-
-
-    //getTestImagePaths()[0]
-  // val selectedFilePath = getTestImagePaths()[6]
+    val selectedFilePath: String = selectedFileUri.value?.toString() ?: "Wrong"
+    //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F24.jpg"
+   //val selectedFilePath = getTestImagePaths()[2]
 
     //val selectedFilePath = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg"
     //val selectedFilePath =   getTestImagePaths()[0]
+    Log.d("aabbcc",selectedFilePath)
 
 
     //val selectedFilePath: String = selectedFileUri.value.toString()?: ""
@@ -82,7 +87,7 @@ fun testScreen() {
         IconButton(onClick = {
             openFileLauncher1.launch(arrayOf("*/*")) // Launch the file picker
          //   openFileLauncher.launch(arrayOf("image/*", "application/pdf"))
-          //  openFileLauncher.
+          //  openFileLauncher.launch(arrayOf("*/*"))
         })
         {
             Icon(
@@ -95,7 +100,7 @@ fun testScreen() {
 
         // Display the selected file URI or a message if none is selected
         Text(
-            text = selectedFilePath2,
+            text = selectedFilePath,
             color = colors.onBackground,
             modifier = Modifier.padding(top = 16.dp)
         )
@@ -103,7 +108,7 @@ fun testScreen() {
         // Display the image
         Image(
             //painter = rememberAsyncImagePainter(selectedFilePath),
-            painter = rememberAsyncImagePainter(selectedFilePath2),
+            painter = rememberAsyncImagePainter(selectedFilePath),
             contentDescription = "Selected Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
