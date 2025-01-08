@@ -7,6 +7,7 @@ package com.example.topics2.ui.components.noteDisplay
 
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,6 +47,7 @@ import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
+import multipleFilePicker
 import myFilePicker
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -72,14 +74,18 @@ fun InputBarMessageScreen(
     val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
 
-    val showPicker: Boolean = viewModel.showPicker.collectAsState().value
+
     val filePicked: Boolean = viewModel.filePicked.collectAsState().value
     val filePath: String = viewModel.fileURI.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
 
     // FilePicker Logic
-    val selectedFileUri: MutableState<Uri?> = remember { mutableStateOf(null) }
-    val openFileLauncher = myFilePicker(onFileSelected = {uri->selectedFileUri.value=uri})
+    val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
+    val openFileLauncher = multipleFilePicker(
+        fileTypes = arrayOf("*/*"),
+        onFilesSelected = { uris -> selectedFileUris.value = uris }
+    )
+    Log.d("THISISMYTAG", selectedFileUris.value.toString())
 
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
@@ -163,14 +169,9 @@ fun InputBarMessageScreen(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // Open File picker
-        if (showPicker) {
 
-            // TODO I BROKE THIS
-            //SelectFileWithPicker(navController, viewModel)
-        }
         // Write file to user directory as file is picked
-        if (filePicked)
+   /*     if (selectedFileUris.value.isNotEmpty())
         {
             viewModel.setfilePicked(false)
 
@@ -190,11 +191,13 @@ fun InputBarMessageScreen(
 
 
         }
+        */
+
 
 
         IconButton( // ADD BUTTON
             onClick = {
-                openFileLauncher.launch(arrayOf("*/*")) // Launch the file picker
+                openFileLauncher.launch(arrayOf("*/*"))
             },
             modifier = Modifier
                 .size(vButtonSize)

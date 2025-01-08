@@ -71,13 +71,6 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
         }.launchIn(viewModelScope)
     }
 
-    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
-    // States whether file picker is done
-    private val _showPicker = MutableStateFlow<Boolean>(false)
-    val showPicker: StateFlow<Boolean> = _showPicker
-    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
-    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
-
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
         messageDao.deleteMessagesWithID(messageId)
