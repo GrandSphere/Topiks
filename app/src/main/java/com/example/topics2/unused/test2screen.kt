@@ -60,10 +60,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
 fun testScreen2(
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    navController: NavController,
     topicColor: Color = Color.Cyan ,
     topicFontColor: Color = Color.Black
 ) { // Main screen
@@ -72,11 +74,10 @@ fun testScreen2(
     val imagePaths = getTestImagePaths()
     var showMore by remember { mutableStateOf(false) }
     var messagecontent="aaaaaa\naaaaaaaaaaaaaaaaa\naaa\nnnnnnnnnnnnnnna"
-    var containsPictures: Boolean = false
-    var containsAttachments: Boolean = true
+    var containsPictures: Boolean = true
+    var containsAttachments: Boolean = false
     val withContentWidth: Float = 0.8f
     val opacity: Float = 0.2f
-    var componentWidth by remember { mutableStateOf(0) }
     Surface(
         shape = RoundedCornerShape(8.dp),
         color = topicColor,
@@ -106,8 +107,8 @@ fun testScreen2(
                 Column(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(topicFontColor.copy(opacity)) // 50% transparent blue
                                 //.border(2.dp, Color.Red)
+                                .background(topicFontColor.copy(opacity)) // 50% transparent blue
                                 .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
                                 .fillMaxWidth(withContentWidth)
                                 .padding(vertical =5.dp)
@@ -120,7 +121,6 @@ fun testScreen2(
                             modifier = Modifier
                                 .widthIn(min=200.dp)
                                 .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
-
                             style = TextStyle(
                                 fontSize = 16.sp, // Set font size as needed
                                 color = topicFontColor, // Set text color
@@ -132,12 +132,7 @@ fun testScreen2(
                 }
 
             }
-
-
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
-
-
-
             if (containsPictures) {
                 if (!showMore) {
                     DisplayState1(
@@ -152,20 +147,17 @@ fun testScreen2(
                         topicFontColor = topicFontColor,
                     )
                 } else {
-                    DisplayState2(
-                        imagePaths = imagePaths,
-                        topicColor = topicColor,
-                        topicFontColor = topicFontColor,
-                        //imageSize = imageSize,
-                        //imageSpacing = imageSpacing,
-                        onBack = { showMore = false } // Update state when "Back" is clicked
-                    )
+                   // DisplayState2(
+                   //     imagePaths = imagePaths,
+                   //     topicColor = topicColor,
+                   //     topicFontColor = topicFontColor,
+                   //     //imageSize = imageSize,
+                   //     //imageSpacing = imageSpacing,
+                   //     onBack = { showMore = false } // Update state when "Back" is clicked
+                   // )
                 }
             }
-
-
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
-
             Text(
                 text = "my timestamp",
                 color=topicFontColor,
@@ -186,6 +178,7 @@ fun testScreen2(
 @Composable
 fun DisplayState2( // State 2
     topicColor: Color,
+    navController: NavController,
     topicFontColor: Color,
     imagePaths: List<String>,
     onBack: () -> Unit,
@@ -255,6 +248,7 @@ fun DisplayState1( // State 1
 ) {
 
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
+    val opacity: Float = 0.2f
     var iPicturesToShow= 0
     when (iPictureCount) {
         1 -> { iPicturesToShow = 1
@@ -297,6 +291,9 @@ fun DisplayState1( // State 1
                     Box(
                         modifier = Modifier
                             //.fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(topicFontColor.copy(opacity)) // 50% transparent blue
+                            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
                             .aspectRatio(1f)
                             .clickable(onClick = onShowMore) // Trigger the show more action
                             .align(Alignment.Center) // Center the content inside the Box
@@ -306,12 +303,12 @@ fun DisplayState1( // State 1
                             modifier = Modifier
                                 .fillMaxSize()
                                 .wrapContentSize(Alignment.Center), // Center the text
-                            color = Color.White,
+                            color = topicFontColor,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
             }
         }
-    }}
-//}}
+    }
+}
