@@ -78,6 +78,8 @@ class MessageViewModel (
         }.launchIn(viewModelScope)
     }
 
+
+
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
         messageDao.deleteMessagesWithID(messageId)
@@ -91,7 +93,7 @@ class MessageViewModel (
         priority: Int,
         type: Int,
         categoryID: Int
-     ) {
+     ): Long {
         val timestamp = System.currentTimeMillis()
         val newMessage = MessageTbl(
             topicId = topicId,
@@ -102,8 +104,8 @@ class MessageViewModel (
             lastEditTime =  timestamp,
             categoryId = categoryID
             )
-        messageDao.insertMessage(newMessage) // Insert the message into the database
         topicDao.updateLastModifiedTopic(topicId, timestamp)
+        return messageDao.insertMessage(newMessage) // Insert the message into the database
     }
 
     // Retrieve files for specific messageID
