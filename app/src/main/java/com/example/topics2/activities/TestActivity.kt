@@ -30,6 +30,7 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.unused.DisplayState2
 import com.example.topics2.unused.testScreen2
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.bottomSheetTest
@@ -87,9 +88,10 @@ fun TestApp(context: Context) {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
                 NavHost(navController = navController, startDestination = "navTest2") {
 
+                    composable("navTest") { DisplayState2 (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { testScreen2() }
+                    composable("navTest2") { testScreen2(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
