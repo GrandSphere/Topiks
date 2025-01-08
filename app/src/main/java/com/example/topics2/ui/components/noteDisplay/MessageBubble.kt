@@ -75,11 +75,8 @@ fun MessageBubble(
         // Message bubble with some padding and rounded corners
         Surface(
             shape = RoundedCornerShape(8.dp),
-            //color = topicColor,
             color = topicColor,
-            modifier = Modifier.padding(1.dp)
-                //.widthIn(max = 100.dp)
-            ,
+            modifier = Modifier.padding(1.dp) ,
             tonalElevation = 0.dp, // Remove shadow
             border = null // Remove border
         ) {

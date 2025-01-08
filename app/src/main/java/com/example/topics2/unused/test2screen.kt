@@ -1,4 +1,5 @@
 package com.example.topics2.unused
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,92 +49,102 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.sp
+
 @Composable
 fun testScreen2(
     topicColor: Color = MaterialTheme.colorScheme.tertiary,
     topicFontColor: Color = MaterialTheme.colorScheme.onTertiary,
 ) { // Main screen
-    val colors = MaterialTheme.colorScheme
-
     val iPictureCount: Int =5
-    // Get image paths by calling the separate function
+        val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
     val imagePaths = getTestImagePaths()
-
-    // State to handle the visibility of additional images
     var showMore by remember { mutableStateOf(false) }
-    // Column dimensions to be used
-    //val columnWidth = 300.dp
-    //val columnHeight = 300.dp
-
-    // Image size for preview
-    //val imageSize = 30.dp
-    val imageSpacing = 2.dp // Spacing between images
-
-    // Calculate the maximum number of images to show
-    val maxImagesVisible = 4 // Initially show only 4 images
-
-var messagecontent="aaaaaaaaaaaaaaaaaaaaaaaa"
-
+    var messagecontent="aaaaaaaaaaaa"
     var containsPictures: Boolean = true
+    var containsAttachments: Boolean = true
+    var componentWidth by remember { mutableStateOf(0) }
     Surface(
         shape = RoundedCornerShape(8.dp),
-        //color = topicColor,
         color = topicColor,
-        modifier = Modifier.padding(1.dp)
-        ,
-
+        modifier = Modifier.padding(1.dp),
         tonalElevation = 0.dp, // Remove shadow
         border = null // Remove border
     ) {
-        Column(
+        Column( // Message Bubble to allign messageContent, additional Content and timpstamp
             modifier = Modifier
-                //.fillMaxWidth() //messages take up entire width
+                //.width(iaa.dp)
                 //.wrapContentWidth()
-                //.background(topic)
                 .padding(6.dp), //space around message
         ) {
-            Text(
+            Text( // Show Message Content.
                 text = messagecontent,
                 color=topicFontColor,
                 style = MaterialTheme.typography.bodyMedium,
-                //color = MaterialTheme.colorScheme.onPrimary
+                modifier = Modifier
+                    .padding(0.dp)
+                    //.width(200.dp)
+                    .onSizeChanged { size ->
+                        componentWidth = size.width
+                        Log.d("aabbcc width changed", componentWidth.toString())
+                    }
             )
 
-            Spacer(modifier = Modifier.height(1.dp)) //space between message and date
+            if (containsAttachments) {
+                listOfAttachments.forEach { attachment ->
+                    Text(
+                        text = attachment,
+                        //style = MaterialTheme.typography.body1,
+                        modifier = Modifier
 
-if (containsPictures) {
-    if (!showMore) {
-        DisplayState1(
-            modifiera = Modifier
-                //.wrapContentWidth()
-                //.weight(1f)
-                .widthIn(max=cons)
-            ,
-            imagePaths = imagePaths,
-            maxImagesVisible = maxImagesVisible,
-            //imageSize = imageSize,
-            iPictureCount = iPictureCount,
-            imageSpacing = imageSpacing,
-            //columnWidth = columnWidth,
-            //columnHeight = columnHeight,
-            onShowMore = { showMore = true }, // Update state when "Show More" is clicked
-            topicColor = topicColor,
-            topicFontColor = topicFontColor,
-        )
-    } else {
-        DisplayState2(
-            imagePaths = imagePaths,
-            topicColor = topicColor,
-            topicFontColor = topicFontColor,
-            //imageSize = imageSize,
-            //imageSpacing = imageSpacing,
-            onBack = { showMore = false } // Update state when "Back" is clicked
-        )
-    }
-}
+                            //.fillMaxWidth()
+                            .padding(vertical = 2.dp),
+                           style = TextStyle(
+                               fontSize = 16.sp, // Set font size as needed
+                               color = Color.Black, // Set text color
+                               textDecoration = TextDecoration.Underline // Underline text
+                           )
+                    )
+
+                }
+            }
 
 
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
+
+
+
+            if (containsPictures) {
+                if (!showMore) {
+                    DisplayState1(
+                        modifiera = Modifier
+                            //.widthIn(min=200.dp)
+                            .width(componentWidth.dp),
+                        imagePaths = imagePaths,
+                        iPictureCount = iPictureCount,
+                        onShowMore = { showMore = true },
+                        topicColor = topicColor,
+                        topicFontColor = topicFontColor,
+                    )
+                } else {
+                    DisplayState2(
+                        imagePaths = imagePaths,
+                        topicColor = topicColor,
+                        topicFontColor = topicFontColor,
+                        //imageSize = imageSize,
+                        //imageSpacing = imageSpacing,
+                        onBack = { showMore = false } // Update state when "Back" is clicked
+                    )
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(1.dp)) //space between message and date
+
             Text(
                 text = "my timestamp",
                 color=topicFontColor,
@@ -148,67 +159,6 @@ if (containsPictures) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Main container for switching between display states
-//    Column(
-//        modifier = Modifier
-//            .padding(8.dp)
-//            //.background(Color.DarkGray)
-//            .fillMaxSize() // Takes up all available space
-//    ) {
-//        if (!showMore) {
-//            DisplayState1(
-//                imagePaths = imagePaths,
-//                maxImagesVisible = maxImagesVisible,
-//                //imageSize = imageSize,
-//                imageSpacing = imageSpacing,
-//                columnWidth = columnWidth,
-//                columnHeight = columnHeight,
-//                onShowMore = { showMore = true }, // Update state when "Show More" is clicked
-//                topicColor=topicColor,
-//                topicFontColor=topicFontColor,
-//            )
-//        } else {
-//            DisplayState2(
-//                imagePaths = imagePaths,
-//                topicColor=topicColor,
-//                topicFontColor=topicFontColor,
-//                //imageSize = imageSize,
-//                //imageSpacing = imageSpacing,
-//                onBack = { showMore = false } // Update state when "Back" is clicked
-//            )
-//        }
-//    }
 }
 
 
@@ -220,16 +170,17 @@ fun DisplayState2( // State 2
     onBack: () -> Unit,
     //modifier: Modifier
 ) {
-    Box(
+    Column(
         modifier = Modifier
-          .fillMaxWidth()  // Make it take the full width of the parent
-            //.widthIn(min = 300.dp)    //.fillMaxWidth()
-            //.fillMaxHeight()
+            .fillMaxWidth()  // Make it take the full width of the parent
+        //.widthIn(min = 300.dp)    //.fillMaxWidth()
+        //.fillMaxHeight()
 //            .background(Color.Yellow)
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
+
+            //.fillMaxWidth()
             //.background(Color.Red)
         ) {
             items(imagePaths) { imagePath ->
@@ -255,7 +206,7 @@ fun DisplayState2( // State 2
         FloatingActionButton(
             onClick = onBack,
             modifier = Modifier
-                .align(Alignment.BottomEnd) // Align to the bottom end
+                //.align(Alignment.BottomEnd) // Align to the bottom end
                 .padding(16.dp), // Add padding to the edge
             //containerColor = topicColor,
             //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
@@ -277,78 +228,27 @@ fun DisplayState1( // State 1
     topicColor: Color,
     topicFontColor: Color,
     imagePaths: List<String>,
-    maxImagesVisible: Int,
-    //imageSize: Dp,
-    imageSpacing: Dp,
-//    columnWidth: Dp,
-//    columnHeight: Dp,
     iPictureCount: Int = 4,
     onShowMore: () -> Unit, // Pass a lambda to update the state
     modifiera: Modifier = Modifier,
-
 ) {
 
-    //val iPictureCount: Int = 4 // Number of images to show initially
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     var iPicturesToShow= 0
-//    var iNumberColumns = when (iNumber) { // iNumber -> iNumberColumns
-//    1 -> 1
-//    2 -> 2
-//    //3 -> 2
-//    else -> 2 // Default value if none of the conditions are met
-//}
-
     when (iPictureCount) {
-        1 -> {
-            iPicturesToShow = 1
-            iNumberColumns=1
-            // Add more actions for x = 1
-        }
-        2 -> {
-            iPicturesToShow = 2
-            iNumberColumns=2
-        }
-        3 -> {
-            iPicturesToShow = 3
-            iNumberColumns=2
-        }
-        4 -> {
-            iPicturesToShow = 4
-            iNumberColumns=2
-        }
-        else -> {
-            iPicturesToShow = 3
-            iNumberColumns=2
-        }
-    }
-
+        1 -> { iPicturesToShow = 1
+            iNumberColumns=1 }
+        2 -> { iPicturesToShow = 2
+            iNumberColumns=2 }
+        3 -> { iPicturesToShow = 3
+            iNumberColumns=2 }
+        4 -> { iPicturesToShow = 4
+            iNumberColumns=2 }
+        else -> { iPicturesToShow = 3
+            iNumberColumns=2 } }
     Box(
-        //modifier = Modifier
         modifiera
-            //.wrapContentWidth()
-            //.widthIn(max=200.dp)
-
-        //.widthIn(min = 300.dp)    //.fillMaxWidth()
-        ///.fillMaxWidth().widthIn(min=200.dp)
-            //.wrapContentWidth()
-            //.widthIn(max=200.dp)
-        //.widthIn(min=200.dp)
-            //.width(300.dp)
-            //.width(columnWidth)
-            //.fillMaxWidth()
-            //.clip(RoundedCornerShape(8.dp))
-            //.background(Color.Red)
-
     ) {
-
-//        Surface(
-//            shape = RoundedCornerShape(8.dp),
-//            //color = topicColor,
-//            color = topicColor,
-//            modifier = Modifier.padding(1.dp),
-//            tonalElevation = 0.dp, // Remove shadow
-//            border = null // Remove border
-//        ) {
         LazyVerticalGrid(
             horizontalArrangement = Arrangement.spacedBy(1.dp), // Horizontal space between items
             verticalArrangement = Arrangement.spacedBy(1.dp),
@@ -356,8 +256,8 @@ fun DisplayState1( // State 1
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
             modifier = Modifier
                 .padding(1.dp)
-                //.width(columnWidth)
-                //.background(Color.Red)
+            //.width(columnWidth)
+            //.background(Color.Red)
         ) {
             // Display the images
             items(imagePaths.take(iPicturesToShow)) { imagePath ->
@@ -365,29 +265,18 @@ fun DisplayState1( // State 1
                     //clipu = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-
-                        //.padding(1.dp)
                         .aspectRatio(1f),
-                    //.width(imageSize)
-                    //.padding(end = imageSpacing, bottom = imageSpacing),
                     painter = rememberAsyncImagePainter(imagePath),
                     contentDescription = "Image",
                     contentScale = ContentScale.Crop, // Crops the image if necessary
                 )
             }
-
-            // Show More button in the 4th slot
             item {
                 if (iPictureCount>iPicturesToShow) {
                     Box(
                         modifier = Modifier
-
-                            .fillMaxWidth()
+                            //.fillMaxWidth()
                             .aspectRatio(1f)
-                            //.height(100.dp)
-                            //.padding(1.dp)
-                            //.padding(end = imageSpacing, bottom = imageSpacing)
-                            //.background(Color.Gray) // Background color for the "Show More" area
                             .clickable(onClick = onShowMore) // Trigger the show more action
                             .align(Alignment.Center) // Center the content inside the Box
                     ) {
