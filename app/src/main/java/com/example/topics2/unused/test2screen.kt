@@ -1,7 +1,9 @@
 package com.example.topics2.unused
 import android.util.Log
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,68 +51,86 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Divider
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun testScreen2(
-    topicColor: Color = MaterialTheme.colorScheme.tertiary,
-    topicFontColor: Color = MaterialTheme.colorScheme.onTertiary,
+    //topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    topicColor: Color = Color.Cyan ,
+    topicFontColor: Color = Color.Black
 ) { // Main screen
     val iPictureCount: Int =5
         val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
     val imagePaths = getTestImagePaths()
     var showMore by remember { mutableStateOf(false) }
-    var messagecontent="aaaaaaaaaaaa"
-    var containsPictures: Boolean = true
+    var messagecontent="aaaaaa\naaaaaaaaaaaaaaaaa\naaa\nnnnnnnnnnnnnnna"
+    var containsPictures: Boolean = false
     var containsAttachments: Boolean = true
+    val withContentWidth: Float = 0.8f
+    val opacity: Float = 0.2f
     var componentWidth by remember { mutableStateOf(0) }
     Surface(
         shape = RoundedCornerShape(8.dp),
         color = topicColor,
-        modifier = Modifier.padding(1.dp),
+        modifier = Modifier
+            .padding(1.dp),
         tonalElevation = 0.dp, // Remove shadow
         border = null // Remove border
     ) {
         Column( // Message Bubble to allign messageContent, additional Content and timpstamp
             modifier = Modifier
-                //.width(iaa.dp)
-                //.wrapContentWidth()
                 .padding(6.dp), //space around message
         ) {
             Text( // Show Message Content.
                 text = messagecontent,
-                color=topicFontColor,
+                color = topicFontColor,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(0.dp)
-                    //.width(200.dp)
-                    .onSizeChanged { size ->
-                        componentWidth = size.width
-                        Log.d("aabbcc width changed", componentWidth.toString())
-                    }
+                //.width(200.dp)
+//                    .onSizeChanged { size ->
+//                        componentWidth = size.width
+//                        Log.d("aabbcc width changed", componentWidth.toString())
+//                    }
             )
 
             if (containsAttachments) {
-                listOfAttachments.forEach { attachment ->
-                    Text(
-                        text = attachment,
-                        //style = MaterialTheme.typography.body1,
-                        modifier = Modifier
+                Column(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(topicFontColor.copy(opacity)) // 50% transparent blue
+                                //.border(2.dp, Color.Red)
+                                .border(2.dp, topicFontColor, RoundedCornerShape(8.dp)) // Apply a rounded border
+                                .fillMaxWidth(withContentWidth)
+                                .padding(vertical =5.dp)
+                                .padding(5.dp)
+                    //.padding(20.dp),
+                ) { //Divider(color = Color.Red, thickness = 2.dp)
+                    listOfAttachments.forEach { attachment ->
+                        Text( // get text name from path
+                            text = attachment,
+                            modifier = Modifier
+                                .widthIn(min=200.dp)
+                                .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
 
-                            //.fillMaxWidth()
-                            .padding(vertical = 2.dp),
-                           style = TextStyle(
-                               fontSize = 16.sp, // Set font size as needed
-                               color = Color.Black, // Set text color
-                               textDecoration = TextDecoration.Underline // Underline text
-                           )
-                    )
+                            style = TextStyle(
+                                fontSize = 16.sp, // Set font size as needed
+                                color = topicFontColor, // Set text color
+                                textDecoration = TextDecoration.Underline // Underline text
+                            )
+                        )
 
+                    }
                 }
+
             }
 
 
@@ -123,7 +143,8 @@ fun testScreen2(
                     DisplayState1(
                         modifiera = Modifier
                             //.widthIn(min=200.dp)
-                            .width(componentWidth.dp),
+                            //.width(componentWidth.dp),
+                            .fillMaxWidth(0.7f),
                         imagePaths = imagePaths,
                         iPictureCount = iPictureCount,
                         onShowMore = { showMore = true },
