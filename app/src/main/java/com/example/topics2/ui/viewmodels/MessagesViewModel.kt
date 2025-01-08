@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -8,22 +9,20 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-
+// TODO Fix category add when adding message
+// TODO Fix created time when  editing when adding message
 class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
-
-    // States whether file picker is done
-    private val _showPicker = MutableStateFlow<Boolean>(false)
-    val showPicker: StateFlow<Boolean> = _showPicker
-    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
 
     // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
     private val _filePicked = MutableStateFlow<Boolean>(false)
@@ -67,51 +66,67 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
-    fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
+    fun collectMessages(topicId: Int) {
+        messageDao.getMessagesForTopic(topicId).onEach { messageList ->_messages.value = messageList
+        }.launchIn(viewModelScope)
+    }
 
-
+    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
+    // States whether file picker is done
+    private val _showPicker = MutableStateFlow<Boolean>(false)
+    val showPicker: StateFlow<Boolean> = _showPicker
+    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
+    // To DELETE AFTER NEW FILE PICKER IMPLEMENTED
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
-        messageDao.deleteMessage(messageId)
-        fetchMessages(topicId)
+        messageDao.deleteMessagesWithID(messageId)
+
     }
 
     // Add Message
     suspend fun addMessage(
-        topicId: Int?,
+        topicId: Int,
         content: String,
         priority: Int,
-        filePath: String = "",
-        fileType: Int = 0
-    ) {
+        type: Int,
+        categoryID: Int
+     ) {
+        val timestamp = System.currentTimeMillis()
         val newMessage = MessageTbl(
             topicId = topicId,
-            messageContent = content,
-            messagePriority = priority,
-            filePath = filePath,
-            fileType = fileType,
-            messageTimestamp = System.currentTimeMillis()
+            content = content,
+            priority = priority,
+            type = type,
+            createTime = timestamp,
+            lastEditTime =  timestamp,
+            categoryId = categoryID
             )
         messageDao.insertMessage(newMessage) // Insert the message into the database
-        fetchMessages(topicId)
+        messageDao.updateLastModifiedTopic(topicId, timestamp)
     }
 
     //Edit Message
     suspend fun editMessage(
         messageId: Int,
-        topicId: Int?, content: String, priority: Int,
-        messageTimestamp: Long = System.currentTimeMillis() )
+        topicId: Int,
+        content: String,
+        priority: Int,
+        messageTimestamp: Long = System.currentTimeMillis()
+    )
     {
         val editedMessage = MessageTbl(
             id = messageId,
             topicId = topicId,
-            messageContent = content,
-            messageTimestamp = messageTimestamp,
-            messagePriority = priority,
+            content = content,
+            createTime = messageTimestamp,
+            priority = priority,
+            lastEditTime =  messageTimestamp,
+            categoryId = 1,
+            type =  1
         )
         messageDao.updateMessage(editedMessage)
-        fetchMessages(topicId)
+      //  fetchMessages(topicId)
     }
 
     companion object {

@@ -1,9 +1,12 @@
 package com.example.topics2.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.enitities.TopicTbl
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -11,24 +14,26 @@ interface TopicDao {
 
 
  @Insert
- suspend fun insertTopic(topic: TopicTbl)
+suspend  fun insertTopic(topic: TopicTbl)
 
- @Query("SELECT * FROM topics ORDER BY topicLastEdit DESC")
- suspend fun getAllTopics(): List<TopicTbl>
+ @Query("SELECT * FROM topic_tbl ORDER BY LastEditTime DESC")
+ fun getAllTopics(): Flow<List<TopicTbl>>
 
- @Query("DELETE FROM topics WHERE topicID = :topicId")
+ @Query("DELETE FROM topic_tbl WHERE id = :topicId")
  suspend fun deleteTopicById(topicId: Int)
 
- // Update the last modified date for a specific topic by topicId
- @Query("UPDATE topics SET topicLastEdit = :lastEdit WHERE topicId = :topicId")
- suspend fun updateLastModified(topicId: Int, lastEdit: Long)
 
 
- @Query("DELETE FROM messages WHERE topicId = :topicId")
- suspend fun deleteMessagesForTopic(topicId: Int)
+
+ //@Query("DELETE FROM message_tbl WHERE topicId = :topicId")
+ //suspend fun deleteMessagesForTopic(topicId: Int)
 
  // selects the last 50 unique colours from data base to populate recent colours
- @Query("SELECT DISTINCT topicColour FROM topics ORDER BY topicCreated DESC LIMIT 50")
- suspend fun getDistinctColorsOrdered(): List<Int>
+ @Query("SELECT DISTINCT Colour FROM topic_tbl ORDER BY CreateTime DESC LIMIT 50")
+ fun getDistinctColorsOrdered(): Flow<List<Int>>
+
+ @Query("SELECT * FROM topic_tbl WHERE categoryId = :categoryId")
+ fun getTopicsByCategoryId(categoryId: Int): Flow<List<TopicTbl>>
 
 }
+

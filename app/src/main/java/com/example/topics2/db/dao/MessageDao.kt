@@ -3,22 +3,34 @@ package com.example.topics2.db.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.topics2.db.enitities.MessageTbl
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
-    @Insert
-    suspend fun insertMessage(message: MessageTbl)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMessage(message: MessageTbl): Long
 
-    @Query("SELECT * FROM messages WHERE topicId = :topicId")
-    suspend fun getMessagesForTopic(topicId: Int?): List<MessageTbl>
+    @Query("SELECT * FROM message_tbl")
+    fun getAllMessages(): Flow<List<MessageTbl>>
 
-    @Query("DELETE FROM messages WHERE id = :messageId")
-    suspend fun deleteMessage(messageId: Int)
+    @Query("SELECT * FROM message_tbl WHERE topicId = :topicId")
+    fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
+
+    @Query("DELETE FROM message_tbl WHERE topicId = :topicId")
+    suspend fun deleteMessagesForTopic(topicId: Int)
+
+    @Query("DELETE FROM message_tbl WHERE id = :messageID")
+    suspend fun deleteMessagesWithID(messageID: Int)
 
     @Update
     suspend fun updateMessage(message: MessageTbl)
+
+    // Update the last modified date for a specific topic by topicId
+    @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
+    suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
 
 }
