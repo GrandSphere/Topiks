@@ -74,7 +74,8 @@ fun ChatBubble(message: String, maxLines: Int = 3) {
 // Preview Function
 @Composable
 fun PreviewChatBubble() {
-    ChatBubble(message = getSampleChatMessage())
+    //ChatBubble(message = getSampleChatMessage())
+
 }
 
 
