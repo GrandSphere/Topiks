@@ -48,12 +48,13 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .background(Color.DarkGray)
+            .background(Color.Black)
             .clip(RoundedCornerShape(4.dp))
     ) {
         BasicTextField(
-            textStyle = TextStyle(fontSize = 20.sp),
+            textStyle = TextStyle(fontSize = 20.sp, color = Color.White),
             value = query,
+
             onValueChange = {
                 query = it
                 viewModel.performUniqueMixedSearch(it)
@@ -61,6 +62,7 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp)
+                //.background(Color.DarkGray)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -126,7 +128,7 @@ class UniqueFuzzySearchViewModel : ViewModel() {
     val uniqueSearchResults: StateFlow<List<TableEntry>> = _uniqueSearchResults
 
     // This is the large dataset we are working with
-    private val dataList = generateTableData(2000)
+    private val dataList = generateTableData(200000)
 
     // Debounce variable to handle fast search input
     private var debounceJob: Job? = null
@@ -137,7 +139,7 @@ class UniqueFuzzySearchViewModel : ViewModel() {
 
         // Start a new debounce task
         debounceJob = viewModelScope.launch {
-            delay(300) // Delay for debouncing user input
+            delay(100) // Delay for debouncing user input
             val keywords = query.lowercase().split(" ").filter { it.isNotBlank() }
 
             val results = dataList.filter { entry ->
