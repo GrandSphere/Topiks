@@ -28,6 +28,7 @@ import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
+import com.example.topics2.ui.screens.ShowMorePictures
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.CategoryViewModel
@@ -95,6 +96,7 @@ fun TopicsApp(context: Context) {
                     composable("navaddtopic") { AddTopicScreen( navController, topicViewModel ) }
                     composable("navcolourpicker") { ColourPickerScreen( navController, topicViewModel ) }
                     composable("navrecentcolours") { ColorGridScreen(navController, topicViewModel )}
+                    composable("navShowMorePictures") { ShowMorePictures (navController) }
                     composable("navnotescreen/{topicId}/{topicName}",
                         arguments= listOf(navArgument("topicId"){type= NavType.IntType})
                     ) { backStackEntry ->

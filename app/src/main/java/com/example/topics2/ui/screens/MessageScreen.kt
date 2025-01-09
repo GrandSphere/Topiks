@@ -34,6 +34,8 @@ import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.OLDMessageBubble
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -94,6 +96,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
+
+
             items(messages.size) { index ->
                 val message = messages[index]
                 val pictureList = remember { mutableStateOf(listOf<String>()) }
@@ -133,6 +137,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 }
                 if (attachmentChecked.value) {
+                    val timestamp: String = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.createTime)
                     MessageBubble(
                         navController = navController,
                         messageContent = message.content,
@@ -141,7 +146,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         containAttachments = containsAttachments.value,
                      //   containAttachments = true,
                         listOfPictures = pictureList.value,
-                        listOfAttachments = attachmentList.value
+                        listOfAttachments = attachmentList.value,
+                        timestamp = timestamp
                       //  listOfAttachments =  pictureList.value
                     )
                     //Log.d("aabbcc",message)
