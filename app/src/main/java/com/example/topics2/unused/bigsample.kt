@@ -182,22 +182,22 @@ fun generateTableData(numberOfEntries: Int): List<TableEntry> {
         "suddenly", "playfully"
     )
 
-    fun generateRandomSentence(): String {
+    fun generateRandomSentence(index: Int): String {
         val structure = Random.nextInt(1, 4)
         return when (structure) {
-            1 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()}"
-            2 -> "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()}"
-            3 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()}"
-            else -> "${verbs.random()} ${nouns.random()} ${nouns.random()}"
+            1 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()} $index"
+            2 -> "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()} $index"
+            3 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} $index"
+            else -> "${verbs.random()} ${nouns.random()} ${nouns.random()} $index"
         }
     }
 
     val topics = List(100) { "Topic ${it + 1}" }
 
-    return (1..numberOfEntries).map {
-        val content = generateRandomSentence()
+    return (1..numberOfEntries).map { index ->
+        val content = generateRandomSentence(index)
         TableEntry(
-            messageID = it,
+            messageID = index,
             messageContent = content,
             messageContentLower = content.lowercase(),
             topicName = topics.random()
