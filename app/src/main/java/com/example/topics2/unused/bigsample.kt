@@ -1,13 +1,9 @@
 package com.example.topics2.unused
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,21 +14,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
-
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlin.random.Random
+
+// Data class representing the table
+data class TableEntry(
+    val messageID: Int,
+    val messageContent: String,
+    val topicName: String
+)
 
 // Composable for the unique fuzzy search screen
 @Composable
@@ -41,7 +41,7 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
     val searchResults by viewModel.uniqueSearchResults.collectAsState()
 
     var isDialogOpen by remember { mutableStateOf(false) }
-    var selectedItemText by remember { mutableStateOf("") }
+    var selectedItem: TableEntry? by remember { mutableStateOf(null) }
 
     Column(
         modifier = Modifier
@@ -65,28 +65,31 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(searchResults) { item ->
-                Text(
-                    text = item,
-                    fontSize = 16.sp,
-                    color = Color.White,
+                Column(
                     modifier = Modifier
                         .padding(8.dp)
                         .clickable {
-                            selectedItemText = item
+                            selectedItem = item
+                            Log.d("TableEntry", "ID: ${item.messageID}, Content: ${item.messageContent}, Topic: ${item.topicName}")
                             isDialogOpen = true
                         }
-                )
+                ) {
+                    Text(text = item.topicName, fontSize = 14.sp, color = Color.Gray)
+                    Text(text = item.messageContent, fontSize = 16.sp, color = Color.White)
+                }
             }
         }
 
-        if (isDialogOpen) {
+        if (isDialogOpen && selectedItem != null) {
             Dialog(onDismissRequest = { isDialogOpen = false }) {
                 Surface(
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
-                    Text(text = selectedItemText)
+                    Text(text = "ID: ${selectedItem!!.messageID}\nContent: ${selectedItem!!.messageContent}\nTopic: ${selectedItem!!.topicName}")
                 }
             }
         }
@@ -95,11 +98,11 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
 
 // ViewModel for the fuzzy search
 class UniqueFuzzySearchViewModel : ViewModel() {
-    private val _uniqueSearchResults = MutableStateFlow<List<String>>(emptyList())
-    val uniqueSearchResults: StateFlow<List<String>> = _uniqueSearchResults
+    private val _uniqueSearchResults = MutableStateFlow<List<TableEntry>>(emptyList())
+    val uniqueSearchResults: StateFlow<List<TableEntry>> = _uniqueSearchResults
 
     // This is the large dataset we are working with
-    private val dataList = generateMyLista(2000) + generateSampleList()
+    private val dataList = generateTableData(500000)
 
     // Debounce variable to handle fast search input
     private var debounceJob: Job? = null
@@ -113,8 +116,8 @@ class UniqueFuzzySearchViewModel : ViewModel() {
             delay(300) // Delay for debouncing user input
             val keywords = query.lowercase().split(" ").filter { it.isNotBlank() }
 
-            val results = dataList.filter { item ->
-                val lowercasedItem = item.lowercase()
+            val results = dataList.filter { entry ->
+                val lowercasedItem = entry.messageContent.lowercase()
 
                 // Process each keyword to check for exclusion
                 keywords.all { keyword ->
@@ -133,8 +136,8 @@ class UniqueFuzzySearchViewModel : ViewModel() {
     }
 }
 
-// Function to generate the list of strings (50,000 entries)
-fun generateMyLista(numberOfEntries: Int): List<String> {
+// Function to generate the table data
+fun generateTableData(numberOfEntries: Int): List<TableEntry> {
     // Define vocabulary categories
     val adjectives = listOf("beautiful", "fast", "slow", "ancient", "bright", "dark", "tall", "small", "grumpy", "peaceful", "shiny", "dirty", "quiet", "loud", "colorful")
     val nouns = listOf("cat", "dog", "bird", "tree", "car", "mountain", "river", "city", "forest", "lake", "house", "sky", "sun", "moon", "star")
@@ -143,29 +146,21 @@ fun generateMyLista(numberOfEntries: Int): List<String> {
 
     // Function to generate a random sentence
     fun generateRandomSentence(): String {
-        // Choose a random structure for the sentence
         val structure = Random.nextInt(1, 4)
-
         return when (structure) {
-            1 -> {
-                // Adjective + Noun + Verb + Adverb
-                "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()}"
-            }
-            2 -> {
-                // Noun + Verb + Noun + Verb
-                "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()}"
-            }
-            3 -> {
-                // Adjective + Noun + Verb
-                "${adjectives.random()} ${nouns.random()} ${verbs.random()}"
-            }
-            else -> {
-                // Fallback to a simple combination of a verb and two nouns
-                "${verbs.random()} ${nouns.random()} ${nouns.random()}"
-            }
+            1 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()}"
+            2 -> "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()}"
+            3 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()}"
+            else -> "${verbs.random()} ${nouns.random()} ${nouns.random()}"
         }
     }
 
-    // Generate the list of sentences
-    return (1..numberOfEntries).map { generateRandomSentence() }
+    // Generate the list of table entries
+    return (1..numberOfEntries).map {
+        TableEntry(
+            messageID = it,
+            messageContent = generateRandomSentence(),
+            topicName = "Topic ${Random.nextInt(1, 100)}"
+        )
+    }
 }

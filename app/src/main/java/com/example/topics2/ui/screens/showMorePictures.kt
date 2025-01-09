@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.topics2.unused.getFileNameFromString
-import com.example.topics2.unused.getTestImagePaths
 
 @Composable
 fun ShowMorePictures( // State 2
@@ -31,7 +30,7 @@ fun ShowMorePictures( // State 2
     // get these values in:
     val topicColor: Color = MaterialTheme.colorScheme.tertiary
     val topicFontColor: Color = MaterialTheme.colorScheme.onTertiary
-    val imagePaths: List<String> = getTestImagePaths()
+    val imagePaths: List<String> = emptyList()
     //
     Box(
         modifier = Modifier

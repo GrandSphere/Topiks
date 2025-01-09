@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.topics2.unused.getTestImagePaths
 
 
 @Composable
@@ -30,7 +29,7 @@ fun MessageBubble( // New Message Bubble
 ) { // Main screen
     val iPictureCount: Int =5
     val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
-    val imagePaths = getTestImagePaths()
+    val imagePaths : List<String> = emptyList()   //getTestImagePaths()
     var showMore by remember { mutableStateOf(false) }
     var messagecontent="This is my first sentence\nThis is my second sentence\n\nthis nothing"
     var containsPictures: Boolean = true
