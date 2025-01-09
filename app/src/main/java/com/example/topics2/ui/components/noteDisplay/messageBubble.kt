@@ -32,7 +32,8 @@ fun MessageBubble( // New Message Bubble
     containPictures: Boolean,
     containAttachments: Boolean,
     listOfPictures: List<String>,
-    listOfAttachments: List<String>
+    listOfAttachments: List<String>,
+    timestamp: String
 ) { // Main screen
 
 
@@ -75,7 +76,7 @@ fun MessageBubble( // New Message Bubble
                             .fillMaxWidth(0.7f),
                         imagePaths = imagePaths,
                         iPictureCount = iPictureCount,
-                        onShowMore = { navController.navigate("navState2") },
+                        onShowMore = { navController.navigate("navShowMorePictures") },
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
                     )
@@ -102,7 +103,7 @@ fun MessageBubble( // New Message Bubble
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             Text(
-                text = "02:07 08/01/25",
+                text = timestamp,
                 color=topicFontColor,
                 style = MaterialTheme.typography.bodySmall,
                 // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
