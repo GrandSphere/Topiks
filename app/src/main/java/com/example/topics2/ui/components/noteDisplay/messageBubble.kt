@@ -33,7 +33,7 @@ fun MessageBubble( // New Message Bubble
     val imagePaths = getTestImagePaths()
     var showMore by remember { mutableStateOf(false) }
     var messagecontent="This is my first sentence\nThis is my second sentence\n\nthis nothing"
-    var containsPictures: Boolean = true
+    var containsPictures: Boolean = false
     var containsAttachments: Boolean = false
     val withContentWidth: Float = 0.8f
     val opacity: Float = 0.2f

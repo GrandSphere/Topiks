@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
+import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.OLDMessageBubble
 
@@ -92,13 +93,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-                OLDMessageBubble(
-                    message = message,
-                    topicId = topicId,
-                    viewModel = viewModel,
-                    topicColor = topicColor,
-                    topicFontColor = topicFontColor,
-                )
+//                OLDMessageBubble(
+//                    message = message,
+//                    topicId = topicId,
+//                    viewModel = viewModel,
+//                    topicColor = topicColor,
+//                    topicFontColor = topicFontColor,
+//                )
+                MessageBubble(navController)
                 //Log.d("aabbcc",message)
             }
             item {
