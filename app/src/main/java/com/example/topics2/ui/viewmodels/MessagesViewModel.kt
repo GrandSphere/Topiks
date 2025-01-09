@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -107,12 +109,14 @@ class MessageViewModel (
     }
 
     // Retrieve files for specific messageID
-    suspend fun getFilesByMessageId(messageId: Int)
-    {
-        filesDao.getFilesByMessageId(messageId)
+    suspend fun getFilesByMessageId(messageId: Int): List<Uri> {
+        // Collect the Flow<List<FileTbl>> and convert it to List<Uri>
+        return filesDao.getFilesByMessageId(messageId).first().map { file ->
+            Uri.parse(file.filePath)
+        }
     }
 
-    // Add File to File_tbl
+        // Add File to File_tbl
     suspend fun addFile(
         topicId: Int,
         messageId: Int,
