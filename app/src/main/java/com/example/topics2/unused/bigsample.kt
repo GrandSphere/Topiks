@@ -118,7 +118,7 @@ class UniqueFuzzySearchViewModel : ViewModel() {
     val uniqueSearchResults: StateFlow<List<TableEntry>> = _uniqueSearchResults
 
     // This is the large dataset we are working with
-    private val dataList = generateTableData(200000)
+    private val dataList = generateTableData(2000)
 
     // Debounce variable to handle fast search input
     private var debounceJob: Job? = null

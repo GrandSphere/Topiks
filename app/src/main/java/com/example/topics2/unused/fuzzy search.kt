@@ -27,7 +27,7 @@ fun NewSearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel()) {
 
     var isDialogOpen by remember { mutableStateOf(false) }
     var selectedItem: TableEntry? by remember { mutableStateOf(null) }
-
+    var inputText by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -35,28 +35,65 @@ fun NewSearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel()) {
             .clip(RoundedCornerShape(4.dp))
     ) {
         CustomSearchBox(
-
-            inputText=,
-            onValueChange=,
-        sPlaceHolder=,
-        isFocused=,
-        focusModifier=,
-        boxModifier=,
+            inputText = query,
+            onValueChange = { newtext ->
+                query = newtext  // Update the inputText as the user types
+                viewModel.performUniqueMixedSearch(query)  // Trigger search with updated query
+            },
+            sPlaceHolder="Search...",
+            isFocused=true,
+            focusModifier= Modifier,
+            boxModifier=Modifier,
         )
 
-        BasicTextField(
-            textStyle = TextStyle(fontSize = 20.sp, color = Color.White),
-            value = query,
 
+
+/*
+        BasicTextField(
+            value = searchText,
             onValueChange = {
-                query = it
-                viewModel.performUniqueMixedSearch(it)
+                searchText = it
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp)
-            //.background(Color.DarkGray)
+                .weight(1f)
+                .height(40.dp)
+                .padding(horizontal = 20.dp, vertical = 0.dp),
+            textStyle = TextStyle(
+                fontSize = 18.sp,
+                color = colors.onSecondary,
+                lineHeight = 20.sp
+            ),
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                Box(contentAlignment = Alignment.CenterStart) {
+                    if (searchText.text.isEmpty() && !isSearchFocused) {
+                        Text(
+                            text = "Search...",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+            cursorBrush = SolidColor(colors.tertiary) // White cursor
         )
+*/
+
+
+//        BasicTextField(
+//            //textStyle = TextStyle(fontSize = 20.sp, color = Color.White),
+//            value = query,
+//
+//            onValueChange = {
+//                query = it
+//                viewModel.performUniqueMixedSearch(it)
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(4.dp)
+//                .background(Color.DarkGray)
+//            //.background(Color.DarkGray)
+//        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

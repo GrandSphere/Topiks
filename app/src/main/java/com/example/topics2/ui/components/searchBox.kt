@@ -41,7 +41,7 @@ fun CustomSearchBox(
     boxModifier: Modifier = Modifier // Modifier for the Box
 ) {
     val colors = MaterialTheme.colorScheme
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+//    var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var isSearchFocused by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -63,10 +63,8 @@ fun CustomSearchBox(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BasicTextField(
-                    value = searchText,
-                    onValueChange = {
-                        searchText = it
-                    },
+                    value = inputText,
+                    onValueChange = onValueChange,
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp)
@@ -79,7 +77,7 @@ fun CustomSearchBox(
                     singleLine = true,
                     decorationBox = { innerTextField ->
                         Box(contentAlignment = Alignment.CenterStart) {
-                            if (searchText.text.isEmpty() && !isSearchFocused) {
+                            if (inputText.isEmpty() && !isSearchFocused) {
                                 Text(
                                     text = "Search...",
                                     style = MaterialTheme.typography.bodyMedium
@@ -120,7 +118,7 @@ fun CustomSearchBox(
     }
 
     // Update search focus state
-    LaunchedEffect(searchText.text) {
-        isSearchFocused = searchText.text.isNotEmpty()
-    }
+//    LaunchedEffect(inputText.text) {
+//        isSearchFocused = input.text.isNotEmpty()
+//    }
 }
