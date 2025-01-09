@@ -100,7 +100,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //                    topicColor = topicColor,
 //                    topicFontColor = topicFontColor,
 //                )
-                MessageBubble(navController)
+                MessageBubble(
+                    navController = navController,
+                    messageContent = message.content,
+                    containPictures = false,
+                    containAttachments = false,
+                    listOfPictures = emptyList(),
+                    listOfAttachments = emptyList()
+                    )
                 //Log.d("aabbcc",message)
             }
             item {
