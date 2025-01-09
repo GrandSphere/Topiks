@@ -94,7 +94,7 @@ fun TestApp(context: Context) {
                     composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
-                    composable("navTest2") { MessageBubble(navController) }
+                   // composable("navTest2") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
