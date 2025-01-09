@@ -88,6 +88,7 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
                     )
                 }
             }
+
         }
 
         if (isDialogOpen && selectedItem != null) {
@@ -113,38 +114,3 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
 }
 
 // ViewModel for the fuzzy search
-class UniqueFuzzySearchViewModel : ViewModel() {
-    private val _uniqueSearchResults = MutableStateFlow<List<TableEntry>>(emptyList())
-    val uniqueSearchResults: StateFlow<List<TableEntry>> = _uniqueSearchResults
-
-    // This is the large dataset we are working with
-    private val dataList = generateTableData(2000)
-
-    // Debounce variable to handle fast search input
-    private var debounceJob: Job? = null
-
-    // Search function with debounce and fuzzy search logic
-    fun performUniqueMixedSearch(query: String) {
-        debounceJob?.cancel() // Cancel any ongoing debounce task
-
-        // Start a new debounce task
-        debounceJob = viewModelScope.launch {
-            delay(100) // Delay for debouncing user input
-            val keywords = query.lowercase().split(" ").filter { it.isNotBlank() }
-
-            val results = dataList.filter { entry ->
-                keywords.all { keyword ->
-                    if (keyword.startsWith("!")) {
-                        // Exclude results containing the substring
-                        !entry.messageContentLower.contains(keyword.substring(1))
-                    } else {
-                        // Include results containing the substring
-                        entry.messageContentLower.contains(keyword)
-                    }
-                }
-            }.take(30) // Limit to top 30 results
-
-            _uniqueSearchResults.value = results
-        }
-    }
-}
