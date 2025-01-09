@@ -84,7 +84,4 @@ dependencies {
     implementation (libs.material3) // for Material3 components
     // Lifecycle components (if not already included)
     implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
-    implementation (libs.lucene.core)
-    implementation (libs.lucene.analyzers.common)
-    implementation (libs.fuzzywuzzy)
 }

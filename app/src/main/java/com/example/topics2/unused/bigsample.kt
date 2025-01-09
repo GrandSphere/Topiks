@@ -1,6 +1,4 @@
 package com.example.topics2.unused
-
-
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,14 +25,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-
-// Data class representing the table with a cached lowercase version of the message content
-data class TableEntry(
-    val messageID: Int,
-    val messageContent: String,
-    val messageContentLower: String, // Cached lowercase content
-    val topicName: String
-)
 
 // Composable for the unique fuzzy search screen
 @Composable
@@ -156,51 +146,5 @@ class UniqueFuzzySearchViewModel : ViewModel() {
 
             _uniqueSearchResults.value = results
         }
-    }
-}
-
-// Function to generate the table data
-fun generateTableData(numberOfEntries: Int): List<TableEntry> {
-    val adjectives = listOf(
-        "beautiful", "fast", "slow", "ancient", "bright", "dark",
-        "tall", "small", "grumpy", "peaceful", "shiny", "dirty",
-        "quiet", "loud", "colorful"
-    )
-    val nouns = listOf(
-        "cat", "dog", "bird", "tree", "car", "mountain",
-        "river", "city", "forest", "lake", "house", "sky",
-        "sun", "moon", "star"
-    )
-    val verbs = listOf(
-        "runs", "flies", "sits", "jumps", "swims", "walks",
-        "climbs", "dives", "sings", "barks", "howls", "shines",
-        "builds", "paints", "explores"
-    )
-    val adverbs = listOf(
-        "quickly", "loudly", "gracefully", "happily", "silently",
-        "randomly", "brightly", "gently", "strongly", "awkwardly",
-        "suddenly", "playfully"
-    )
-
-    fun generateRandomSentence(index: Int): String {
-        val structure = Random.nextInt(1, 4)
-        return when (structure) {
-            1 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()} $index"
-            2 -> "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()} $index"
-            3 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} $index"
-            else -> "${verbs.random()} ${nouns.random()} ${nouns.random()} $index"
-        }
-    }
-
-    val topics = List(100) { "Topic ${it + 1}" }
-
-    return (1..numberOfEntries).map { index ->
-        val content = generateRandomSentence(index)
-        TableEntry(
-            messageID = index,
-            messageContent = content,
-            messageContentLower = content.lowercase(),
-            topicName = topics.random()
-        )
     }
 }
