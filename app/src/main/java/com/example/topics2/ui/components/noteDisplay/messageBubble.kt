@@ -33,11 +33,12 @@ fun MessageBubble( // New Message Bubble
     listOfPictures: List<String>,
     listOfAttachments: List<String>
 ) { // Main screen
-    val iPictureCount: Int =5
-    val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
-    val imagePaths = getTestImagePaths()
+
 
     var messagecontent = messageContent
+    val imagePaths: List<String> = listOfPictures
+    val listOfAttachments: List<String> =  listOfAttachments
+    val iPictureCount: Int = imagePaths.size
     var containsPictures: Boolean = containPictures
     var containsAttachments: Boolean = containAttachments
 
