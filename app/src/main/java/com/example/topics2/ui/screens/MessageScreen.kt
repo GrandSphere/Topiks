@@ -93,13 +93,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-//                OLDMessageBubble(
-//                    message = message,
-//                    topicId = topicId,
-//                    viewModel = viewModel,
-//                    topicColor = topicColor,
-//                    topicFontColor = topicFontColor,
-//                )
+
                 MessageBubble(
                     navController = navController,
                     messageContent = message.content,
