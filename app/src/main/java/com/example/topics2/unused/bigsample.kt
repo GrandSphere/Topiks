@@ -1,5 +1,6 @@
 package com.example.topics2.unused
 
+
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,15 +23,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-// Data class representing the table
+// Data class representing the table with a cached lowercase version of the message content
 data class TableEntry(
     val messageID: Int,
     val messageContent: String,
+    val messageContentLower: String, // Cached lowercase content
     val topicName: String
 )
 
@@ -63,19 +64,35 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             items(searchResults) { item ->
                 Column(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
                             selectedItem = item
-                            Log.d("TableEntry", "ID: ${item.messageID}, Content: ${item.messageContent}, Topic: ${item.topicName}")
+                            Log.d(
+                                "TableEntry",
+                                "ID: ${item.messageID}, Content: ${item.messageContent}, Topic: ${item.topicName}"
+                            )
                             isDialogOpen = true
                         }
                 ) {
-                    Text(text = item.topicName, fontSize = 14.sp, color = Color.Gray)
-                    Text(text = item.messageContent, fontSize = 16.sp, color = Color.White)
+                    Text(
+                        text = item.topicName,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Text(
+                        text = item.messageContent,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
                 }
             }
         }
@@ -89,7 +106,13 @@ fun UniqueFuzzySearchScreen(viewModel: UniqueFuzzySearchViewModel = viewModel())
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(text = "ID: ${selectedItem!!.messageID}\nContent: ${selectedItem!!.messageContent}\nTopic: ${selectedItem!!.topicName}")
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(text = "ID: ${selectedItem!!.messageID}", fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Content: ${selectedItem!!.messageContent}", fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Topic: ${selectedItem!!.topicName}", fontSize = 16.sp)
+                    }
                 }
             }
         }
@@ -102,7 +125,7 @@ class UniqueFuzzySearchViewModel : ViewModel() {
     val uniqueSearchResults: StateFlow<List<TableEntry>> = _uniqueSearchResults
 
     // This is the large dataset we are working with
-    private val dataList = generateTableData(500000)
+    private val dataList = generateTableData(2000)
 
     // Debounce variable to handle fast search input
     private var debounceJob: Job? = null
@@ -117,19 +140,16 @@ class UniqueFuzzySearchViewModel : ViewModel() {
             val keywords = query.lowercase().split(" ").filter { it.isNotBlank() }
 
             val results = dataList.filter { entry ->
-                val lowercasedItem = entry.messageContent.lowercase()
-
-                // Process each keyword to check for exclusion
                 keywords.all { keyword ->
                     if (keyword.startsWith("!")) {
-                        // If keyword starts with "!", exclude results containing this substring
-                        !lowercasedItem.contains(keyword.substring(1)) // Remove the "!"
+                        // Exclude results containing the substring
+                        !entry.messageContentLower.contains(keyword.substring(1))
                     } else {
-                        // Otherwise, include results that contain the substring
-                        lowercasedItem.contains(keyword)
+                        // Include results containing the substring
+                        entry.messageContentLower.contains(keyword)
                     }
                 }
-            }
+            }.take(30) // Limit to top 30 results
 
             _uniqueSearchResults.value = results
         }
@@ -138,13 +158,27 @@ class UniqueFuzzySearchViewModel : ViewModel() {
 
 // Function to generate the table data
 fun generateTableData(numberOfEntries: Int): List<TableEntry> {
-    // Define vocabulary categories
-    val adjectives = listOf("beautiful", "fast", "slow", "ancient", "bright", "dark", "tall", "small", "grumpy", "peaceful", "shiny", "dirty", "quiet", "loud", "colorful")
-    val nouns = listOf("cat", "dog", "bird", "tree", "car", "mountain", "river", "city", "forest", "lake", "house", "sky", "sun", "moon", "star")
-    val verbs = listOf("runs", "flies", "sits", "jumps", "swims", "walks", "climbs", "dives", "sings", "barks", "howls", "shines", "builds", "paints", "explores")
-    val adverbs = listOf("quickly", "loudly", "gracefully", "happily", "silently", "randomly", "brightly", "gently", "strongly", "awkwardly", "suddenly", "playfully")
+    val adjectives = listOf(
+        "beautiful", "fast", "slow", "ancient", "bright", "dark",
+        "tall", "small", "grumpy", "peaceful", "shiny", "dirty",
+        "quiet", "loud", "colorful"
+    )
+    val nouns = listOf(
+        "cat", "dog", "bird", "tree", "car", "mountain",
+        "river", "city", "forest", "lake", "house", "sky",
+        "sun", "moon", "star"
+    )
+    val verbs = listOf(
+        "runs", "flies", "sits", "jumps", "swims", "walks",
+        "climbs", "dives", "sings", "barks", "howls", "shines",
+        "builds", "paints", "explores"
+    )
+    val adverbs = listOf(
+        "quickly", "loudly", "gracefully", "happily", "silently",
+        "randomly", "brightly", "gently", "strongly", "awkwardly",
+        "suddenly", "playfully"
+    )
 
-    // Function to generate a random sentence
     fun generateRandomSentence(): String {
         val structure = Random.nextInt(1, 4)
         return when (structure) {
@@ -155,12 +189,15 @@ fun generateTableData(numberOfEntries: Int): List<TableEntry> {
         }
     }
 
-    // Generate the list of table entries
+    val topics = List(100) { "Topic ${it + 1}" }
+
     return (1..numberOfEntries).map {
+        val content = generateRandomSentence()
         TableEntry(
             messageID = it,
-            messageContent = generateRandomSentence(),
-            topicName = "Topic ${Random.nextInt(1, 100)}"
+            messageContent = content,
+            messageContentLower = content.lowercase(),
+            topicName = topics.random()
         )
     }
 }
