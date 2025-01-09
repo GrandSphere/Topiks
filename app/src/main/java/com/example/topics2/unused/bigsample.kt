@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+
 // Data class representing the table with a cached lowercase version of the message content
 data class TableEntry(
     val messageID: Int,
