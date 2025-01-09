@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -109,6 +110,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 LaunchedEffect(message) {
                     val filePaths: List<Uri> = viewModel.getFilesByMessageId(message.id)
+                    Log.d("DEBUG_LOG", "$filePaths")
                     // Initialize variables inside the coroutine
                     val newPictureList = mutableListOf<String>()
                     val newAttachmentList = mutableListOf<String>()

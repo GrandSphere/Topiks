@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,7 +65,12 @@ fun picturesPreview( // State 1
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
             modifier = Modifier
         ) {
+            Log.d("AASSDD", "we got here")
+            Log.d("AASSDD", "${iPicturesToShow}")
+            Log.d("AASSDD Paths", "${imagePaths}")
+            // THINGS BREAK HERE
             items(imagePaths.take(iPicturesToShow)) { imagePath -> // Display the Images
+                Log.d("AASSDD Paths", "${imagePath}")
                 Image(
                     modifier = Modifier
                         .clip(RoundedCornerShape(cPadding))
