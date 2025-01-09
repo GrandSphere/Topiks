@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
@@ -93,16 +96,56 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
+                val pictureList = remember { mutableStateOf(listOf<String>()) }
+                val attachmentList = remember { mutableStateOf(listOf<String>()) }
+                val containsPictures = remember { mutableStateOf(false) }
+                val containsAttachments = remember { mutableStateOf(false) }
+                var attachmentChecked = remember { mutableStateOf(false) }
+                val context = LocalContext.current
 
-                MessageBubble(
-                    navController = navController,
-                    messageContent = message.content,
-                    containPictures = false,
-                    containAttachments = false,
-                    listOfPictures = emptyList(),
-                    listOfAttachments = emptyList()
+                LaunchedEffect(message) {
+                    val filePaths: List<Uri> = viewModel.getFilesByMessageId(message.id)
+                    // Initialize variables inside the coroutine
+                    val newPictureList = mutableListOf<String>()
+                    val newAttachmentList = mutableListOf<String>()
+                    var hasPictures = false
+                    var hasAttachments = false
+
+                    // Get file paths for the specific message
+                    filePaths.forEach { filePath ->
+                        val fileType = determineFileType(context, filePath)
+
+                        if (fileType == "Image") {
+                            newPictureList.add(filePath.toString())
+                            hasPictures = true
+                        } else {
+                            newAttachmentList.add(filePath.toString())
+                            hasAttachments = true
+                        }
+
+                    }
+                    attachmentChecked.value = true
+
+                    pictureList.value = newPictureList
+                    attachmentList.value = newAttachmentList
+                    containsPictures.value = hasPictures
+                    containsAttachments.value = hasAttachments
+
+                }
+                if (attachmentChecked.value) {
+                    MessageBubble(
+                        navController = navController,
+                        messageContent = message.content,
+                        containPictures = containsPictures.value,
+                      //  containPictures = false,
+                        containAttachments = containsAttachments.value,
+                     //   containAttachments = true,
+                        listOfPictures = pictureList.value,
+                        listOfAttachments = attachmentList.value
+                      //  listOfAttachments =  pictureList.value
                     )
-                //Log.d("aabbcc",message)
+                    //Log.d("aabbcc",message)
+                }
             }
             item {
                 Spacer(

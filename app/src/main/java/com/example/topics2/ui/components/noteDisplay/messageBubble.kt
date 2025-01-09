@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,15 @@ fun MessageBubble( // New Message Bubble
     val iPictureCount: Int = imagePaths.size
     var containsPictures: Boolean = containPictures
     var containsAttachments: Boolean = containAttachments
+
+    Log.d("DEBUG_LOG", "Message Content: $messagecontent")
+    Log.d("DEBUG_LOG", "Image Paths: $imagePaths")
+    Log.d("DEBUG_LOG", "List of Attachments: $listOfAttachments")
+    Log.d("DEBUG_LOG", "Picture Count: $iPictureCount")
+    Log.d("DEBUG_LOG", "Contains Pictures: $containsPictures")
+    Log.d("DEBUG_LOG", "Contains Attachments: $containsAttachments")
+
+
 
     var showMore by remember { mutableStateOf(false) }
     val withContentWidth: Float = 0.8f
