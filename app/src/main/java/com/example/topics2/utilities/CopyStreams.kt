@@ -35,8 +35,6 @@ fun getFileNameFromUri(context: Context, uri: Uri): String {
     return fileName
 }
 
-
-
 fun determineFileType(context: Context, uri: Uri): String {
     // Attempt to get MIME type
     val contentResolver = context.contentResolver
@@ -58,7 +56,7 @@ fun determineFileType(context: Context, uri: Uri): String {
             // Fallback to file extension if MIME type is not available
             val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
             when (extension.lowercase()) {
-                "jpg", "jpeg", "png", "gif" -> "Image"
+                "jpg", "jpeg", "png", "gif", "heic" -> "Image"
                 "mp4", "mkv", "avi" -> "Video"
                 "mp3", "wav", "aac" -> "Audio"
                 "pdf" -> "PDF"

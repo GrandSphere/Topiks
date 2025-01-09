@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.global.CustomTextBox
@@ -240,15 +241,23 @@ fun InputBarMessageScreen(
                             type = 1, //based on if check to see what type - message or image or file etc
                             categoryID = 1
                         )
-                        // Write file paths to DB
+
+
+
+                        // Copy files and write file paths to DB
                         if (!selectedFileUris.value.isNullOrEmpty()) {
+
                             Log.d("room", "writing files now")
                             selectedFileUris.value?.forEach { uri ->
+                                copyFileToUserFolder(context, viewModel, uri)
+
+
                                 viewModel.addFile(
                                     topicId = topicId,
                                     messageId = messageId.toInt(),
                                     fileType = determineFileType(context, uri),
-                                    filePath = uri.toString(),
+                                    //filePath = uri.toString(),
+                                    filePath = viewModel.fileURI.value,
                                     description = "",
                                     iconPath = "",
                                     categoryId = 1,

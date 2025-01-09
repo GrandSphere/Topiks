@@ -1,7 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -12,7 +11,6 @@ import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
-import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +39,7 @@ class MessageViewModel (
     // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
-    fun setURI(newURI: String) { _fileURI.value = newURI }
+    fun setFileURI(newURI: String) { _fileURI.value = newURI }
 
     // File Name for file imports
     private val _fileName = MutableStateFlow<String>("")
