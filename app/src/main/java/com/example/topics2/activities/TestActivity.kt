@@ -38,6 +38,7 @@ import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.PreviewChatBubble
 import com.example.topics2.unused.PreviewOverflowingLayout
 import com.example.topics2.unused.PreviewResizedComponentsView
+import com.example.topics2.unused.UniqueFuzzySearchScreen
 import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
 
@@ -92,8 +93,9 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navFuzzy") {
+                NavHost(navController = navController, startDestination = "navnewFuzzy") {
 
+                    composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("navFuzzy") { FuzzySearchScreen () }
                     composable("navTest3") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }
