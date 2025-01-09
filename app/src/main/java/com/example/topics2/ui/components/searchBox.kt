@@ -32,7 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CustomSearchBox() {
+fun CustomSearchBox(
+    inputText: String,
+    onValueChange: (String) -> Unit,
+    sPlaceHolder: String = "Enter message",
+    isFocused: Boolean = false,
+    focusModifier: Modifier = Modifier,
+    boxModifier: Modifier = Modifier // Modifier for the Box
+) {
     val colors = MaterialTheme.colorScheme
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var isSearchFocused by remember { mutableStateOf(false) }
