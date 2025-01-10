@@ -2,10 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="test keep settings">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="delete settings">
+      <SelectionState runConfigName="testapp">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

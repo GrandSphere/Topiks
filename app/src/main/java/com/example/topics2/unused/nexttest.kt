@@ -1,8 +1,11 @@
+/*
+
 package com.example.topics2.unused
 //first attempt at matching colours
 // Necessary Imports
 // Necessary Imports
-/*
+
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,7 +26,8 @@ import kotlin.random.Random
 // Data Classes
 
 // ViewModel-like functionality using a single class
-class T2SearchHandler(private val dataset: List<TableEntry>) {
+class T2SearchHandler() {
+    //private val dataset: List<TableEntry>
     private var results: List<TableEntry> = listOf()
     private var currentJob: Job? = null // blue: Store current search job
 
@@ -46,7 +50,7 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
                 results = dataset.filter { entry ->
                     includes.all { word -> word in entry.messageContentLower } && // blue: Checking for substrings
                             excludes.none { word -> word in entry.messageContentLower }
-                }.take(10000)
+                }.take(30)
             } else {
                 results = emptyList() // blue: Ensure no results are shown for empty queries
             }
@@ -143,5 +147,6 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
 fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(2000000)) // blue: Updated dataset size for testing
-}*/
+    T2SearchUI(generateTableData(1000000)) // blue: Updated dataset size for testing
+}
+*/

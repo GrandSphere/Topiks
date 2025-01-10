@@ -1,6 +1,8 @@
+/*
 package com.example.topics2.unused
 // this one works better
-/*
+*//*
+
 
 // Necessary Imports
 import androidx.compose.foundation.background
@@ -16,6 +18,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.topics2.unused.TableEntry
+import com.example.topics2.unused.generateTableData
 import kotlinx.coroutines.*
 import kotlin.random.Random
 
@@ -50,7 +54,7 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
                 results = dataset.filter { entry ->
                     includes.all { it in entry.messageContentLower } &&
                             excludes.none { it in entry.messageContentLower }
-                }.take(10000)
+                }.take(30)
             } else {
                 results = emptyList() // blue: Ensure no results are shown for empty queries
             }
@@ -122,6 +126,6 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
 fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(500000))
+    T2SearchUI(generateTableData(1000000))
 }
 */
