@@ -1,6 +1,3 @@
-package com.example.topics2.ui.components.noteDisplay
-
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.topics2.ui.components.noteDisplay.showAttachments
 import com.example.topics2.unused.getTestImagePaths
 
 
@@ -27,33 +25,16 @@ fun MessageBubble( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
     navController: NavController,
     topicColor: Color = Color.Cyan,
-    topicFontColor: Color = Color.Black,
-    messageContent: String,
-    containPictures: Boolean,
-    containAttachments: Boolean,
-    listOfPictures: List<String>,
-    listOfAttachments: List<String>,
-    timestamp: String
+    topicFontColor: Color = Color.Black
 ) { // Main screen
-
-
-    var messagecontent = messageContent
-    val imagePaths: List<String> = listOfPictures
-    val listOfAttachments: List<String> =  listOfAttachments
-    val iPictureCount: Int = imagePaths.size
-    var containsPictures: Boolean = containPictures
-    var containsAttachments: Boolean = containAttachments
-
-    Log.d("DEBUG_LOG", "Message Content: $messagecontent")
-    Log.d("DEBUG_LOG", "Image Paths: $imagePaths")
-    Log.d("DEBUG_LOG", "List of Attachments: $listOfAttachments")
-    Log.d("DEBUG_LOG", "Picture Count: $iPictureCount")
-    Log.d("DEBUG_LOG", "Contains Pictures: $containsPictures")
-    Log.d("DEBUG_LOG", "Contains Attachments: $containsAttachments")
-
-
-
+    val iPictureCount: Int =1
+    val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
+   // val imagePaths = getTestImagePaths()
+    val imagePaths:List<String> = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210205-172826_Firefox.jpg")
     var showMore by remember { mutableStateOf(false) }
+    var messagecontent="This is my first sentence\nThis is my second sentence\n\nthis nothing"
+    var containsPictures: Boolean = true
+    var containsAttachments: Boolean = false
     val withContentWidth: Float = 0.8f
     val opacity: Float = 0.2f
     Surface(
@@ -76,7 +57,7 @@ fun MessageBubble( // New Message Bubble
                             .fillMaxWidth(0.7f),
                         imagePaths = imagePaths,
                         iPictureCount = iPictureCount,
-                        onShowMore = { navController.navigate("navShowMorePictures") },
+                        onShowMore = { navController.navigate("navState2") },
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
                     )
@@ -103,7 +84,7 @@ fun MessageBubble( // New Message Bubble
             }
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             Text(
-                text = timestamp,
+                text = "02:07 08/01/25",
                 color=topicFontColor,
                 style = MaterialTheme.typography.bodySmall,
                 // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)

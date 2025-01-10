@@ -249,15 +249,16 @@ fun InputBarMessageScreen(
 
                             Log.d("room", "writing files now")
                             selectedFileUris.value?.forEach { uri ->
-                                copyFileToUserFolder(context, viewModel, uri)
+                                    copyFileToUserFolder(context, viewModel, uri)
 
-
+                                Log.d("DEBUG_LOG uri written","${uri.toString()}")
                                 viewModel.addFile(
                                     topicId = topicId,
                                     messageId = messageId.toInt(),
                                     fileType = determineFileType(context, uri),
-                                    //filePath = uri.toString(),
-                                    filePath = viewModel.fileURI.value,
+                                //   filePath = uri.toString(),
+                                   // filePath = uri.toString(),
+                                    filePath = viewModel.destURI.value,
                                     description = "",
                                     iconPath = "",
                                     categoryId = 1,

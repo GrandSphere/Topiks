@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import MessageBubble
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -32,7 +33,7 @@ import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
+
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.OLDMessageBubble
 import java.text.SimpleDateFormat
@@ -110,7 +111,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 LaunchedEffect(message) {
                     val filePaths: List<Uri> = viewModel.getFilesByMessageId(message.id)
-                    Log.d("DEBUG_LOG", "$filePaths")
+
+                    Log.d("DEBUG_LOG FILEPATHS RETRIEVED", "$filePaths")
                     // Initialize variables inside the coroutine
                     val newPictureList = mutableListOf<String>()
                     val newAttachmentList = mutableListOf<String>()
@@ -140,18 +142,19 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 }
                 if (attachmentChecked.value) {
                     val timestamp: String = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(message.createTime)
-                    MessageBubble(
-                        navController = navController,
-                        messageContent = message.content,
-                        containPictures = containsPictures.value,
-                      //  containPictures = false,
-                        containAttachments = containsAttachments.value,
-                     //   containAttachments = true,
-                        listOfPictures = pictureList.value,
-                        listOfAttachments = attachmentList.value,
-                        timestamp = timestamp
-                      //  listOfAttachments =  pictureList.value
-                    )
+//                    MessageBubble(
+//                        navController = navController,
+//                        messageContent = message.content,
+//                        containPictures = containsPictures.value,
+//                      //  containPictures = false,
+//                        containAttachments = containsAttachments.value,
+//                     //   containAttachments = true,
+//                        listOfPictures = pictureList.value,
+//                        listOfAttachments = attachmentList.value,
+//                        timestamp = timestamp
+//                      //  listOfAttachments =  pictureList.value
+//                    )
+                    MessageBubble(navController)
                     //Log.d("aabbcc",message)
                 }
             }
