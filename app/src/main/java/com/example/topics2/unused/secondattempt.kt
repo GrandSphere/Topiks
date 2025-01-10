@@ -1,7 +1,4 @@
 package com.example.topics2.unused
-// this one works better
-/*
-
 // Necessary Imports
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,12 +17,6 @@ import kotlinx.coroutines.*
 import kotlin.random.Random
 
 // Data Classes
-//data class TableEntry(
-//    val messageID: Int,
-//    val messageContent: String,
-//    val messageContentLower: String,
-//    val topicName: String
-//)
 
 // ViewModel-like functionality using a single class
 class T2SearchHandler(private val dataset: List<TableEntry>) {
@@ -45,11 +36,12 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
 
         // blue: Perform debounced search in a coroutine
         currentJob = GlobalScope.launch {
-            //delay(debounceTime)
+            delay(debounceTime) // blue: Ensure debounce before starting the search
+
             if (query.isNotEmpty()) { // blue: Handle empty search query (shows no results)
                 results = dataset.filter { entry ->
-                    includes.all { it in entry.messageContentLower } &&
-                            excludes.none { it in entry.messageContentLower }
+                    includes.all { word -> word in entry.messageContentLower } && // blue: Checking for substrings
+                            excludes.none { word -> word in entry.messageContentLower }
                 }.take(10000)
             } else {
                 results = emptyList() // blue: Ensure no results are shown for empty queries
@@ -69,8 +61,8 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
             .padding(16.dp)
+            //.background(Color.Red)
     ) {
         TextField(
             value = query,
@@ -96,16 +88,34 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                             withStyle(style = SpanStyle(color = Color.Gray)) {
                                 append(item.topicName.take(8) + " ")
                             }
-                            val contentWords = item.messageContent.split(" ")
-                            contentWords.forEach { word ->
-                                if (query.split(" ").any { it.equals(word, true) }) {
-                                    withStyle(style = SpanStyle(color = highlightColor)) {
-                                        append("$word ")
-                                    }
-                                } else {
-                                    withStyle(style = SpanStyle(color = Color.White)) {
-                                        append("$word ")
-                                    }
+
+                            // blue: Use regular expression to find and highlight matches
+                            val regex = Regex(query, RegexOption.IGNORE_CASE)
+                            var lastEnd = 0
+
+                            regex.findAll(item.messageContent).forEach { matchResult ->
+                                // blue: Append text before the match in normal color
+                                withStyle(style = SpanStyle(color = Color.White)) {
+                                    append(
+                                        item.messageContent.substring(
+                                            lastEnd,
+                                            matchResult.range.first
+                                        )
+                                    )
+                                }
+                                // blue: Highlight the matched text
+                                withStyle(style = SpanStyle(color = highlightColor)) {
+                                    append(matchResult.value)
+                                }
+                                lastEnd = matchResult.range.last + 1
+                            }
+
+                            // blue: Append the remaining text after the last match
+
+                            if (lastEnd < item.messageContent.length) {
+
+                                withStyle(style = SpanStyle(color = Color.White)) {
+                                    append(item.messageContent.substring(lastEnd))
                                 }
                             }
                         }
@@ -116,11 +126,12 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     }
 }
 
+// Helper function to generate sample data (for testing purposes)
 
 // Call this function to run the app
 @Composable
 fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(500000))
-}*/
+    T2SearchUI(generateTableData(500)) // blue: Updated dataset size for testing
+}
