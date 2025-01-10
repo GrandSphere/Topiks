@@ -1,5 +1,6 @@
 package com.example.topics2.activities
 
+//import T2RunApp
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,7 +38,9 @@ import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.NewSearchScreen
 import com.example.topics2.unused.PreviewChatBubble
 import com.example.topics2.unused.PreviewOverflowingLayout
-import com.example.topics2.unused.T2RunApp
+//import com.example.topics2.unused.T2RunApp
+//import com.example.topics2.unused.T2SearchHandler
+//import com.example.topics2.unused.T2RunApp
 
 import com.example.topics2.unused.UniqueFuzzySearchScreen
 
@@ -95,8 +98,9 @@ fun TestApp(context: Context) {
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
                 NavHost(navController = navController, startDestination = "navcTest3") {
-                    composable("navcTest3") {T2RunApp()
- }
+                  //  composable("navcTest3") {T2RunApp()}
+
+
                     composable("navcTest") { MessageBubble( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("newSearch") { NewSearchScreen () }

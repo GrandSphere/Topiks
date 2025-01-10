@@ -1,15 +1,19 @@
-/*
-package com.example.topics2.unused
-// TODO This is the most working branch
-// Necessary Imports
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+package com.example.topics2.ui.screens
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,43 +22,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.topics2.ui.components.CustomSearchBox
-import kotlinx.coroutines.*
-import kotlin.random.Random
-
-// Data Classes
-
-// ViewModel-like functionality using a single class
-class T2SearchHandler(private val dataset: List<TableEntry>) {
-    private var results: List<TableEntry> = listOf()
-    private var currentJob: Job? = null // blue: Store current search job
-
-    fun search(query: String, debounceTime: Long = 150L, onResults: (List<TableEntry>) -> Unit) {
-        // blue: Cancel the previous job if there is one before starting a new one
-        currentJob?.cancel()
-
-        val includes = mutableListOf<String>()
-        val excludes = mutableListOf<String>()
-        query.split(" ").forEach { part ->
-            if (part.startsWith("!")) excludes.add(part.substring(1).lowercase())
-            else includes.add(part.lowercase())
-        }
-
-        // blue: Perform debounced search in a coroutine
-        currentJob = GlobalScope.launch {
-            delay(debounceTime) // blue: Ensure debounce before starting the search
-
-            if (query.isNotEmpty()) { // blue: Handle empty search query (shows no results)
-                results = dataset.filter { entry ->
-                    includes.all { word -> word in entry.messageContentLower } && // blue: Checking for substrings
-                            excludes.none { word -> word in entry.messageContentLower }
-                }.take(30)
-            } else {
-                results = emptyList() // blue: Ensure no results are shown for empty queries
-            }
-            onResults(results)
-        }
-    }
-}
+import com.example.topics2.unused.T2SearchHandler
+import com.example.topics2.unused.TableEntry
 
 @Composable
 fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) {
@@ -137,10 +106,3 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
         }
     }
 }
-
-
-@Composable
-fun T2RunApp() {
-    T2SearchUI(generateTableData(1000000)) // blue: Updated dataset size for testing
-}
-*/
