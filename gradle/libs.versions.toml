@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 coilCompose = "2.2.2"
+fuzzywuzzy = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -12,6 +13,8 @@ composeBom = "2024.04.01"
 lifecycleRuntimeKtxVersion = "2.5.1"
 lifecycleViewmodelCompose = "2.6.0-alpha01"
 lifecycleViewmodelComposeVersion = "2.6.0-alpha03"
+luceneAnalyzersCommon = "9.5.0"
+luceneCore = "9.5.0"
 material = "1.4.0"
 material3 = "1.0.0"
 navigationCompose = "2.8.5"
@@ -46,6 +49,7 @@ androidx-ui-v140 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler" }
 androidx-room-runtime = { module = "androidx.room:room-runtime" }
+fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -62,6 +66,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+lucene-analyzers-common = { module = "org.apache.lucene:lucene-analyzers-common", version.ref = "luceneAnalyzersCommon" }
+lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "luceneCore" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtxVersion" }

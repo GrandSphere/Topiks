@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -95,7 +96,8 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
         ) {
             // TODO:: Search Box focus
-            CustomSearchBox()
+            //CustomSearchBox()
+            //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(

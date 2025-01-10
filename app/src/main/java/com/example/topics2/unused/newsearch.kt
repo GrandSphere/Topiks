@@ -1,6 +1,9 @@
-package com.example.topics2.unused
-
 /*
+package com.example.topics2.unused
+// this one works better
+*//*
+
+
 // Necessary Imports
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +18,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.topics2.unused.TableEntry
+import com.example.topics2.unused.generateTableData
 import kotlinx.coroutines.*
 import kotlin.random.Random
 
@@ -29,8 +34,12 @@ import kotlin.random.Random
 // ViewModel-like functionality using a single class
 class T2SearchHandler(private val dataset: List<TableEntry>) {
     private var results: List<TableEntry> = listOf()
+    private var currentJob: Job? = null // blue: Store current search job
 
     fun search(query: String, debounceTime: Long = 150L, onResults: (List<TableEntry>) -> Unit) {
+        // blue: Cancel the previous job if there is one before starting a new one
+        currentJob?.cancel()
+
         val includes = mutableListOf<String>()
         val excludes = mutableListOf<String>()
         query.split(" ").forEach { part ->
@@ -38,13 +47,17 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
             else includes.add(part.lowercase())
         }
 
-        // Perform debounced search
-        GlobalScope.launch {
-            delay(debounceTime)
-            results = dataset.filter { entry ->
-                includes.all { it in entry.messageContentLower } &&
-                        excludes.none { it in entry.messageContentLower }
-            }.take(10)
+        // blue: Perform debounced search in a coroutine
+        currentJob = GlobalScope.launch {
+            //delay(debounceTime)
+            if (query.isNotEmpty()) { // blue: Handle empty search query (shows no results)
+                results = dataset.filter { entry ->
+                    includes.all { it in entry.messageContentLower } &&
+                            excludes.none { it in entry.messageContentLower }
+                }.take(30)
+            } else {
+                results = emptyList() // blue: Ensure no results are shown for empty queries
+            }
             onResults(results)
         }
     }
@@ -107,59 +120,12 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     }
 }
 
-// Example Test Dataset and Main Function
-fun generateTableData(numberOfEntries: Int): List<TableEntry> {
-    val adjectives = listOf(
-        "beautiful", "fast", "slow", "ancient", "bright", "dark",
-        "tall", "small", "grumpy", "peaceful", "shiny", "dirty",
-        "quiet", "loud", "colorful"
-    )
-    val nouns = listOf(
-        "cat", "dog", "bird", "tree", "car", "mountain",
-        "river", "city", "forest", "lake", "house", "sky",
-        "sun", "moon", "star"
-    )
-    val verbs = listOf(
-        "runs", "flies", "sits", "jumps", "swims", "walks",
-        "climbs", "dives", "sings", "barks", "howls", "shines",
-        "builds", "paints", "explores"
-    )
-    val adverbs = listOf(
-        "quickly", "loudly", "gracefully", "happily", "silently",
-        "randomly", "brightly", "gently", "strongly", "awkwardly",
-        "suddenly", "playfully"
-    )
-
-    fun generateRandomSentence(index: Int): String {
-        val structure = Random.nextInt(1, 4)
-        return when (structure) {
-            1 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} ${adverbs.random()} $index"
-            2 -> "${nouns.random()} ${verbs.random()} ${nouns.random()} ${verbs.random()} $index"
-            3 -> "${adjectives.random()} ${nouns.random()} ${verbs.random()} $index"
-            else -> "${verbs.random()} ${nouns.random()} ${nouns.random()} $index"
-        }
-    }
-
-    val topics = List(100) { "Topic ${it + 1}" }
-
-    return (1..numberOfEntries).map { index ->
-        val content = generateRandomSentence(index)
-        TableEntry(
-            messageID = index,
-            messageContent = content,
-            messageContentLower = content.lowercase(),
-            topicName = topics.random()
-        )
-    }
-}
 
 // Call this function to run the app
 @Composable
 fun T2RunApp() {
-
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-        T2SearchUI(generateTableData(2000000))
-    }
-    *
- */
+    T2SearchUI(generateTableData(1000000))
+}
+*/

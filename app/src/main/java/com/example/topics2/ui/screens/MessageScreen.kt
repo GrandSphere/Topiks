@@ -42,9 +42,7 @@ import java.util.Locale
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun MessageScreen(navController: NavController,
-                  viewModel: MessageViewModel,
-                  topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
 
     viewModel.collectMessages(topicId)
     viewModel.setTopicColor(topicColor)
@@ -116,6 +114,7 @@ fun MessageScreen(navController: NavController,
                     listOfAttachmentsP = attachmentList,
                     timestamp = timestamp
                 )
+                //Log.d("aabbcc",message)
             }
             item {
                 Spacer(
@@ -144,5 +143,4 @@ fun MessageScreen(navController: NavController,
             scrollState.scrollToItem(messages.size - 1)
         }
     }
-
 }
