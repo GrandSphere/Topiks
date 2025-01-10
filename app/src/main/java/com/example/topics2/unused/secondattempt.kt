@@ -63,24 +63,19 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            //.background(Color.Black)
             .clip(RoundedCornerShape(4.dp))
-            //.padding(16.dp)
     ) {
-
-
         CustomSearchBox(
             inputText = query,
             onValueChange = { newQuery ->
                 query = newQuery
                 searchHandler.search(newQuery) { updatedResults -> results = updatedResults }
             },
-            sPlaceHolder="Search...",
-            isFocused=true,
-            focusModifier= Modifier,
-            boxModifier=Modifier,
-        ) // Text box
-
+            sPlaceHolder = "Search...",
+            isFocused = true,
+            focusModifier = Modifier,
+            boxModifier = Modifier,
+        )
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -97,30 +92,41 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                             withStyle(style = SpanStyle(color = Color.Gray)) {
                                 append(item.topicName.take(8) + " ")
                             }
+
                             val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = item.messageContent.split(" ")
 
                             contentWords.forEach { word ->
-                                var wordToHighlight = word
-                                var isHighlighted = false
+                                var currentIndex = 0 // Track the current position in the word
 
                                 normalizedQuery.forEach { substring ->
-                                    // Check if the substring exists inside the word
-                                    if (wordToHighlight.contains(substring, ignoreCase = true)) {
-                                        withStyle(style = SpanStyle(color = highlightColor)) {
-                                            append("$substring ")
+                                    while (true) {
+                                        val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
+                                        if (matchIndex == -1) break
+
+                                        // Append the part before the match
+                                        withStyle(style = SpanStyle(color = Color.White)) {
+                                            append(word.substring(currentIndex, matchIndex))
                                         }
-                                        // Remove the highlighted part from the word and continue
-                                        wordToHighlight = wordToHighlight.replace(substring, "", ignoreCase = true)
-                                        isHighlighted = true
+
+                                        // Append the matched part
+                                        withStyle(style = SpanStyle(color = highlightColor)) {
+                                            append(word.substring(matchIndex, matchIndex + substring.length))
+                                        }
+
+                                        // Move the index forward
+                                        currentIndex = matchIndex + substring.length
                                     }
                                 }
 
-                                if (!isHighlighted) {
+                                // Append the remaining part of the word
+                                if (currentIndex < word.length) {
                                     withStyle(style = SpanStyle(color = Color.White)) {
-                                        append("$word ")
+                                        append(word.substring(currentIndex))
                                     }
                                 }
+
+                                append(" ") // Add space between words
                             }
                         }
                     )
