@@ -4,15 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.topics2.ui.components.CustomSearchBox
 import kotlinx.coroutines.*
 import kotlin.random.Random
 
@@ -42,7 +45,7 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
                 results = dataset.filter { entry ->
                     includes.all { word -> word in entry.messageContentLower } && // blue: Checking for substrings
                             excludes.none { word -> word in entry.messageContentLower }
-                }.take(10000)
+                }.take(20)
             } else {
                 results = emptyList() // blue: Ensure no results are shown for empty queries
             }
@@ -50,9 +53,6 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
         }
     }
 }
-
-// Composable UI for Search Results
-
 
 
 @Composable
@@ -64,18 +64,20 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
-            .padding(16.dp)
+            .clip(RoundedCornerShape(4.dp))
     ) {
-        TextField(
-            value = query,
+        CustomSearchBox(
+            inputText = query,
             onValueChange = { newQuery ->
                 query = newQuery
                 searchHandler.search(newQuery) { updatedResults -> results = updatedResults }
             },
-            modifier = Modifier.fillMaxWidth().background((Color.DarkGray)),
-            placeholder = { Text("Search...", color = Color.Gray) }
+            sPlaceHolder = "Search...",
+            isFocused = true,
+            focusModifier = Modifier,
+            boxModifier = Modifier,
         )
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(8.dp)
@@ -91,31 +93,35 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                             withStyle(style = SpanStyle(color = Color.Gray)) {
                                 append(item.topicName.take(8) + " ")
                             }
-
                             val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
+                            val regex = Regex(normalizedQuery.joinToString("|") { Regex.escape(it) }, RegexOption.IGNORE_CASE)
+
                             val contentWords = item.messageContent.split(" ")
 
                             contentWords.forEach { word ->
-                                var wordToHighlight = word
-                                var isHighlighted = false
+                                val matches = regex.findAll(word)
+                                var lastEnd = 0
 
-                                normalizedQuery.forEach { substring ->
-                                    // Check if the substring exists inside the word
-                                    if (wordToHighlight.contains(substring, ignoreCase = true)) {
-                                        withStyle(style = SpanStyle(color = highlightColor)) {
-                                            append("$substring ")
-                                        }
-                                        // Remove the highlighted part from the word and continue
-                                        wordToHighlight = wordToHighlight.replace(substring, "", ignoreCase = true)
-                                        isHighlighted = true
-                                    }
-                                }
-
-                                if (!isHighlighted) {
+                                matches.forEach { match ->
+                                    // Append the part of the word before the match
                                     withStyle(style = SpanStyle(color = Color.White)) {
-                                        append("$word ")
+                                        append(word.substring(lastEnd, match.range.first))
+                                    }
+                                    // Append the matched substring in highlight color
+                                    withStyle(style = SpanStyle(color = highlightColor)) {
+                                        append(match.value)
+                                    }
+                                    lastEnd = match.range.last + 1
+                                }
+
+                                // Append the remaining part of the word
+                                if (lastEnd < word.length) {
+                                    withStyle(style = SpanStyle(color = Color.White)) {
+                                        append(word.substring(lastEnd))
                                     }
                                 }
+                                // Add a space after each word
+                                append(" ")
                             }
                         }
                     )
@@ -126,12 +132,7 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
 }
 
 
-// Helper function to generate sample data (for testing purposes)
-
-// Call this function to run the app
 @Composable
 fun T2RunApp() {
-    //val testDataset = generateTableData(1000)
-    //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(500000)) // blue: Updated dataset size for testing
+    T2SearchUI(generateTableData(200)) // blue: Updated dataset size for testing
 }
