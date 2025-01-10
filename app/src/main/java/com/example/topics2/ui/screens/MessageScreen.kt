@@ -1,7 +1,8 @@
 package com.example.topics2.ui.screens
 
+import MessageBubble
+import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,63 +23,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import androidx.activity.compose.BackHandler
-import androidx.compose.material3.Text
+import com.example.topics2.unused.OLDMessageBubble
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int?, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
-    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
+fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+
+    viewModel.collectMessages(topicId)
+    viewModel.setTopicColor(topicColor)
+
     val messages by viewModel.messages.collectAsState()
-    viewModel.fetchMessages(topicId)
-    val scrollState = rememberLazyListState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
-   
+
+    val scrollState = rememberLazyListState()
+    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
+    viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
-
-    //val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-
-
-//
-//
-//    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-//    val focusRequester = remember { FocusRequester() }
-
-//    LaunchedEffect(toFocusTextbox) {
-//        if (toFocusTextbox) {
-//            //focusRequester.requestFocus()
-//            // Reset focus state to false after focus is requested
-//            viewModel.setToFocusTextbox(false)
-//        }
-//        else{
-//            //focusManager.clearFocus()
-//
-//        }
-//    }
-
-//    LaunchedEffect(Unit) {
-//
-//        viewModel.setToFocusTextbox(true)
-//        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
-//        viewModel.setToFocusTextbox(false)
-//        focusManager.clearFocus()
-//    }
-
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -97,14 +74,45 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
+            // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
+                val pictureList = mutableListOf<String>()
+                val attachmentList = mutableListOf<String>()
+                var hasPictures = false
+                var hasAttachments = false
+                val filePathsForMessage by viewModel.getFilesByMessageId(message.id).collectAsState(initial = emptyList())
+
+                // Process each file path
+                for (filePath in filePathsForMessage) {
+                    val fileType = determineFileType(context, filePath.toUri())
+                    when (fileType) {
+                        "Image" -> {
+                            pictureList.add(filePath)
+                            hasPictures = true
+                        }
+                        else -> {
+                            attachmentList.add(filePath)
+                            hasAttachments = true
+                        }
+                    }
+                }
+                // Format timestamp
+                val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+                viewModel.setImagePaths(pictureList)
+
+                // Call MessageBubble
                 MessageBubble(
-                    message = message,
-                    topicId = topicId,
-                    viewModel = viewModel,
+                    navController = navController,
                     topicColor = topicColor,
                     topicFontColor = topicFontColor,
+                    viewModel = viewModel,
+                    messageContent = message.content,
+                    containPictures = hasPictures,
+                    containAttachments = hasAttachments,
+                    listOfPictures = pictureList,
+                    listOfAttachmentsP = attachmentList,
+                    timestamp = timestamp
                 )
                 //Log.d("aabbcc",message)
             }
@@ -135,8 +143,4 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             scrollState.scrollToItem(messages.size - 1)
         }
     }
-
-
-
-
 }

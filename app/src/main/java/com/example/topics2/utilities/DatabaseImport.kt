@@ -1,5 +1,6 @@
 package com.example.topics.utilities
 
+//import com.example.topics.model.db.AppDatabase
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
@@ -12,17 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.db.AppDatabase
-import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.ui.viewmodels.TopicViewModel
-
-//import com.example.topics.model.db.AppDatabase
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 
 // Called from topAppBar
 // TODO:: REFRESH UI SOMEHOW
@@ -34,11 +28,12 @@ fun ImportDatabaseWithPicker(onImportComplete: () -> Unit, navController: NavCon
     // Use the FilePicker composable to pick a file
     if (fileUri == null) {
         Log.d("ZZZ Import URI", "EMPTY")
-        FilePickerIcon(onFileSelected = { selectedUri ->
-            fileUri = selectedUri },
-            fileTypes = arrayOf("*/*"),
-            navController = navController,
-        )
+        // TODO I broke this
+        //FilePickerIcon(onFileSelected = { selectedUri ->
+        //    fileUri = selectedUri },
+        //    fileTypes = arrayOf("*/*"),
+        //    navController = navController,
+        //)
     }
     val context = LocalContext.current
     LaunchedEffect(fileUri) {

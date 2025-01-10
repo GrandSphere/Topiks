@@ -1,39 +1,48 @@
 package com.example.topics2.ui.viewmodels
 
+import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
+import androidx.compose.ui.graphics.Color
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
+import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
+import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.entities.FileTbl
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import java.io.File
 
-
-class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
+// TODO Fix category add when adding message
+// TODO Fix created time when  editing when adding message
+class MessageViewModel (
+    private val messageDao: MessageDao,
+    private val topicDao: TopicDao,
+    private val filesDao: FilesDao
+): ViewModel() {
 
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
 
-    // States whether file picker is done
-    private val _showPicker = MutableStateFlow<Boolean>(false)
-    val showPicker: StateFlow<Boolean> = _showPicker
-    fun setShowPicker(newValue: Boolean) { _showPicker.value = newValue }
-
-    // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
-    private val _filePicked = MutableStateFlow<Boolean>(false)
-    val filePicked: StateFlow<Boolean> = _filePicked
-    fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
-
     // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
-    fun setURI(newURI: String) { _fileURI.value = newURI }
+    fun setFileURI(newURI: String) { _fileURI.value = newURI }
 
     // File Name for file imports
     private val _fileName = MutableStateFlow<String>("")
@@ -64,54 +73,112 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
     val tempMessage: StateFlow<String> = _tempMessage
     fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
 
+    // ImagePaths, used for messageBubble and showmore
+    private val _imagePaths = MutableStateFlow<List<String>>(listOf(""))
+    val imagePaths: StateFlow<List<String>> = _imagePaths
+    fun setImagePaths(imagePaths: List<String>) {_imagePaths.value = imagePaths}
+
+    // Topic Color
+    private val _topicColor = MutableStateFlow<Color>(Color.Cyan)
+    val topicColor: StateFlow<Color> = _topicColor
+    fun setTopicColor(topicColor: Color) {_topicColor.value = topicColor}
+
+    // Topic Color
+    private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
+    val topicFontColor: StateFlow<Color> = _topicColor
+    fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
+
+
+
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
-    fun fetchMessages(topicId: Int?) { viewModelScope.launch { _messages.value = messageDao.getMessagesForTopic(topicId) } }
-
-
+    fun collectMessages(topicId: Int) {
+        messageDao.getMessagesForTopic(topicId).onEach { messageList ->_messages.value = messageList
+        }.launchIn(viewModelScope)
+    }
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int, topicId: Int?) {
-        messageDao.deleteMessage(messageId)
-        fetchMessages(topicId)
+        messageDao.deleteMessagesWithID(messageId)
+
     }
 
     // Add Message
     suspend fun addMessage(
-        topicId: Int?,
+        topicId: Int,
         content: String,
         priority: Int,
-        filePath: String = "",
-        fileType: Int = 0
-    ) {
+        type: Int,
+        categoryID: Int
+     ): Long {
+        val timestamp = System.currentTimeMillis()
         val newMessage = MessageTbl(
             topicId = topicId,
-            messageContent = content,
-            messagePriority = priority,
-            filePath = filePath,
-            fileType = fileType,
-            messageTimestamp = System.currentTimeMillis()
+            content = content,
+            priority = priority,
+            type = type,
+            createTime = timestamp,
+            lastEditTime =  timestamp,
+            categoryId = categoryID
             )
-        messageDao.insertMessage(newMessage) // Insert the message into the database
-        fetchMessages(topicId)
+        topicDao.updateLastModifiedTopic(topicId, timestamp)
+        return messageDao.insertMessage(newMessage) // Insert the message into the database
+    }
+
+    fun getFilesByMessageId(messageId: Int): Flow<List<String>> {
+        return filesDao.getFilesByMessageId(messageId)
+            .map { fileList -> fileList.map { it.filePath } }
+    }
+
+    // Add File to File_tbl
+    suspend fun addFile(
+        topicId: Int,
+        messageId: Int,
+        fileType: String,
+        filePath: String,
+        description: String,
+        iconPath: String = "",
+        categoryId: Int,
+        createTime: Long = System.currentTimeMillis()
+
+    ) {
+        val value = filesDao.insertFile(
+            FileTbl(
+                topicId = topicId,
+                messageId = messageId,
+                fileType = fileType,
+                filePath = filePath,
+                description = description,
+                iconPath = iconPath,
+                categoryId = categoryId,
+                createTime = createTime
+        )
+
+        )
     }
 
     //Edit Message
     suspend fun editMessage(
         messageId: Int,
-        topicId: Int?, content: String, priority: Int,
-        messageTimestamp: Long = System.currentTimeMillis() )
+        topicId: Int,
+        content: String,
+        priority: Int,
+        messageTimestamp: Long = System.currentTimeMillis()
+    )
     {
         val editedMessage = MessageTbl(
             id = messageId,
             topicId = topicId,
-            messageContent = content,
-            messageTimestamp = messageTimestamp,
-            messagePriority = priority,
+            content = content,
+            createTime = messageTimestamp,
+            priority = priority,
+            lastEditTime =  messageTimestamp,
+            categoryId = 1,
+            type =  1
         )
         messageDao.updateMessage(editedMessage)
-        fetchMessages(topicId)
+      //  fetchMessages(topicId)
     }
 
     companion object {
@@ -124,7 +191,7 @@ class MessageViewModel (private val messageDao: MessageDao): ViewModel() {
 
                 // Get the TopicDao from the Application class
                 val myApplication = application as DbTopics
-                return MessageViewModel(myApplication.messageDao) as T
+                return MessageViewModel(myApplication.messageDao, myApplication.topicDao, myApplication.filesDao) as T
             }
         }
     }

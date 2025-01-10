@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,33 +21,45 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-
-import com.example.topics.utilities.SelectImageWithPicker
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import kotlinx.coroutines.coroutineScope
+import iconFilePicker
 
 @Composable
 fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
     val noteColour by viewModel.colour.collectAsState()
-    val showFilePicker = viewModel.showPicker.collectAsState().value
+
     val colors = MaterialTheme.colorScheme
     var imageUrl = viewModel.fileURI.collectAsState().value
+
+    val imageMimeTypes = arrayOf(
+        "image/jpeg", "image/png", "image/gif", "image/bmp", "image/webp" )
+
+    // FilePicker Logic
+    val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
+    val openFileLauncher = iconFilePicker(
+        fileTypes = imageMimeTypes,
+        onFileSelected = { uri: Uri? ->
+            //selectedFileUri.value = uri ?: Uri.parse("")
+            Log.d("Debug_ this is where i set", "${uri}")
+            viewModel.setFileURI(uri.toString())
+        }
+    )
+  //  if (fileURI.value.si)
+     //Log.d("THISISMYTAG", selectedFileUri.value.toString())
+
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -60,7 +73,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         // Clear focus when tapping outside
-                        viewModel.setShowPicker(true)
+                        openFileLauncher.launch(arrayOf("*/*"))
                     })
                 }
                 .clip(CircleShape)
@@ -68,9 +81,8 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
-            if (showFilePicker) {
-                SelectImageWithPicker(topicViewModel = viewModel, navController = navController)
-            }
+
+
 
             if (imageUrl.length > 4) { // Load and display the image
                 Image(
