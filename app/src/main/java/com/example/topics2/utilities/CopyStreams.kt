@@ -32,7 +32,7 @@ fun getFileNameFromUri(context: Context, uri: Uri): String {
             fileName = it.getString(columnIndex)
         }
     }
-    return fileName
+    return fileName.trim()
 }
 
 fun determineFileType(context: Context, uri: Uri): String {
