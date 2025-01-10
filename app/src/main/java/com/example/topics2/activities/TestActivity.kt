@@ -1,5 +1,6 @@
 package com.example.topics2.activities
 
+//import T2RunApp
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-//import com.example.topics2.ui.components.noteDisplay.MessageBubble
+import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
@@ -31,13 +32,19 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.ImageGridScreen
 
 
 import com.example.topics2.unused.MyScreen
-import com.example.topics2.unused.bottomSheetTest
-import com.example.topics2.unused.testScreen
+import com.example.topics2.unused.NewSearchScreen
+import com.example.topics2.unused.PreviewChatBubble
+import com.example.topics2.unused.PreviewOverflowingLayout
+//import com.example.topics2.unused.T2RunApp
+//import com.example.topics2.unused.T2SearchHandler
+//import com.example.topics2.unused.T2RunApp
 
+import com.example.topics2.unused.UniqueFuzzySearchScreen
+
+import com.example.topics2.unused.testScreen
 
 
 class TestActivity : ComponentActivity() {
@@ -90,15 +97,20 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "testfun") {
+                NavHost(navController = navController, startDestination = "navcTest3") {
+                  //  composable("navcTest3") {T2RunApp()}
 
 
-                    composable("testfun") { ImageGridScreen () }
+                    composable("navcTest") { MessageBubble( navController) }
+                    composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
+                    composable("newSearch") { NewSearchScreen () }
+                    //composable("navFuzzy") { FuzzySearchScreen () }
+                    composable("navTest4") { PreviewOverflowingLayout () }
+                    composable("navTest2") { PreviewChatBubble () }
                     composable("navTest") { testScreen () }
-                  //  composable("navState2") { ShowMorePictures (navController, viewModel = messageViewModel) }
+                    composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
-                    composable("navBottomSheetTest") { bottomSheetTest() }
-                   // composable("navTest2") { MessageBubble(navController) }
+                    composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(
@@ -133,6 +145,7 @@ fun TestApp(context: Context) {
                                 topicColor = topicViewModel.cTopicColor,
                             )
                         }
+
                     }
                 }
             }

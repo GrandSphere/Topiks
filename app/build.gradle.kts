@@ -80,9 +80,8 @@ dependencies {
     kapt (libs.androidx.room.compiler)
     kapt (libs.room.compiler) // Add this for kapt
     testImplementation(libs.junit)
-  implementation (libs.ui)  // Update with the latest version
+    implementation (libs.ui)  // Update with the latest version
     implementation (libs.material3) // for Material3 components
-        // Lifecycle components (if not already included)
-        implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
-
+    // Lifecycle components (if not already included)
+    implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
 }
