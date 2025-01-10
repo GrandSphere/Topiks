@@ -34,7 +34,9 @@ import com.example.topics2.unused.OLDMessageBubble
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+fun MessageScreen(navController: NavController,
+                  viewModel: MessageViewModel,
+                  topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
 
     viewModel.collectMessages(topicId)
 
@@ -46,31 +48,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
-    //val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-//
-//
-//    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-//    val focusRequester = remember { FocusRequester() }
-
-//    LaunchedEffect(toFocusTextbox) {
-//        if (toFocusTextbox) {
-//            //focusRequester.requestFocus()
-//            // Reset focus state to false after focus is requested
-//            viewModel.setToFocusTextbox(false)
-//        }
-//        else{
-//            //focusManager.clearFocus()
-//
-//        }
-//    }
-
-//    LaunchedEffect(Unit) {
-//
-//        viewModel.setToFocusTextbox(true)
-//        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
-//        viewModel.setToFocusTextbox(false)
-//        focusManager.clearFocus()
-//    }
 
 
     Box(

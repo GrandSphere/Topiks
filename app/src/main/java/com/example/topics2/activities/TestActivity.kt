@@ -37,9 +37,8 @@ import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.NewSearchScreen
 import com.example.topics2.unused.PreviewChatBubble
 import com.example.topics2.unused.PreviewOverflowingLayout
-import com.example.topics2.unused.PreviewResizedComponentsView
+import com.example.topics2.unused.T2RunApp
 import com.example.topics2.unused.UniqueFuzzySearchScreen
-import com.example.topics2.unused.bottomSheetTest
 import com.example.topics2.unused.testScreen
 
 
@@ -93,16 +92,18 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "newSearch") {
+                NavHost(navController = navController, startDestination = "navcTest3") {
+                    composable("navcTest3") {T2RunApp()
+ }
+                    composable("navcTest") { MessageBubble( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("newSearch") { NewSearchScreen () }
                     //composable("navFuzzy") { FuzzySearchScreen () }
-                    composable("navTest3") { PreviewOverflowingLayout () }
+                    composable("navTest4") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }
                     composable("navTest") { testScreen () }
                     composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
-                    composable("navBottomSheetTest") { bottomSheetTest() }
                     composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {

@@ -6,6 +6,7 @@ fun getTestImagePaths(): List<String> {
     // Example paths (you would replace these with actual file paths)
     return listOf(
         "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F27.jpg",
+        "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F27.jpg",
         "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F22.jpg",
         "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F24.jpg",
         "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F28.jpg",
@@ -95,6 +96,7 @@ data class TableEntry(
 
 
 // Function to generate the table data
+/*
 fun generateTableData(numberOfEntries: Int): List<TableEntry> {
     val adjectives = listOf(
         "beautiful", "fast", "slow", "ancient", "bright", "dark",
@@ -138,4 +140,4 @@ fun generateTableData(numberOfEntries: Int): List<TableEntry> {
             topicName = topics.random()
         )
     }
-}
+}*/
