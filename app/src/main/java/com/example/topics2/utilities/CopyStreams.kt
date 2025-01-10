@@ -6,7 +6,7 @@ import android.net.Uri
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-
+import android.webkit.MimeTypeMap
 /**
  * Utility function to copy data from InputStream to OutputStream.
  * This function is reusable for various file operations.
@@ -32,5 +32,37 @@ fun getFileNameFromUri(context: Context, uri: Uri): String {
             fileName = it.getString(columnIndex)
         }
     }
-    return fileName
+    return fileName.trim()
+}
+
+fun determineFileType(context: Context, uri: Uri): String {
+    // Attempt to get MIME type
+    val contentResolver = context.contentResolver
+    val mimeType = contentResolver.getType(uri)
+
+    return when {
+        mimeType != null -> {
+            // Map MIME type to a custom file type string if needed
+            when {
+                mimeType.startsWith("image/") -> "Image"
+                mimeType.startsWith("video/") -> "Video"
+                mimeType.startsWith("audio/") -> "Audio"
+                mimeType == "application/pdf" -> "PDF"
+                mimeType.startsWith("application/") -> "Document"
+                else -> "Unknown"
+            }
+        }
+        else -> {
+            // Fallback to file extension if MIME type is not available
+            val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+            when (extension.lowercase()) {
+                "jpg", "jpeg", "png", "gif", "heic" -> "Image"
+                "mp4", "mkv", "avi" -> "Video"
+                "mp3", "wav", "aac" -> "Audio"
+                "pdf" -> "PDF"
+                "doc", "docx", "txt" -> "Document"
+                else -> "Unknown"
+            }
+        }
+    }
 }

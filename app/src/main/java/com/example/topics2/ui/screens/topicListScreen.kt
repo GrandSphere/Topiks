@@ -1,6 +1,16 @@
 package com.example.topics2.ui.screens
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -26,8 +36,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,23 +47,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.utilities.helper.TemporaryDataHolder
+
+
 import kotlinx.coroutines.launch
 
 
@@ -64,7 +78,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 
     //val inputColor = Color.Gray     // Example input color
     //val outputColor = chooseColorBasedOnLuminance(inputColor)
-    //println(outputColor) // This will print the output color
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -82,7 +96,8 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
         ) {
             // TODO:: Search Box focus
-            CustomSearchBox()
+            //CustomSearchBox()
+            //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
@@ -94,15 +109,20 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
             }
         }
+        val localContext = LocalContext.current
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
                 onClick = {
+                    Log.d("AASSDD", "${
+                        TemporaryDataHolder.getImagePaths()}")
+                    navController.navigate("navShowMorePictures")
+
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
-                    viewModel.setURI("")
-                    viewModel.setShowPicker(false)
+                    viewModel.setFileURI("")
                     navController.navigate("navaddtopic")
                           },
+                shape = CircleShape, // Change the shape to rounded corners
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -129,13 +149,9 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { // Go to specific Topic
-                        viewModel.cTopicColor=argbToColor(topic.topicColour)
-                        //viewModel
+                        viewModel.cTopicColor=argbToColor(topic.colour)
                         //viewModel.setTopicColor(topic)
-
-                        // SET MESSAGEVIEWMODEL showpicker false
-
-                        navController.navigate("navnotescreen/${topic.topicId}/${topic.topicName}")
+                        navController.navigate("navnotescreen/${topic.id}/${topic.name}")
                     },
                     onLongPress = { showMenu = true }
                 )
@@ -146,9 +162,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             verticalAlignment = Alignment.CenterVertically
         ) {
             // TODO check image validity AND compress images
-            val imageUrl = topic.topicIcon
+            val imageUrl = topic.iconPath
             if (imageUrl != "") {
-                Log.d("THIS IS NOT NULL", imageUrl )
                 // Load and display the image
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
@@ -160,7 +175,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         .clip(CircleShape) // Clip the image into a circular shape
                 )
             } else {
-
                 // Show an icon as a fallback if no image URL is provided
                 Surface(
                     //color = colors.primaryContainer,
@@ -174,14 +188,14 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(argbToColor(topic.topicColour))
+                            .background(argbToColor(topic.colour))
                             //.background(argbToColor(topic.topicColour))
                             .heightIn(max = 35.dp),
                     ) {
                         Text(
-                            text = topic.topicName.first().toString(),
+                            text = topic.name.first().toString(),
                             //color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            color = chooseColorBasedOnLuminance(argbToColor(topic.topicColour)),
+                            color = chooseColorBasedOnLuminance(argbToColor(topic.colour)),
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center
                         )
@@ -189,12 +203,9 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 }
             }
 
-
-
-
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = topic.topicName,
+                text = topic.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = colors.onBackground
@@ -208,15 +219,11 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
-                    viewModel.deleteTopic(topic.topicId)
-                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.topicId)}
+                    viewModel.deleteTopic(topic.id)
+                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
                     showMenu = false
                 }
             )
         }
     }
 }
-
-
-
-
