@@ -1,6 +1,9 @@
 package com.example.topics2.unused
-
+//first attempt at matching colours
 // Necessary Imports
+// Necessary Imports
+/*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,56 +21,11 @@ import kotlinx.coroutines.*
 import kotlin.random.Random
 
 // Data Classes
-//data class TableEntry(
-//    val messageID: Int,
-//    val messageContent: String,
-//    val messageContentLower: String,
-//    val topicName: String
-//)
-
-// Trie Node class for word indexing
-class TrieNode {
-    val children: MutableMap<Char, TrieNode> = mutableMapOf()
-    var isEndOfWord = false
-}
-
-class Trie {
-    private val root: TrieNode = TrieNode()
-
-    // Insert words into the trie
-    fun insert(word: String) {
-        var currentNode = root
-        for (char in word.lowercase()) { // blue: Case insensitive search
-            currentNode = currentNode.children.getOrPut(char) { TrieNode() }
-        }
-        currentNode.isEndOfWord = true
-    }
-
-    // Search for a word in the trie
-    fun search(word: String): Boolean {
-        var currentNode = root
-        for (char in word.lowercase()) { // blue: Case insensitive search
-            currentNode = currentNode.children[char] ?: return false
-        }
-        return currentNode.isEndOfWord
-    }
-}
 
 // ViewModel-like functionality using a single class
 class T2SearchHandler(private val dataset: List<TableEntry>) {
     private var results: List<TableEntry> = listOf()
     private var currentJob: Job? = null // blue: Store current search job
-    private val trie: Trie = Trie() // blue: Create the Trie instance
-
-    init {
-        // blue: Preprocess dataset and build the Trie
-        dataset.forEach { entry ->
-            val words = entry.messageContentLower.split(" ")
-            words.forEach { word ->
-                trie.insert(word)
-            }
-        }
-    }
 
     fun search(query: String, debounceTime: Long = 150L, onResults: (List<TableEntry>) -> Unit) {
         // blue: Cancel the previous job if there is one before starting a new one
@@ -86,8 +44,8 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
 
             if (query.isNotEmpty()) { // blue: Handle empty search query (shows no results)
                 results = dataset.filter { entry ->
-                    includes.all { word -> trie.search(word) && word in entry.messageContentLower } && // blue: Efficient word search using Trie
-                            excludes.none { word -> trie.search(word) && word in entry.messageContentLower } // blue: Exclude words using Trie search
+                    includes.all { word -> word in entry.messageContentLower } && // blue: Checking for substrings
+                            excludes.none { word -> word in entry.messageContentLower }
                 }.take(10000)
             } else {
                 results = emptyList() // blue: Ensure no results are shown for empty queries
@@ -134,17 +92,41 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                             withStyle(style = SpanStyle(color = Color.Gray)) {
                                 append(item.topicName.take(8) + " ")
                             }
+
+                            // Split the message content into words and process each word
                             val contentWords = item.messageContent.split(" ")
                             contentWords.forEach { word ->
-                                if (query.split(" ").any { it.equals(word, true) }) {
-                                    withStyle(style = SpanStyle(color = highlightColor)) {
-                                        append("$word ")
-                                    }
-                                } else {
-                                    withStyle(style = SpanStyle(color = Color.White)) {
-                                        append("$word ")
+                                // blue: Track current word without altering spacing
+                                var currentWord = word
+                                var startIdx = 0
+                                query.split(" ").forEach { queryPart ->
+                                    if (queryPart.isNotEmpty() && currentWord.contains(queryPart, ignoreCase = true)) {
+                                        // blue: Find the position of the match and split the word accordingly
+                                        val parts = currentWord.split(queryPart, ignoreCase = true)
+                                        // blue: Append the part before the match in normal color
+                                        withStyle(style = SpanStyle(color = Color.White)) {
+                                            append(parts[0])
+                                        }
+                                        // blue: Highlight the matching part
+                                        withStyle(style = SpanStyle(color = highlightColor)) {
+                                            append(queryPart)
+                                        }
+                                        // blue: Append the part after the match in normal color
+                                        if (parts.size > 1) {
+                                            withStyle(style = SpanStyle(color = Color.White)) {
+                                                append(parts[1])
+                                            }
+                                        }
+                                        currentWord = parts.getOrElse(1) { "" }
                                     }
                                 }
+                                // blue: If no match was found, append the word normally
+                                if (currentWord.isNotEmpty()) {
+                                    withStyle(style = SpanStyle(color = Color.White)) {
+                                        append(currentWord)
+                                    }
+                                }
+                                append(" ") // blue: Ensure space is added after each word
                             }
                         }
                     )
@@ -154,11 +136,12 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     }
 }
 
+// Helper function to generate sample data (for testing purposes)
 
 // Call this function to run the app
 @Composable
 fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(500000)) // blue: Updated dataset size for testing
-}
+    T2SearchUI(generateTableData(2000000)) // blue: Updated dataset size for testing
+}*/
