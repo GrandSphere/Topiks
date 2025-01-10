@@ -54,7 +54,6 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
     }
 }
 
-
 @Composable
 fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) {
     var query by remember { mutableStateOf("") }
@@ -64,19 +63,24 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            //.background(Color.Black)
             .clip(RoundedCornerShape(4.dp))
+            //.padding(16.dp)
     ) {
+
+
         CustomSearchBox(
             inputText = query,
             onValueChange = { newQuery ->
                 query = newQuery
                 searchHandler.search(newQuery) { updatedResults -> results = updatedResults }
             },
-            sPlaceHolder = "Search...",
-            isFocused = true,
-            focusModifier = Modifier,
-            boxModifier = Modifier,
-        )
+            sPlaceHolder="Search...",
+            isFocused=true,
+            focusModifier= Modifier,
+            boxModifier=Modifier,
+        ) // Text box
+
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -94,34 +98,29 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                                 append(item.topicName.take(8) + " ")
                             }
                             val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
-                            val regex = Regex(normalizedQuery.joinToString("|") { Regex.escape(it) }, RegexOption.IGNORE_CASE)
-
                             val contentWords = item.messageContent.split(" ")
 
                             contentWords.forEach { word ->
-                                val matches = regex.findAll(word)
-                                var lastEnd = 0
+                                var wordToHighlight = word
+                                var isHighlighted = false
 
-                                matches.forEach { match ->
-                                    // Append the part of the word before the match
-                                    withStyle(style = SpanStyle(color = Color.White)) {
-                                        append(word.substring(lastEnd, match.range.first))
+                                normalizedQuery.forEach { substring ->
+                                    // Check if the substring exists inside the word
+                                    if (wordToHighlight.contains(substring, ignoreCase = true)) {
+                                        withStyle(style = SpanStyle(color = highlightColor)) {
+                                            append("$substring ")
+                                        }
+                                        // Remove the highlighted part from the word and continue
+                                        wordToHighlight = wordToHighlight.replace(substring, "", ignoreCase = true)
+                                        isHighlighted = true
                                     }
-                                    // Append the matched substring in highlight color
-                                    withStyle(style = SpanStyle(color = highlightColor)) {
-                                        append(match.value)
-                                    }
-                                    lastEnd = match.range.last + 1
                                 }
 
-                                // Append the remaining part of the word
-                                if (lastEnd < word.length) {
+                                if (!isHighlighted) {
                                     withStyle(style = SpanStyle(color = Color.White)) {
-                                        append(word.substring(lastEnd))
+                                        append("$word ")
                                     }
                                 }
-                                // Add a space after each word
-                                append(" ")
                             }
                         }
                     )
@@ -134,5 +133,5 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
 
 @Composable
 fun T2RunApp() {
-    T2SearchUI(generateTableData(200)) // blue: Updated dataset size for testing
+    T2SearchUI(generateTableData(2000000)) // blue: Updated dataset size for testing
 }
