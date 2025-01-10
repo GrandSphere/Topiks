@@ -1,6 +1,8 @@
 package com.example.topics2.ui.screens
 
 import MessageBubble
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.OLDMessageBubble
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 //import com.example.topics2.ui.viewmodels.TopicViewModel
 
@@ -41,7 +48,6 @@ fun MessageScreen(navController: NavController,
 
     viewModel.collectMessages(topicId)
 
-
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
@@ -49,7 +55,7 @@ fun MessageScreen(navController: NavController,
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
-
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -68,17 +74,44 @@ fun MessageScreen(navController: NavController,
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
+            // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
-//                OLDMessageBubble(
-//                    message = message,
-//                    topicId = topicId,
-//                    viewModel = viewModel,
-//                    topicColor = topicColor,
-//                    topicFontColor = topicFontColor,
-//                )
-                MessageBubble(navController)
-                //Log.d("aabbcc",message)
+                val pictureList = mutableListOf<String>()
+                val attachmentList = mutableListOf<String>()
+                var hasPictures = false
+                var hasAttachments = false
+                val filePathsForMessage by viewModel.getFilesByMessageId(message.id).collectAsState(initial = emptyList())
+
+                // Process each file path
+                for (filePath in filePathsForMessage) {
+                    val fileType = determineFileType(context, filePath.toUri())
+                    when (fileType) {
+                        "Image" -> {
+                            pictureList.add(filePath)
+                            hasPictures = true
+                        }
+                        else -> {
+                            attachmentList.add(filePath)
+                            hasAttachments = true
+                        }
+                    }
+                }
+                // Format timestamp
+                val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+
+                // Call MessageBubble
+                MessageBubble(
+                    navController = navController,
+                    topicColor = topicColor,
+                    topicFontColor = topicFontColor,
+                    messageContent = message.content,
+                    containPictures = hasPictures,
+                    containAttachments = hasAttachments,
+                    listOfPictures = pictureList,
+                    listOfAttachmentsP = attachmentList,
+                    timestamp = timestamp
+                )
             }
             item {
                 Spacer(
@@ -108,44 +141,4 @@ fun MessageScreen(navController: NavController,
         }
     }
 
-
-
-
 }
-
-
-/*
-
-fun MessageBubble( // New Message Bubble
-    //topicColor: Color = MaterialTheme.colorScheme.tertiary,
-    navController: NavController,
-    topicColor: Color = Color.Cyan,
-    topicFontColor: Color = Color.Black,
-    messageContent: String,
-    containPictures: Boolean,
-    containAttachments: Boolean,
-    listOfPictures: List<String>,
-    listOfAttachments: List<String>,
-    timestamp: String
-) { // Main screen
-
-
-    var messagecontent = messageContent
-    val imagePaths: List<String> = listOfPictures
-  //  val imagePaths = getTestImagePaths()
-    val listOfAttachments: List<String> =  listOfAttachments
-    val iPictureCount: Int = imagePaths.size
-    var containsPictures: Boolean = containPictures
-  //  var containsPictures: Boolean = true
-    var containsAttachments: Boolean = containAttachments
-
-    Log.d("DEBUG_LOG", "Message Content: $messagecontent")
-    Log.d("DEBUG_LOG", "Image Paths: $imagePaths")
-    Log.d("DEBUG_LOG", "List of Attachments: $listOfAttachments")
-    Log.d("DEBUG_LOG", "Picture Count: $iPictureCount")
-    Log.d("DEBUG_LOG", "Contains Pictures: $containsPictures")
-    Log.d("DEBUG_LOG", "Contains Attachments: $containsAttachments")
-
-
-
- */

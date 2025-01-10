@@ -1,5 +1,16 @@
 package com.example.topics2.ui.screens
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Environment
+import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -37,11 +48,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.topics2.db.enitities.TopicTbl
@@ -49,7 +64,10 @@ import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
+
+
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
@@ -88,9 +106,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
             }
         }
+        val localContext = LocalContext.current
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
                 onClick = {
+
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
                     viewModel.setFileURI("")

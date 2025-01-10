@@ -1,7 +1,13 @@
 import android.Manifest
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.asImageBitmap
+import java.io.InputStream
+
 import android.content.pm.PackageManager
 import android.util.Log
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,19 +25,28 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
 import java.io.File
+
+
+
+
+
 
 fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBorder: Dp): Dp {
     val rows = (iPicturesToShow + if (iPicturesToShow < 4) 0 else 1).toDouble() / iNumberColumns
@@ -78,12 +93,8 @@ fun picturesPreview( // State 1
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
             modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
         ) {
-            Log.d("DEBUG_HEREREAD", "imagePaths: $imagePaths")
-            Log.d("DEBUG_HEREREAD", "Displaying ${imagePaths.size} images.")
 
-            items(imagePaths.take(iPicturesToShow)) { imagePath -> // Display the Images
-
-                Log.d("DEBUG_QQQQ", "${imagePath}")
+            items(imagePaths.take(iPicturesToShow)) { imagePath ->
                 Image(
                     modifier = Modifier
                         .clip(RoundedCornerShape(cPadding))
@@ -92,7 +103,7 @@ fun picturesPreview( // State 1
                         .aspectRatio(1f),
                     painter = rememberAsyncImagePainter(imagePath),
                     contentDescription = "Image",
-                    contentScale = ContentScale.Crop, // Crops the image if necessary
+                    contentScale = ContentScale.Crop,
                 )
             }
             item {
@@ -117,9 +128,6 @@ fun picturesPreview( // State 1
                 }
             }
         }
-
-//        Spacer(modifier = Modifier.height(4.dp)) //space between message and date
-//        Divider(color = topicFontColor.copy(opacity2), thickness = cBorder)
         Spacer(modifier = Modifier.height(5.dp)) //space between message and date
 
     }

@@ -16,10 +16,12 @@ import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.entities.FileTbl
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.io.File
 
@@ -112,12 +114,18 @@ class MessageViewModel (
     }
 
     // Retrieve files for specific messageID
-    suspend fun getFilesByMessageId(messageId: Int): List<Uri> {
-        // Collect the Flow<List<FileTbl>> and convert it to List<Uri>
-        return filesDao.getFilesByMessageId(messageId).first().map { file ->
-            Uri.parse(file.filePath)
-        }
+//    fun getFilesByMessageId(messageId: Int): List<String> {
+//        // Collect the Flow<List<FileTbl>> and convert it to List<Uri>
+//        return filesDao.getFilesByMessageId(messageId).first().map { file ->
+//            file.filePath
+//        }
+//    }
+    // Regular function, not suspend
+    fun getFilesByMessageId(messageId: Int): Flow<List<String>> {
+        return filesDao.getFilesByMessageId(messageId)
+            .map { fileList -> fileList.map { it.filePath } }
     }
+
 
 //    suspend fun getFilesByMessageId(context: Context, messageId: Int): List<Uri> {
 //        return filesDao.getFilesByMessageId(messageId).first().map { file ->
