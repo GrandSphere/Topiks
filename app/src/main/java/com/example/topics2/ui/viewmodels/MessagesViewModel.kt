@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -38,11 +39,6 @@ class MessageViewModel (
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
 
-    // States whether reached the end of the SelectFileWithPicker function, meaning validURI set
-    private val _filePicked = MutableStateFlow<Boolean>(false)
-    val filePicked: StateFlow<Boolean> = _filePicked
-    // fun setfilePicked(newValue: Boolean) { _filePicked.value = newValue }
-
     // File Source URI for file imports
     private val _fileURI = MutableStateFlow<String>("")
     val fileURI: StateFlow<String> = _fileURI
@@ -76,6 +72,23 @@ class MessageViewModel (
     private val _tempMessage = MutableStateFlow<String>("")
     val tempMessage: StateFlow<String> = _tempMessage
     fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
+
+    // ImagePaths, used for messageBubble and showmore
+    private val _imagePaths = MutableStateFlow<List<String>>(listOf(""))
+    val imagePaths: StateFlow<List<String>> = _imagePaths
+    fun setImagePaths(imagePaths: List<String>) {_imagePaths.value = imagePaths}
+
+    // Topic Color
+    private val _topicColor = MutableStateFlow<Color>(Color.Cyan)
+    val topicColor: StateFlow<Color> = _topicColor
+    fun setTopicColor(topicColor: Color) {_topicColor.value = topicColor}
+
+    // Topic Color
+    private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
+    val topicFontColor: StateFlow<Color> = _topicColor
+    fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
+
+
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
@@ -113,52 +126,12 @@ class MessageViewModel (
         return messageDao.insertMessage(newMessage) // Insert the message into the database
     }
 
-    // Retrieve files for specific messageID
-//    fun getFilesByMessageId(messageId: Int): List<String> {
-//        // Collect the Flow<List<FileTbl>> and convert it to List<Uri>
-//        return filesDao.getFilesByMessageId(messageId).first().map { file ->
-//            file.filePath
-//        }
-//    }
-    // Regular function, not suspend
     fun getFilesByMessageId(messageId: Int): Flow<List<String>> {
         return filesDao.getFilesByMessageId(messageId)
             .map { fileList -> fileList.map { it.filePath } }
     }
 
-
-//    suspend fun getFilesByMessageId(context: Context, messageId: Int): List<Uri> {
-//        return filesDao.getFilesByMessageId(messageId).first().map { file ->
-//            val filePath = file.filePath
-//            val file = File(filePath)
-//
-//            // Check if the file exists
-//            if (file.exists()) {
-//                // Use DocumentsContract for Android KitKat (API 19) and above
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                    try {
-//                        // Get the external storage URI (content://com.android.externalstorage.documents/document/)
-//                        val rootUri = Uri.parse("content://com.android.externalstorage.documents/document/primary")
-//                        val documentUri = DocumentsContract.buildDocumentUriUsingTree(
-//                            rootUri,
-//                            filePath.substring(filePath.indexOf("Documents"))
-//                        )
-//                        documentUri
-//                    } catch (e: IllegalArgumentException) {
-//                        e.printStackTrace()
-//                        Uri.EMPTY // Return empty URI if building fails
-//                    }
-//                } else {
-//                    // For older versions, FileProvider may be used
-//                    FileProvider.getUriForFile(context, "your.authority.provider", file)
-//                }
-//            } else {
-//                Uri.EMPTY // Return empty URI if file does not exist
-//            }
-//        }
-//    }
-
-        // Add File to File_tbl
+    // Add File to File_tbl
     suspend fun addFile(
         topicId: Int,
         messageId: Int,

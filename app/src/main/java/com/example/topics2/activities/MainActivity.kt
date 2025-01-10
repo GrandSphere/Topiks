@@ -47,12 +47,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
-
-
-
-
     }
-
     //val Purple200 = Color(0xFFBB86FC) FIX THIS
     @Composable
     fun TopicsApp(context: Context) {
@@ -128,6 +123,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("navShowMorePictures") { ShowMorePictures(navController) }
+
                         composable(
                             "navnotescreen/{topicId}/{topicName}",
                             arguments = listOf(navArgument("topicId") { type = NavType.IntType })

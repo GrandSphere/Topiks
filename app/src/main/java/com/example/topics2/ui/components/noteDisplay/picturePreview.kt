@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -40,11 +41,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.topics2.utilities.helper.TemporaryDataHolder
 import java.io.File
-
-
-
 
 
 
@@ -59,14 +59,15 @@ fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBo
 
 @Composable
 fun picturesPreview( // State 1
+    navController: NavController,
     topicColor: Color,
     topicFontColor: Color,
     imagePaths: List<String>,
     iPictureCount: Int = 4,
-    onShowMore: () -> Unit, // Pass a lambda to update the state
+   // onShowMore: () -> Unit, // Pass a lambda to update the state
     modifiera: Modifier = Modifier,
 ) {
-
+    TemporaryDataHolder.setImagePaths(imagePaths)
     val opacity2: Float = 0.3f
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     val opacity: Float = 0.2f
@@ -91,7 +92,8 @@ fun picturesPreview( // State 1
             horizontalArrangement = Arrangement.spacedBy(3.dp), // Horizontal space between items
             verticalArrangement = Arrangement.spacedBy(3.dp),
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
-            modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
+         //   modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
+            modifier = Modifier.heightIn(max=800.dp)
         ) {
 
             items(imagePaths.take(iPicturesToShow)) { imagePath ->
@@ -114,7 +116,7 @@ fun picturesPreview( // State 1
                             .background(topicFontColor.copy(opacity)) // 50% transparent blue
                             .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding)) // Apply a rounded border
                             .aspectRatio(1f)
-                            .clickable(onClick = onShowMore) // Trigger the show more action
+                            .clickable(onClick = {navController.navigate("navShowMorePictures")}) // Trigger the show more action
                     ) {
                         Text(
                             text = "Show More...",

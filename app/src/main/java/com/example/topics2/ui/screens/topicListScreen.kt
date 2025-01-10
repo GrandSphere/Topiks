@@ -64,6 +64,7 @@ import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.utilities.helper.TemporaryDataHolder
 
 
 import kotlinx.coroutines.launch
@@ -110,6 +111,9 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
                 onClick = {
+                    Log.d("AASSDD", "${
+                        TemporaryDataHolder.getImagePaths()}")
+                    navController.navigate("navShowMorePictures")
 
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")

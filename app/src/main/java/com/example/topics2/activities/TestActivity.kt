@@ -95,7 +95,7 @@ fun TestApp(context: Context) {
 
                     composable("testfun") { ImageGridScreen () }
                     composable("navTest") { testScreen () }
-                    composable("navState2") { ShowMorePictures (navController) }
+                  //  composable("navState2") { ShowMorePictures (navController, viewModel = messageViewModel) }
                     composable("navTest") { testScreen() }
                     composable("navBottomSheetTest") { bottomSheetTest() }
                    // composable("navTest2") { MessageBubble(navController) }

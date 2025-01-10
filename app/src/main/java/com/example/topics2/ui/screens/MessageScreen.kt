@@ -47,12 +47,14 @@ fun MessageScreen(navController: NavController,
                   topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
 
     viewModel.collectMessages(topicId)
+    viewModel.setTopicColor(topicColor)
 
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
     val scrollState = rememberLazyListState()
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
+    viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
     val context = LocalContext.current
@@ -99,12 +101,14 @@ fun MessageScreen(navController: NavController,
                 }
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+                viewModel.setImagePaths(pictureList)
 
                 // Call MessageBubble
                 MessageBubble(
                     navController = navController,
                     topicColor = topicColor,
                     topicFontColor = topicFontColor,
+                    viewModel = viewModel,
                     messageContent = message.content,
                     containPictures = hasPictures,
                     containAttachments = hasAttachments,
