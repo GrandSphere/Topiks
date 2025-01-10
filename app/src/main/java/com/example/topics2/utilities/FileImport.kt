@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.io.File
 import java.io.IOException
@@ -32,7 +33,7 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, c
 
         // Create the file in the accessible directory
         val destinationFile = File(externalDir, fileName)
-
+        messageViewModel.setdestURI(destinationFile.toString())
         if (destinationFile.exists()) {
             Toast.makeText(context, "File already exists in destination folder.", Toast.LENGTH_SHORT).show()
             return

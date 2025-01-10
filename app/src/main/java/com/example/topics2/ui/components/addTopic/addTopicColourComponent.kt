@@ -1,6 +1,7 @@
 package com.example.topics2.ui.components.addTopic
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -52,6 +53,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
         fileTypes = imageMimeTypes,
         onFileSelected = { uri: Uri? ->
             //selectedFileUri.value = uri ?: Uri.parse("")
+            Log.d("Debug_ this is where i set", "${uri}")
             viewModel.setFileURI(uri.toString())
         }
     )

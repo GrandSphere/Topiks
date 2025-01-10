@@ -1,6 +1,10 @@
 package com.example.topics2.ui.viewmodels
 
+import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -17,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
 
 // TODO Fix category add when adding message
 // TODO Fix created time when  editing when adding message
@@ -113,6 +118,37 @@ class MessageViewModel (
             Uri.parse(file.filePath)
         }
     }
+
+//    suspend fun getFilesByMessageId(context: Context, messageId: Int): List<Uri> {
+//        return filesDao.getFilesByMessageId(messageId).first().map { file ->
+//            val filePath = file.filePath
+//            val file = File(filePath)
+//
+//            // Check if the file exists
+//            if (file.exists()) {
+//                // Use DocumentsContract for Android KitKat (API 19) and above
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                    try {
+//                        // Get the external storage URI (content://com.android.externalstorage.documents/document/)
+//                        val rootUri = Uri.parse("content://com.android.externalstorage.documents/document/primary")
+//                        val documentUri = DocumentsContract.buildDocumentUriUsingTree(
+//                            rootUri,
+//                            filePath.substring(filePath.indexOf("Documents"))
+//                        )
+//                        documentUri
+//                    } catch (e: IllegalArgumentException) {
+//                        e.printStackTrace()
+//                        Uri.EMPTY // Return empty URI if building fails
+//                    }
+//                } else {
+//                    // For older versions, FileProvider may be used
+//                    FileProvider.getUriForFile(context, "your.authority.provider", file)
+//                }
+//            } else {
+//                Uri.EMPTY // Return empty URI if file does not exist
+//            }
+//        }
+//    }
 
         // Add File to File_tbl
     suspend fun addFile(

@@ -1,5 +1,5 @@
-package com.example.topics2.ui.components.noteDisplay
-
+import android.Manifest
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,9 +25,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
+import java.io.File
+
+fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBorder: Dp): Dp {
+    val rows = (iPicturesToShow + if (iPicturesToShow < 4) 0 else 1).toDouble() / iNumberColumns
+    val itemHeight = 100.dp // Adjust this based on your image size
+    val spacing = 3.dp
+    val padding = cPadding * 2
+    val border = cBorder * 2
+    return (itemHeight * rows.toInt() + spacing * (rows.toInt() - 1) + padding + border)
+}
 
 @Composable
 fun picturesPreview( // State 1
@@ -63,14 +76,14 @@ fun picturesPreview( // State 1
             horizontalArrangement = Arrangement.spacedBy(3.dp), // Horizontal space between items
             verticalArrangement = Arrangement.spacedBy(3.dp),
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
-            modifier = Modifier
+            modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
         ) {
-            Log.d("AASSDD", "we got here")
-            Log.d("AASSDD", "${iPicturesToShow}")
-            Log.d("AASSDD Paths", "${imagePaths}")
-            // THINGS BREAK HERE
+            Log.d("DEBUG_HEREREAD", "imagePaths: $imagePaths")
+            Log.d("DEBUG_HEREREAD", "Displaying ${imagePaths.size} images.")
+
             items(imagePaths.take(iPicturesToShow)) { imagePath -> // Display the Images
-                Log.d("AASSDD Paths", "${imagePath}")
+
+                Log.d("DEBUG_QQQQ", "${imagePath}")
                 Image(
                     modifier = Modifier
                         .clip(RoundedCornerShape(cPadding))
