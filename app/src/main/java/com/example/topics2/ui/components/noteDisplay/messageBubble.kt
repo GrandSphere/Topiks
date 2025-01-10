@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.noteDisplay.showAttachments
-import com.example.topics2.unused.getTestImagePaths
-
 
 @Composable
 fun MessageBubble( // New Message Bubble
@@ -27,10 +25,9 @@ fun MessageBubble( // New Message Bubble
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black
 ) { // Main screen
-    val iPictureCount: Int =1
+    val iPictureCount: Int =2
     val listOfAttachments = listOf("Attachment 1", "Attachment 2", "Attachment 3") // Example list
-   // val imagePaths = getTestImagePaths()
-    val imagePaths:List<String> = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210205-172826_Firefox.jpg")
+    val imagePaths : List<String> =listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210205-172826_Firefox.jpg")
     var showMore by remember { mutableStateOf(false) }
     var messagecontent="This is my first sentence\nThis is my second sentence\n\nthis nothing"
     var containsPictures: Boolean = true
