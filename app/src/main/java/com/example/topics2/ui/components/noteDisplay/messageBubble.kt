@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,13 +17,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.noteDisplay.showAttachments
+import com.example.topics2.ui.screens.ShowMorePictures
+import com.example.topics2.ui.viewmodels.MessageViewModel
+import com.example.topics2.utilities.helper.TemporaryDataHolder
 
 
 @Composable
 fun MessageBubble( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    viewModel: MessageViewModel,
     navController: NavController,
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
@@ -34,11 +40,17 @@ fun MessageBubble( // New Message Bubble
     timestamp: String
 ) {
     var messagecontent = messageContent
-    val imagePaths: List<String> = listOfPictures
+  //  val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
+  //  val topicColor = viewModel.topicColor.collectAsState().value
+   // val topicFontColor = viewModel.topicFontColor.collectAsState().value
+    val imagePaths = listOfPictures
+
     val listOfAttachments: List<String> =  listOfAttachmentsP
     val iPictureCount: Int = imagePaths.size
     var containsPictures: Boolean = containPictures
     var containsAttachments: Boolean = containAttachments
+
+ //   var bShowMore: Boolean by remember { mutableStateOf(false) }
 
     var showMore by remember { mutableStateOf(false) }
     val withContentWidth: Float = 0.8f
@@ -59,11 +71,11 @@ fun MessageBubble( // New Message Bubble
             if (containsPictures) {
                 if (!showMore) {
                     picturesPreview(
+                        navController = navController,
                         modifiera = Modifier
                             .fillMaxWidth(0.7f),
                         imagePaths = imagePaths,
                         iPictureCount = iPictureCount,
-                        onShowMore = { navController.navigate("navState2") },
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
                     )

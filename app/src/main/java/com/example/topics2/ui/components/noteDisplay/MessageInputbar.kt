@@ -242,8 +242,6 @@ fun InputBarMessageScreen(
                             categoryID = 1
                         )
 
-
-
                         // Copy files and write file paths to DB
                         if (!selectedFileUris.value.isNullOrEmpty()) {
 
@@ -269,6 +267,8 @@ fun InputBarMessageScreen(
 
                     }
                 }
+                // TODO Change THIS!
+            //    viewModel.setImagePaths(emptyList())
             }
         },
         modifier = Modifier
