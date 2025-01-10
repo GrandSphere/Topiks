@@ -52,6 +52,9 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
 }
 
 // Composable UI for Search Results
+
+
+
 @Composable
 fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) {
     var query by remember { mutableStateOf("") }
@@ -61,8 +64,8 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .padding(16.dp)
-            //.background(Color.Red)
     ) {
         TextField(
             value = query,
@@ -89,33 +92,29 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                                 append(item.topicName.take(8) + " ")
                             }
 
-                            // blue: Use regular expression to find and highlight matches
-                            val regex = Regex(query, RegexOption.IGNORE_CASE)
-                            var lastEnd = 0
+                            val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
+                            val contentWords = item.messageContent.split(" ")
 
-                            regex.findAll(item.messageContent).forEach { matchResult ->
-                                // blue: Append text before the match in normal color
-                                withStyle(style = SpanStyle(color = Color.White)) {
-                                    append(
-                                        item.messageContent.substring(
-                                            lastEnd,
-                                            matchResult.range.first
-                                        )
-                                    )
+                            contentWords.forEach { word ->
+                                var wordToHighlight = word
+                                var isHighlighted = false
+
+                                normalizedQuery.forEach { substring ->
+                                    // Check if the substring exists inside the word
+                                    if (wordToHighlight.contains(substring, ignoreCase = true)) {
+                                        withStyle(style = SpanStyle(color = highlightColor)) {
+                                            append("$substring ")
+                                        }
+                                        // Remove the highlighted part from the word and continue
+                                        wordToHighlight = wordToHighlight.replace(substring, "", ignoreCase = true)
+                                        isHighlighted = true
+                                    }
                                 }
-                                // blue: Highlight the matched text
-                                withStyle(style = SpanStyle(color = highlightColor)) {
-                                    append(matchResult.value)
-                                }
-                                lastEnd = matchResult.range.last + 1
-                            }
 
-                            // blue: Append the remaining text after the last match
-
-                            if (lastEnd < item.messageContent.length) {
-
-                                withStyle(style = SpanStyle(color = Color.White)) {
-                                    append(item.messageContent.substring(lastEnd))
+                                if (!isHighlighted) {
+                                    withStyle(style = SpanStyle(color = Color.White)) {
+                                        append("$word ")
+                                    }
                                 }
                             }
                         }
@@ -126,6 +125,7 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     }
 }
 
+
 // Helper function to generate sample data (for testing purposes)
 
 // Call this function to run the app
@@ -133,5 +133,5 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
 fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
-    T2SearchUI(generateTableData(500)) // blue: Updated dataset size for testing
+    T2SearchUI(generateTableData(500000)) // blue: Updated dataset size for testing
 }

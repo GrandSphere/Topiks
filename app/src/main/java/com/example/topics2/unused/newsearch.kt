@@ -123,4 +123,5 @@ fun T2RunApp() {
     //val testDataset = generateTableData(1000)
     //androidx.compose.ui.window.singleWindowApplication {
     T2SearchUI(generateTableData(500000))
-}*/
+}
+*/
