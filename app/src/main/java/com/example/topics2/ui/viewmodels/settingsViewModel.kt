@@ -3,46 +3,81 @@ package com.example.topics2.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewModelScope
+import com.example.topics2.model.DefaultSettings.settingsMap
 import com.example.topics2.model.SettingsManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
-    // LiveData to hold the current settings
-    val settingsLiveData: MutableLiveData<Map<String, Any>> = MutableLiveData()
+    private val _settings = MutableStateFlow<Map<String, String>>(emptyMap())
+    val settings: StateFlow<Map<String, String>> = _settings
 
+    // Initialize settings when ViewModel is created
     init {
-        // Initialize settings from the SettingsManager when ViewModel is created
-        SettingsManager.initialize(application.applicationContext)
-        settingsLiveData.value = SettingsManager.getSettings()
+        loadSettings()
     }
 
-    // Method to update a specific setting
-    fun updateSetting(key: String, value: Any) {
+    // Load settings from SettingsManager (this could be async)
+    private fun loadSettings() {
+        // Using a coroutine to load settings asynchronously
+        viewModelScope.launch {
+            SettingsManager.initialize(getApplication())
+            _settings.value = SettingsManager.getSettings().mapValues { it.value.toString() }
+        }
+    }
+
+    // Update a specific setting and persist it
+    fun updateSetting(key: String, value: String) {
+        // Update in the state flow
+        _settings.value = _settings.value.toMutableMap().apply {
+            this[key] = value
+        }
+
         SettingsManager.updateSetting(key, value)
-        settingsLiveData.value = SettingsManager.getSettings() // Update LiveData
         saveSettings()
     }
 
-    // Method to save the settings to XML
-    fun saveSettings() {
+    // Reload the settings from the SettingsManager (e.g., from file)
+    fun reloadSettings() {
+        viewModelScope.launch {
+            SettingsManager.initialize(getApplication())
+            _settings.value = SettingsManager.getSettings().mapValues { it.value.toString() }
+        }
+    }
+
+    // Get the theme setting
+    fun getTheme(): String {
+        return _settings.value["theme"] ?: settingsMap["theme"] as? String ?: "Default"
+    }
+
+    // Additional getter methods for other settings (e.g., notificationsEnabled)
+    fun getNotificationsEnabled(): Boolean {
+        return _settings.value["notificationsEnabled"]?.toBoolean() ?: false
+    }
+
+    fun getNewSetting(): String {
+        return _settings.value["newSetting"] ?: "Default Value"
+    }
+
+    // Save settings to the persistent storage (XML)
+    private fun saveSettings() {
         SettingsManager.saveSettings(getApplication())
     }
 
-  /*  companion object {
-        // Factory to create the ViewModel
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                // Get the Application object from extras
-                val application = checkNotNull(extras[APPLICATION_KEY])
-
-                return SettingsViewModel(application as Application) as T
-            }
-        }
-    }*/
+    companion object {
+        // Factory for providing SettingsViewModel instance
+        fun Factory(settingsViewModel: SettingsViewModel): ViewModelProvider.Factory =
+            ViewModelProvider.NewInstanceFactory()  // You can skip custom initialization if no need for params
+    }
 }
+
+/* CREATE OBJECT LIKE THIS in composables
+val activity = LocalContext.current as ComponentActivity
+    val settingsViewModel: SettingsViewModel = viewModel(
+        factory = Factory(activity.settingsViewModel)
+    )
+ */
