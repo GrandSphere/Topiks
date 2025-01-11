@@ -46,7 +46,7 @@ fun ShowMorePictures( // State 2
    // val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
     //val imagePaths = by remeberTemporaryDataHolder.getImagePaths()
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
-    Log.d("AASSDD", "${imagePaths}")
+    Log.d("zzee", "${imagePaths}")
    // val imagePaths = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210430-054520_Camera.jpg")
     //
     Box(

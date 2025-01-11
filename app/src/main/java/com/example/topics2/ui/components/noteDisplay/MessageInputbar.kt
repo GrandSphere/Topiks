@@ -57,7 +57,8 @@ import multipleFilePicker
 @Composable
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int,
-    topicColour: Color = MaterialTheme.colorScheme.onPrimary
+    topicColour: Color = MaterialTheme.colorScheme.onPrimary,
+    onFocus: () -> Unit ={},
 ) {
 
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -167,7 +168,8 @@ fun InputBarMessageScreen(
             boxModifier = Modifier
                 .weight(1f)
                 .padding(0.dp)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
+            onFocus=onFocus
         )
 
         Spacer(modifier = Modifier.width(8.dp))

@@ -26,6 +26,7 @@ fun CustomTextBox(
     sPlaceHolder: String = "Enter message",
     isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
+    onFocus: () -> Unit = {},
     boxModifier: Modifier = Modifier // Modifier for the Box
 ) {
     val colors = MaterialTheme.colorScheme
@@ -71,7 +72,9 @@ fun chooseColorBasedOnLuminance(inputColor: Color): Color {
     // Compute luminance using the standard formula
     var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
     return when { // Determine the output color based on luminance
-        luminance < 0.5 -> Color.White
+//        luminance < 0.5 -> Color.White
+        luminance < 0.5 -> Color(0xf0f0f0FF)
+//        luminance < 0.5 -> Color(0xFFFFF0FF)
         //luminance < 0.25 -> Color.White
         //luminance < 0.5 -> Color.Gray
         //luminance < 0.75 -> Color.DarkGray

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -68,12 +69,13 @@ fun picturesPreview( // State 1
     modifiera: Modifier = Modifier,
 ) {
     TemporaryDataHolder.setImagePaths(imagePaths)
-    val opacity2: Float = 0.3f
+    val opacity2: Float = 0.1f
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     val opacity: Float = 0.2f
     var iPicturesToShow= 0
-    val cPadding: Dp = 6.dp
+    val cPadding: Dp = 8.dp
     val cBorder: Dp = 2.dp
+    val cCrop: Dp = cPadding-cBorder
     when (iPictureCount) {
         1 -> { iPicturesToShow = 1
             iNumberColumns=1 }
@@ -89,19 +91,22 @@ fun picturesPreview( // State 1
         modifiera
     ) {
         LazyVerticalGrid(
-            horizontalArrangement = Arrangement.spacedBy(3.dp), // Horizontal space between items
-            verticalArrangement = Arrangement.spacedBy(3.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp), // Horizontal space between items
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             columns = GridCells.Fixed(iNumberColumns), // 2 images per row
          //   modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
-            modifier = Modifier.heightIn(max=800.dp)
+            modifier = Modifier.heightIn(max=800.dp) // TODO this is a temp fix
         ) {
 
             items(imagePaths.take(iPicturesToShow)) { imagePath ->
                 Image(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(cPadding))
+
+                        .border(cBorder, Color.White.copy(1f), RoundedCornerShape(cPadding))
+//                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
+                        .padding(cBorder)
+                        .clip(RoundedCornerShape(cCrop))
                         .background(topicFontColor.copy(opacity))
-                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                         .aspectRatio(1f),
                     painter = rememberAsyncImagePainter(imagePath),
                     contentDescription = "Image",
@@ -112,9 +117,15 @@ fun picturesPreview( // State 1
                 if (iPictureCount>iPicturesToShow) {
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(cPadding))
+
+                            .border(cBorder, Color.White.copy(1f), RoundedCornerShape(cPadding))
+//                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
+                            .padding(cBorder)
+                            .clip(RoundedCornerShape(cCrop))
+
+//                            .clip(RoundedCornerShape(cPadding))
                             .background(topicFontColor.copy(opacity)) // 50% transparent blue
-                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding)) // Apply a rounded border
+//                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding)) // Apply a rounded border
                             .aspectRatio(1f)
                             .clickable(onClick = {navController.navigate("navShowMorePictures")}) // Trigger the show more action
                     ) {
