@@ -33,7 +33,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         SettingsManager.saveSettings(getApplication())
     }
 
-    companion object {
+  /*  companion object {
         // Factory to create the ViewModel
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -44,5 +44,5 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 return SettingsViewModel(application as Application) as T
             }
         }
-    }
+    }*/
 }
