@@ -8,8 +8,12 @@ Priority 5 = get to it when you really want to.
 
 
 ## Priorty 0
+Fix:[l] Chatscreen GUI 
+Fix:[dl] Integrate search for different windows (Topics, Messages, both)
 
 ## Priorty 1
+Fix: Send attachments without text.
+Fix:[d] Only show attachment names
 
 ## Priorty 2
 
