@@ -6,6 +6,6 @@ object DefaultSettings {
     val settingsMap: MutableMap<String, Any> = mutableMapOf(
         "theme" to "Light",
         "notificationsEnabled" to true,
-        "newSetting" to "Default Value"
+        "newSetting" to "Default Value",
     )
 }
