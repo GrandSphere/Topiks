@@ -44,6 +44,7 @@ import com.example.topics2.unused.PreviewOverflowingLayout
 //import com.example.topics2.unused.T2RunApp
 
 import com.example.topics2.unused.UniqueFuzzySearchScreen
+import com.example.topics2.unused.fTestSearchScreen
 
 import com.example.topics2.unused.testScreen
 
@@ -98,11 +99,11 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navcTest3") {
+                NavHost(navController = navController, startDestination = "navSearchTest") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
-                    //composable("navcTest") { MessageBubble( navController) }
+                    composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("newSearch") { NewSearchScreen () }
                     //composable("navFuzzy") { FuzzySearchScreen () }
