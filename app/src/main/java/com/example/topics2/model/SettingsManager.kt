@@ -56,6 +56,7 @@ object SettingsManager {
         // Write each setting from the map to XML
         for ((key, value) in settings) {
             val element = document.createElement(key)
+            //document.
             element.appendChild(document.createTextNode(value.toString()))
             rootElement.appendChild(element)
         }

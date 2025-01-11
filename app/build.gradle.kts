@@ -50,9 +50,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling)
-    implementation (libs.androidx.room.ktx.v260)
-    implementation (libs.androidx.room.room.runtime)
-    implementation (libs.coil.compose)
+    implementation(libs.androidx.room.ktx.v260)
+    implementation(libs.androidx.room.room.runtime)
+    implementation(libs.coil.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core.ktx)
@@ -77,14 +77,18 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.ui.tooling.preview)
     implementation(platform(libs.androidx.compose.bom))
-    kapt (libs.androidx.room.compiler)
-    kapt (libs.room.compiler) // Add this for kapt
+    kapt(libs.androidx.room.compiler)
+    kapt(libs.room.compiler) // Add this for kapt
     testImplementation(libs.junit)
-    implementation (libs.ui)  // Update with the latest version
-    implementation (libs.material3) // for Material3 components
+    implementation(libs.ui)  // Update with the latest version
+    implementation(libs.material3) // for Material3 components
     // Lifecycle components (if not already included)
-    implementation (libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
+    implementation(libs.androidx.lifecycle.runtime.ktx.v251) // Ensure this is included
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose.v262)
-}
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
+
+
+ }
+

@@ -3,6 +3,8 @@ package com.example.topics2.activities
 
 import android.Manifest
 import android.content.Context
+
+
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -50,8 +52,11 @@ import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.viewmodel.SettingsViewModel
 
+
 class MainActivity : ComponentActivity() {
-        override fun onCreate(savedInstanceState: Bundle?) {
+    // Initialize SettingsViewModel scoped to the Activity lifecycle
+    private val settingsViewModel: SettingsViewModel by viewModels()
+     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
 
@@ -64,13 +69,11 @@ class MainActivity : ComponentActivity() {
         val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
         val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
         val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
-        val settingsViewModel: SettingsViewModel = viewModel()
 
-      //  settingsViewModel.updateSetting("theme", "Very Dark")
 
-        settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
-            Log.d("SETTINGS_DEBUG", "${settings}")
-        })
+
+    //    Log.d("Debug_L Main", "${settingsViewModel.getTheme()}")
+   // settingsViewModel.updateSetting("theme", "Very Dark")
 
         val topBarViewModel: TopBarViewModel = viewModel()
         val navController = rememberNavController()
