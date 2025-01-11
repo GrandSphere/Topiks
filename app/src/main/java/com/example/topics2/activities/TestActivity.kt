@@ -1,3 +1,5 @@
+@file:Suppress("PreviewAnnotationInFunctionWithParameters")
+
 package com.example.topics2.activities
 
 //import T2RunApp
@@ -13,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -45,6 +48,7 @@ import com.example.topics2.unused.PreviewOverflowingLayout
 
 import com.example.topics2.unused.UniqueFuzzySearchScreen
 import com.example.topics2.unused.fTestSearchScreen
+import com.example.topics2.unused.messageScreen.TestMessageScreen
 
 import com.example.topics2.unused.testScreen
 
@@ -99,10 +103,14 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navSearchTest") {
+                NavHost(navController = navController, startDestination = "navDebugChat") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
+
+                    composable("navShowMorePictures") { ShowMorePictures(navController) }
+                    composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
+//                    composable("navDebugChat") { MessageScreen(navController,messageViewModel,1)}
                     composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("newSearch") { NewSearchScreen () }

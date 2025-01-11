@@ -1,5 +1,7 @@
 package com.example.topics2.utilities.helper
 
+import android.util.Log
+
 object TemporaryDataHolder {
     private var _imagePaths: List<String> = emptyList()
 
@@ -7,7 +9,10 @@ object TemporaryDataHolder {
         _imagePaths = imagePathsP
     }
 
+
     fun getImagePaths(): List<String> { // Clear after retrieval
+        Log.d("zzee", "This sould clear")
         return _imagePaths.also { _imagePaths = emptyList() }
+        Log.d("zzee Current size:", _imagePaths.size.toString())
     }
 }

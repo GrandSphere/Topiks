@@ -12,12 +12,22 @@ Fix:[l] Chatscreen GUI
 Fix:[dl] Integrate search for different windows (Topics, Messages, both)
 
 ## Priorty 1
+Fix: Sending a file sends it again on next message
+Fix: Auto Scroll messages
+Feature: Add error handling. App should not crash so often. Rather give errors. Big issue is if table changed, user cannot backup.
 Fix: Send attachments without text.
+Fix: Ensure edit still works
 Fix:[d] Only show attachment names
+Fix: Image types only should be allowed for Topic Icon
+Fix: Copying files should rename previous file and keep both. Current implementation Does not allow saving 2 files with different names. Alternate solutions is making a new folder for each message topic or day
+
 
 ## Priorty 2
+Fix: Allow editing a topic
+Feature: Open files on click
 
 ## Priorty 3
+Feature: Image previews should be stored thumbnails.
 Feature: Camera access
 Feature: Voice recorder access
 Feature: Share to and from
@@ -26,6 +36,7 @@ Feature: Custom settings
 
 ## Priorty 4
 Feature: In slot audio playback
+Feature: Allow combining messages
 
 ## Priorty 5
 Feature: Widget for new topic/note

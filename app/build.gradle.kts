@@ -87,4 +87,8 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose.v262)
+    implementation (libs.androidx.ui.v15)
+    implementation (libs.androidx.foundation)
+    implementation (libs.androidx.material.v15)
+    implementation (libs.androidx.runtime.livedata)
 }

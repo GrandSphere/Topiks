@@ -83,7 +83,7 @@ class MessageViewModel (
     val topicColor: StateFlow<Color> = _topicColor
     fun setTopicColor(topicColor: Color) {_topicColor.value = topicColor}
 
-    // Topic Color
+    // Topic Font Color
     private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
     val topicFontColor: StateFlow<Color> = _topicColor
     fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
