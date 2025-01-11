@@ -113,10 +113,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
                 onClick = {
-                    Log.d("AASSDD", "${
-                        TemporaryDataHolder.getImagePaths()}")
-                    navController.navigate("navShowMorePictures")
-
                     viewModel.setTempCategory("Topics")
                     viewModel.settemptopicname("")
                     viewModel.setFileURI("")

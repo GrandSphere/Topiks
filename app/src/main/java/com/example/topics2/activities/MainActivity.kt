@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
 import com.example.topics2.db.AppDatabase
+
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
@@ -40,22 +45,32 @@ import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.CategoryViewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
+
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
+
     }
+
     //val Purple200 = Color(0xFFBB86FC) FIX THIS
     @Composable
     fun TopicsApp(context: Context) {
-
         val database = AppDatabase.getDatabase(context)
         val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
         val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
         val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
+        val settingsViewModel: SettingsViewModel = viewModel()
+
+      //  settingsViewModel.updateSetting("theme", "Very Dark")
+
+        settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
+            Log.d("SETTINGS_DEBUG", "${settings}")
+        })
 
         val topBarViewModel: TopBarViewModel = viewModel()
         val navController = rememberNavController()
