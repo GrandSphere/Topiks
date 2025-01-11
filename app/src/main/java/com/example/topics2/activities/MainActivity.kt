@@ -64,12 +64,13 @@ class MainActivity : ComponentActivity() {
         val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
         val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
         val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
-        val settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
+        val settingsViewModel: SettingsViewModel = viewModel()
+
+      //  settingsViewModel.updateSetting("theme", "Very Dark")
 
         settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
             Log.d("SETTINGS_DEBUG", "${settings}")
         })
-      //  settingsViewModel.updateSetting("theme","WHAHA!")
 
         val topBarViewModel: TopBarViewModel = viewModel()
         val navController = rememberNavController()
