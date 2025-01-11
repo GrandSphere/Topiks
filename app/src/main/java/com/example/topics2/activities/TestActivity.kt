@@ -1,6 +1,7 @@
 package com.example.topics2.activities
 
 //import T2RunApp
+import MessageBubble
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -21,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
+
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
@@ -101,7 +102,7 @@ fun TestApp(context: Context) {
                   //  composable("navcTest3") {T2RunApp()}
 
 
-                    composable("navcTest") { MessageBubble( navController) }
+                    //composable("navcTest") { MessageBubble( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     composable("newSearch") { NewSearchScreen () }
                     //composable("navFuzzy") { FuzzySearchScreen () }
@@ -110,7 +111,7 @@ fun TestApp(context: Context) {
                     composable("navTest") { testScreen () }
                     composable("navState2") { ShowMorePictures (navController) }
                     composable("navTest") { testScreen() }
-                    composable("navMessageBubble") { MessageBubble(navController) }
+                   // composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
                     composable("navtopicListScreen") {
                         TopicListScreen(

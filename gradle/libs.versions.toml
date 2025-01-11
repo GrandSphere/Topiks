@@ -1,7 +1,9 @@
 [versions]
 agp = "8.7.3"
+androidxLifecycleViewmodelCompose = "2.6.2"
 coilCompose = "2.2.2"
 fuzzywuzzy = "1.2.0"
+gson = "2.8.8"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -13,6 +15,7 @@ composeBom = "2024.04.01"
 lifecycleRuntimeKtxVersion = "2.5.1"
 lifecycleViewmodelCompose = "2.6.0-alpha01"
 lifecycleViewmodelComposeVersion = "2.6.0-alpha03"
+lifecycleViewmodelKtx = "2.6.2"
 luceneAnalyzersCommon = "9.5.0"
 luceneCore = "9.5.0"
 material = "1.4.0"
@@ -40,6 +43,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-lifecycle-runtime-ktx-v251 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-compose-v260alpha03 = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelComposeVersion" }
+androidx-lifecycle-viewmodel-compose-v262 = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodelCompose" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose-v250 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-room-ktx-v260 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }
@@ -50,6 +55,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose"
 androidx-room-compiler = { module = "androidx.room:room-compiler" }
 androidx-room-runtime = { module = "androidx.room:room-runtime" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
