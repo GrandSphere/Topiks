@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun CustomTextBox(
     inputText: String,
@@ -35,16 +35,24 @@ fun CustomTextBox(
     ) {
         BasicTextField(
             value = inputText,
+
+
             onValueChange = onValueChange,
             modifier = focusModifier
                 .fillMaxWidth() // Ensure textfield takes full width
                 .padding(start = 3.dp, top = 3.dp) // Ensure padding inside text field
-                .heightIn(max = vMaxLinesSize),
+//                .heightIn(max = vMaxLinesSize),
+            ,
             textStyle = TextStyle(
                 fontSize = vFontSize,
                 color = colors.onBackground, // Set font color for the input text
                 lineHeight = 20.sp,
+
+//        softWrap = true // Allow the text to wrap within the available space
+
             ),
+//                            maxLines = 6,
+
             cursorBrush = if (isFocused) SolidColor(Color.White) else SolidColor(Color.Transparent), // Hide cursor if not focused
             decorationBox = @Composable { innerTextField ->
                 if (inputText.isEmpty()) {

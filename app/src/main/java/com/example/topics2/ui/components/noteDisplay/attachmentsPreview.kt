@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -37,7 +38,9 @@ fun showAttachments(
         attachments.forEach { attachment ->
             Text( // get text name from path
                 text = attachment,
-                modifier = Modifier
+
+
+                              modifier = Modifier
                     .widthIn(min=200.dp)
                     .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
                 style = TextStyle(

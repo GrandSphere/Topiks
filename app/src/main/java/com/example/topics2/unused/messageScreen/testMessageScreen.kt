@@ -55,7 +55,7 @@ fun TestMessageScreen(navController: NavController, viewModel: MessageViewModel,
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
-    val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
+    val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
 
     Box(
