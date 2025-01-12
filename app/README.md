@@ -13,6 +13,7 @@ Fix:[dl] Integrate search for different windows (Topics, Messages, both)
 
 ## Priorty 1
 Fix: Sending a file sends it again on next message
+Feature: Files in chat buble should be openable somehow
 Fix: Auto Scroll messages
 Feature: Add error handling. App should not crash so often. Rather give errors. Big issue is if table changed, user cannot backup.
 Fix: Send attachments without text.
@@ -27,6 +28,7 @@ Fix: Allow editing a topic
 Feature: Open files on click
 
 ## Priorty 3
+Optimize: only top (n) notes must be loaded, show more button to be displayed. Search would query all messages. Same for topics.
 Feature: Image previews should be stored thumbnails.
 Feature: Camera access
 Feature: Voice recorder access
