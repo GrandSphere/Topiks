@@ -1,11 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
-import android.content.Context
-import android.net.Uri
-import android.os.Build
-import android.provider.DocumentsContract
 import androidx.compose.ui.graphics.Color
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -20,11 +15,9 @@ import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import java.io.File
 
 // TODO Fix category add when adding message
 // TODO Fix created time when  editing when adding message

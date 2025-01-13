@@ -1,4 +1,6 @@
-import android.util.Log
+package com.example.topics2.ui.components.noteDisplay
+
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -6,23 +8,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.topics2.ui.components.noteDisplay.showAttachments
-import com.example.topics2.ui.screens.ShowMorePictures
+import com.example.topics.ui.themes.cDateStampFont
+import com.example.topics.ui.themes.cMessageFont
+import com.example.topics.ui.themes.cShowMoreFont
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.utilities.helper.TemporaryDataHolder
+import picturesPreview
 
 
 @Composable
@@ -33,62 +37,51 @@ fun MessageBubble( // New Message Bubble
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
     messageContent: String,
-    containPictures: Boolean,
-    containAttachments: Boolean,
-    listOfPictures: List<String>,
-    listOfAttachmentsP: List<String>,
+    containsPictures: Boolean= false,
+    containsAttachments: Boolean = false,
+    containsMessage: Boolean = true,
+    listOfPictures: List<String> = emptyList<String>(),
+    listOfAttachmentsP: List<String> = emptyList<String>(),
     timestamp: String
 ) {
     var messagecontent = messageContent
-  //  val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
-  //  val topicColor = viewModel.topicColor.collectAsState().value
-   // val topicFontColor = viewModel.topicFontColor.collectAsState().value
     val imagePaths = listOfPictures
 
     val listOfAttachments: List<String> =  listOfAttachmentsP
     val iPictureCount: Int = imagePaths.size
-    var containsPictures: Boolean = containPictures
-    var containsAttachments: Boolean = containAttachments
-
- //   var bShowMore: Boolean by remember { mutableStateOf(false) }
 
     var showMore by remember { mutableStateOf(false) }
     val withContentWidth: Float = 0.8f
     val opacity: Float = 0.2f
-    Surface(
-        shape = RoundedCornerShape(8.dp),
+    var focusing = true
+    Surface( // Message bubble
+        shape = RoundedCornerShape(9.dp),
         color = topicColor,
         tonalElevation = 0.dp, // Remove shadow
-        border = null
-    ) {
+        border = null,
+        modifier = Modifier.padding(horizontal = 12.dp , vertical = 4.dp)
+    ) { // Allignment of message bubble
         Column( // Message Bubble to align messageContent, additional Content and timestamp
             modifier = Modifier
-                .padding(horizontal = 4.dp)
+                .padding(horizontal = 6.dp)
                 .padding(vertical = 3.dp), // Padding around everything
         ) {
 
-            Spacer(modifier = Modifier.height(1.dp)) //space between message and date
             if (containsPictures) {
-                if (!showMore) {
-                    picturesPreview(
-                        navController = navController,
-                        modifiera = Modifier
-                            .fillMaxWidth(0.7f),
-                        imagePaths = imagePaths,
-                        iPictureCount = iPictureCount,
-                        topicColor = topicColor,
-                        topicFontColor = topicFontColor,
-                    )
-                }
+//                if (!showMore) {
+                picturesPreview(
+                    navController = navController,
+                    modifiera = Modifier
+                        .padding(vertical = 4.dp, horizontal = 1.dp)
+                        .fillMaxWidth(),
+                    imagePaths = imagePaths,
+                    iPictureCount = iPictureCount,
+                    topicColor = topicColor,
+                    topicFontColor = topicFontColor,
+                )
+//                }
             }
 
-            Text( // Show Message Content.
-                text = messagecontent,
-                color = topicFontColor,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .padding(0.dp)
-            )
 
             if (containsAttachments) {
                 showAttachments(
@@ -100,13 +93,46 @@ fun MessageBubble( // New Message Bubble
                 )
 
             }
+
+//            var iMaxLines: Int by remember {mutableStateOf(10)}
+            var isOverFlowing: Boolean by remember {mutableStateOf(false)}
+            var bshowMore: Boolean by remember {mutableStateOf(false)}
+//var numberOfLines by remember { mutableStateOf(0) }
+            var textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+            if (containsMessage) {
+                Text( // Show Message Content.
+                    text = messagecontent,
+                    color = topicFontColor,
+                    style = cMessageFont,
+
+                    overflow = TextOverflow.Ellipsis, // Show "..." at the end of the overflowed text
+                    maxLines = if(bshowMore) Int.MAX_VALUE else 10,
+                    onTextLayout = { textLaoutResult -> isOverFlowing= textLaoutResult.hasVisualOverflow }, // TODO THIS IS NOT EFFECIENT
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                )
+            }
+
+            if (isOverFlowing || bshowMore) {
+                Text(
+                    text = if (!bshowMore) "show more" else "show less",
+                    modifier = Modifier.clickable(onClick = { bshowMore = !bshowMore }),
+                    textAlign = TextAlign.Center,
+                    style = cShowMoreFont,
+                    color= topicFontColor.copy(alpha = 0.6f),
+                )
+            }
+
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
+
             Text(
                 text = timestamp,
-                color=topicFontColor,
-                style = MaterialTheme.typography.bodySmall,
+                color= topicFontColor.copy(alpha = 0.8f),
+                style = cDateStampFont,
                 // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
+//                 modifier = Modifier.align(Alignment.End)
             )
+
         }
     }
 }
