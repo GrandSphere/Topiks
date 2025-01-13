@@ -216,11 +216,10 @@ fun InputBarMessageScreen(
             .focusRequester(focusRequester)
     )
     IconButton( // SEND BUTTON
-        // TODO Enable sending blank message if attachments is available
         onClick = {
             viewModel.setToFocusTextbox(false)
 
-            if (inputText.isNotBlank()) {
+            if ((inputText.isNotBlank()) || (!selectedFileUris.value.isNullOrEmpty()) ) {
                 val tempInput = inputText
                 inputText = ""
                 if (tempMessageID > -1) { // Edit Mode
@@ -256,21 +255,14 @@ fun InputBarMessageScreen(
                                     topicId = topicId,
                                     messageId = messageId.toInt(),
                                     fileType = determineFileType(context, uri),
-                                //   filePath = uri.toString(),
-                                   // filePath = uri.toString(),
                                     filePath = viewModel.destURI.value,
                                     description = "",
-                                    iconPath = "",
                                     categoryId = 1,
                                 )
                             }
                         }
-
-
                     }
                 }
-                // TODO Change THIS!
-            //    viewModel.setImagePaths(emptyList())
             }
         },
         modifier = Modifier
