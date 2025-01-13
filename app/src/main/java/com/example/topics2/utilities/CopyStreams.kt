@@ -3,10 +3,11 @@ package com.example.topics.utilities
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import android.webkit.MimeTypeMap
+
 /**
  * Utility function to copy data from InputStream to OutputStream.
  * This function is reusable for various file operations.

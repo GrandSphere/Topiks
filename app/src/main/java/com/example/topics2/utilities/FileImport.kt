@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.io.File
 import java.io.IOException

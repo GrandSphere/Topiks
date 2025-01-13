@@ -1,8 +1,5 @@
 package com.example.topics2.ui.screens
 
-import MessageBubble
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,14 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
+import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.unused.OLDMessageBubble
-import com.example.topics2.viewmodel.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -55,7 +50,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
-    val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
+    val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
 
     Box(
@@ -109,8 +104,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     topicFontColor = topicFontColor,
                     viewModel = viewModel,
                     messageContent = message.content,
-                    containPictures = hasPictures,
-                    containAttachments = hasAttachments,
+                    containsPictures = hasPictures,
+                    containsAttachments = hasAttachments,
                     listOfPictures = pictureList,
                     listOfAttachmentsP = attachmentList,
                     timestamp = timestamp

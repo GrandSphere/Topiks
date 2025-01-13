@@ -3,7 +3,12 @@
 package com.example.topics2.activities
 
 //import T2RunApp
-import MessageBubble
+
+
+//import com.example.topics2.unused.T2RunApp
+//import com.example.topics2.unused.T2SearchHandler
+//import com.example.topics2.unused.T2RunApp
+
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,7 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.CustomTopAppBar
-
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
@@ -36,20 +39,13 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-
-
 import com.example.topics2.unused.MyScreen
 import com.example.topics2.unused.NewSearchScreen
 import com.example.topics2.unused.PreviewChatBubble
 import com.example.topics2.unused.PreviewOverflowingLayout
-//import com.example.topics2.unused.T2RunApp
-//import com.example.topics2.unused.T2SearchHandler
-//import com.example.topics2.unused.T2RunApp
-
 import com.example.topics2.unused.UniqueFuzzySearchScreen
 import com.example.topics2.unused.fTestSearchScreen
 import com.example.topics2.unused.messageScreen.TestMessageScreen
-
 import com.example.topics2.unused.testScreen
 
 

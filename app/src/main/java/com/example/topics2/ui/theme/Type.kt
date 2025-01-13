@@ -1,10 +1,12 @@
 package com.example.topics.ui.themes
 
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
 // Set of Material typography styles to start with
@@ -63,8 +65,12 @@ val cDateStampFont = TextStyle(
 val cMessageFont = TextStyle(
     fontFamily = FontFamily.Default,
     fontWeight = FontWeight.Normal,
-    fontSize = 16.sp,
+    fontSize = 14.sp,
+    textDecoration = null,
     color = Color.White,
-    lineHeight = 24.sp,
-    letterSpacing = 0.5.sp
+    lineHeight = 20.sp,
+    letterSpacing = 0.2.sp
+)
+val cShowMoreFont = cMessageFont.copy(
+    textDecoration = TextDecoration.Underline,
 )

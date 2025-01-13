@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics.utilities.determineFileType
-import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch

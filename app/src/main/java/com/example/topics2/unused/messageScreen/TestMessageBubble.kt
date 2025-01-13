@@ -1,7 +1,6 @@
 package com.example.topics2.unused.messageScreen
 
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +25,6 @@ import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
 import com.example.topics2.ui.components.noteDisplay.TestshowAttachments
-import com.example.topics2.ui.components.noteDisplay.showAttachments
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import picturesPreview
 
