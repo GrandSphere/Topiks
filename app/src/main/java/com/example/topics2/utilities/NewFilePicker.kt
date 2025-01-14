@@ -36,7 +36,7 @@ fun iconFilePicker(
 
 @Composable
 fun multipleFilePicker(
-    onFilesSelected: (List<Uri>?) -> Unit,
+    onUserFilesSelected: (List<Uri>?) -> Unit,
     fileTypes: Array<String> = arrayOf("*/*") // Default file types
 ): ActivityResultLauncher<Array<String>> {
     val context = LocalContext.current
@@ -45,7 +45,7 @@ fun multipleFilePicker(
         onResult = { uris: List<Uri>? ->
             if (uris.isNullOrEmpty()) {
                 // If no files are selected, return null
-                onFilesSelected(null)
+                onUserFilesSelected(null)
             } else {
                 // Persist access permissions for each URI
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -53,7 +53,7 @@ fun multipleFilePicker(
                     context.contentResolver.takePersistableUriPermission(uri, takeFlags)
                 }
                 // Return the selected file URIs to the callback
-                onFilesSelected(uris)
+                onUserFilesSelected(uris)
             }
         }
     )
