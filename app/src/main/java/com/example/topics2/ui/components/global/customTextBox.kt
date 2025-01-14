@@ -2,7 +2,6 @@ package com.example.topics2.ui.components.global
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ fun CustomTextBox(
     sPlaceHolder: String = "Enter message",
     isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
+    onFocus: () -> Unit = {},
     boxModifier: Modifier = Modifier // Modifier for the Box
 ) {
     val colors = MaterialTheme.colorScheme
@@ -34,16 +34,24 @@ fun CustomTextBox(
     ) {
         BasicTextField(
             value = inputText,
+
+
             onValueChange = onValueChange,
             modifier = focusModifier
                 .fillMaxWidth() // Ensure textfield takes full width
                 .padding(start = 3.dp, top = 3.dp) // Ensure padding inside text field
-                .heightIn(max = vMaxLinesSize),
+//                .heightIn(max = vMaxLinesSize),
+            ,
             textStyle = TextStyle(
                 fontSize = vFontSize,
                 color = colors.onBackground, // Set font color for the input text
                 lineHeight = 20.sp,
+
+//        softWrap = true // Allow the text to wrap within the available space
+
             ),
+//                            maxLines = 6,
+
             cursorBrush = if (isFocused) SolidColor(Color.White) else SolidColor(Color.Transparent), // Hide cursor if not focused
             decorationBox = @Composable { innerTextField ->
                 if (inputText.isEmpty()) {
@@ -71,7 +79,9 @@ fun chooseColorBasedOnLuminance(inputColor: Color): Color {
     // Compute luminance using the standard formula
     var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
     return when { // Determine the output color based on luminance
-        luminance < 0.5 -> Color.White
+//        luminance < 0.5 -> Color.White
+        luminance < 0.5 -> Color(0xf0f0f0FF)
+//        luminance < 0.5 -> Color(0xFFFFF0FF)
         //luminance < 0.25 -> Color.White
         //luminance < 0.5 -> Color.Gray
         //luminance < 0.75 -> Color.DarkGray

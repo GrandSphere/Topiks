@@ -1,4 +1,5 @@
-package com.example.topics2.ui.components.noteDisplay
+package com.example.topics2.unused.messageScreen
+
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,20 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
-import com.example.topics.ui.themes.cShowMoreFont
+import com.example.topics2.ui.components.noteDisplay.TestshowAttachments
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import picturesPreview
 
 
 @Composable
-fun MessageBubble( // New Message Bubble
+fun TestMessageBubble( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    viewModel: MessageViewModel,
     navController: NavController,
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
@@ -68,21 +69,22 @@ fun MessageBubble( // New Message Bubble
 
             if (containsPictures) {
 //                if (!showMore) {
-                picturesPreview(
-                    navController = navController,
-                    modifiera = Modifier
-                        .padding(vertical = 4.dp, horizontal = 1.dp)
-                        .fillMaxWidth(),
-                    imagePaths = imagePaths,
-                    iPictureCount = iPictureCount,
-                    topicColor = topicColor,
-                    topicFontColor = topicFontColor,
-                )
+                    picturesPreview(
+                        navController = navController,
+                        modifiera = Modifier
+                            .padding(vertical = 4.dp, horizontal = 1.dp)
+                            .fillMaxWidth(),
+                        imagePaths = imagePaths,
+                        iPictureCount = iPictureCount,
+                        topicColor = topicColor,
+                        topicFontColor = topicFontColor,
+                    )
 //                }
             }
 
+
             if (containsAttachments) {
-                showAttachments(
+                TestshowAttachments(
                     topicFontColor = topicFontColor,
                     topicColor = topicColor,
                     opacity= opacity,
@@ -111,21 +113,20 @@ fun MessageBubble( // New Message Bubble
                 )
             }
 
-            if (isOverFlowing || bshowMore) {
-                Text(
-                    text = if (!bshowMore) "show more" else "show less",
-                    modifier = Modifier.clickable(onClick = { bshowMore = !bshowMore }),
-                    textAlign = TextAlign.Center,
-                    style = cShowMoreFont,
-                    color= topicFontColor.copy(alpha = 0.6f),
-                )
-            }
+           if (isOverFlowing || bshowMore) {
+               Text(
+                   text = if (!bshowMore) "show more" else "show less",
+                   modifier = Modifier.clickable(onClick = { bshowMore = !bshowMore }),
+                   textAlign = TextAlign.Center,
+                   style = cMessageFont,
+               )
+           }
 
             Spacer(modifier = Modifier.height(1.dp)) //space between message and date
 
             Text(
                 text = timestamp,
-                color= topicFontColor.copy(alpha = 0.8f),
+                color=topicFontColor.copy(alpha = 0.8f),
                 style = cDateStampFont,
                 // color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
 //                 modifier = Modifier.align(Alignment.End)

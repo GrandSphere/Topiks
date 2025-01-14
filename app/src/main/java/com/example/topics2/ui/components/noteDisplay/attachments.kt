@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.noteDisplay
 
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.example.topics2.unused.getFileNameFromString
 
 @Composable
-fun showAttachments(
+fun TestshowAttachments(
     topicFontColor: Color,
     topicColor: Color,
     opacity: Float = 0.0f,
