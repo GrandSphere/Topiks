@@ -94,7 +94,7 @@ fun TestMessageScreen(navController: NavController, viewModel: MessageViewModel,
                 }
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
-                viewModel.setImagePaths(pictureList)
+                    //viewModel.setImagePaths(pictureList)
 
                 // Call MessageBubble
                 TestMessageBubble(

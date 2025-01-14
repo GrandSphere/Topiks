@@ -82,7 +82,6 @@ fun MessageBubble( // New Message Bubble
 //                }
             }
 
-
             if (containsAttachments) {
                 showAttachments(
                     topicFontColor = topicFontColor,

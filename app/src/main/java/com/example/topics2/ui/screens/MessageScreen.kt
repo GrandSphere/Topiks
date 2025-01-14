@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,8 +96,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 }
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
-                viewModel.setImagePaths(pictureList)
 
+              //  Log.d("DEBUG_MESSAGES IMAGE PATHS: ", "${pictureList}")
+              //  Log.d("DEBUG_MESSAGES attachements PATHS: ", "${attachmentList}")
                 // Call MessageBubble
                 MessageBubble(
                     navController = navController,
@@ -110,7 +112,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     listOfAttachmentsP = attachmentList,
                     timestamp = timestamp
                 )
-                //Log.d("aabbcc",message)
             }
             item {
                 Spacer(

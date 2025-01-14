@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
         val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
         val settingsViewModel: SettingsViewModel = viewModel()
 
+        //database.close()
       //  settingsViewModel.updateSetting("theme", "Very Dark")
 
         settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
@@ -64,7 +65,6 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
         val backStackEntry = navController.currentBackStackEntryAsState()
-        Log.d("AABBCC", "ADDED B")
 
         //  database.close()
         //Add test category

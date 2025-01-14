@@ -32,44 +32,24 @@ class MessageViewModel (
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
     fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
 
-    // File Source URI for file imports
-    private val _fileURI = MutableStateFlow<String>("")
-    val fileURI: StateFlow<String> = _fileURI
-    fun setFileURI(newURI: String) { _fileURI.value = newURI }
-
-    // File Name for file imports
-    private val _fileName = MutableStateFlow<String>("")
-    val fileName: StateFlow<String> = _fileName
-    fun setfileName(newFileName: String) { _fileName.value = newFileName }
-
-    // File destination URI for file imports
-    private val _destURI = MutableStateFlow<String>("")
-    val destURI: StateFlow<String> = _destURI
-    fun setdestURI(newURI: String) { _destURI.value = newURI }
-
     private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox
     fun setToUnFocusTextbox(newValue: Boolean) { _ToUnFocusTextbox.value = newValue }
 
     // States whether you are editing or sending
-    private val _amEditing = MutableStateFlow<Boolean>(false)
-    val amEditing: StateFlow<Boolean> = _amEditing
-    fun setAmEditing(newValue: Boolean) { _amEditing.value = newValue }
+    private val _bEditMode = MutableStateFlow<Boolean>(false)
+    val bEditMode: StateFlow<Boolean> = _bEditMode
+    fun setEditMode(newValue: Boolean) { _bEditMode.value = newValue }
 
     // TempID, used only for editing a message
     private val _tempMessageId = MutableStateFlow<Int>(0)
     val tempMessageId: StateFlow<Int> = _tempMessageId
     fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
 
-    //Temp message, used only for editing a message
-    private val _tempMessage = MutableStateFlow<String>("")
-    val tempMessage: StateFlow<String> = _tempMessage
-    fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
-
-    // ImagePaths, used for messageBubble and showmore
-    private val _imagePaths = MutableStateFlow<List<String>>(listOf(""))
-    val imagePaths: StateFlow<List<String>> = _imagePaths
-    fun setImagePaths(imagePaths: List<String>) {_imagePaths.value = imagePaths}
+  //  //Temp message, used only for editing a message
+  //  private val _tempMessage = MutableStateFlow<String>("")
+  //  val tempMessage: StateFlow<String> = _tempMessage
+  //  fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
 
     // Topic Color
     private val _topicColor = MutableStateFlow<Color>(Color.Cyan)
@@ -80,8 +60,6 @@ class MessageViewModel (
     private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
     val topicFontColor: StateFlow<Color> = _topicColor
     fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
-
-
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())

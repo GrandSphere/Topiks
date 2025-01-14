@@ -121,8 +121,8 @@ fun OLDMessageBubble(
                 onClick = {
 
                     viewModel.setToUnFocusTextbox(true)
-                    viewModel.setTempMessage(message.content)
-                    viewModel.setAmEditing(true)
+                    //viewModel.setTempMessage(message.content)
+                    //viewModel.setAmEditing(true)
                     viewModel.setTempMessageId(message.id)
                     showMenu = false
                     viewModel.setToFocusTextbox(true)
