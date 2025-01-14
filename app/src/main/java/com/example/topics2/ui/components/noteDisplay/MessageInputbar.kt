@@ -221,7 +221,7 @@ fun InputBarMessageScreen(
 
                         if (!selectedFileUris.value.isNullOrEmpty()) {
                             tempFilePath = ""
-                            // Copyfile, get list of paths as return value
+                            // Copy file, get list of paths as return value
                             selectedFileUris.value?.forEach { uri ->
                                 tempFilePath = copyFileToUserFolder(context, viewModel, uri)
                                 Log.d("THIS IS THE FILE PATH ADDED TO THE ARRAY", "${tempFilePath}")
