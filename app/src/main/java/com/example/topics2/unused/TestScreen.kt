@@ -39,7 +39,7 @@ fun testScreen() {
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher1 = multipleFilePicker(
        // fileTypes = arrayOf("*/*"),
-        onFilesSelected = { uris -> selectedFileUris.value = uris }
+        onUserFilesSelected = { uris -> selectedFileUris.value = uris }
     )
 
     selectedFileUris.value?.forEach { uri ->

@@ -16,11 +16,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,9 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.getFileNameFromString
-import com.example.topics2.unused.getTestImagePaths
 import com.example.topics2.utilities.helper.TemporaryDataHolder
 
 @Composable
@@ -46,7 +42,7 @@ fun ShowMorePictures( // State 2
    // val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
     //val imagePaths = by remeberTemporaryDataHolder.getImagePaths()
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
-    Log.d("AASSDD", "${imagePaths}")
+    Log.d("zzee", "${imagePaths}")
    // val imagePaths = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210430-054520_Camera.jpg")
     //
     Box(

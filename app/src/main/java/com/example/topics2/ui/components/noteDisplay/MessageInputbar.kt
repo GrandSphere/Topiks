@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics.utilities.determineFileType
-import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
@@ -57,7 +56,8 @@ import multipleFilePicker
 @Composable
 fun InputBarMessageScreen(
     navController: NavController, viewModel: MessageViewModel, topicId: Int,
-    topicColour: Color = MaterialTheme.colorScheme.onPrimary
+    topicColour: Color = MaterialTheme.colorScheme.onPrimary,
+    onFocus: () -> Unit ={},
 ) {
 
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
@@ -77,19 +77,15 @@ fun InputBarMessageScreen(
     val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
 
-
     // val filePicked: Boolean = viewModel.filePicked.collectAsState().value
-    val filePath: String = viewModel.fileURI.collectAsState().value
-    val coroutineScope = rememberCoroutineScope()
+    //val filePath: String = viewModel.fileURI.collectAsState().value
 
     // FilePicker Logic
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
         fileTypes = arrayOf("*/*"),
-        onFilesSelected = { uris -> selectedFileUris.value = uris }
+        onUserFilesSelected = { uris -> selectedFileUris.value = uris }
     )
-    // Log.d("THISISMYTAG", selectedFileUris.value.toString())
-    val context = LocalContext.current
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
@@ -140,16 +136,7 @@ fun InputBarMessageScreen(
         }
 
     var tempMessageID by remember { mutableStateOf(-1) }
-    val amEditing by viewModel.amEditing.collectAsState()
-    LaunchedEffect(amEditing) {
-        if (viewModel.amEditing.value) {
-            inputText = viewModel.tempMessage.value
-            viewModel.setAmEditing(false)
-            tempMessageID = viewModel.tempMessageId.value
-            viewModel.setTempMessageId(-1)
-
-        }
-    }
+    val bEditMode by viewModel.bEditMode.collectAsState()
 
     Row(
         modifier = Modifier
@@ -167,28 +154,11 @@ fun InputBarMessageScreen(
             boxModifier = Modifier
                 .weight(1f)
                 .padding(0.dp)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
+            onFocus=onFocus
         )
 
         Spacer(modifier = Modifier.width(8.dp))
-
-
-        // TODO I BROKE THIS
-        //copyFileToUserFolder(context = LocalContext.current, viewModel)
-        /*   LaunchedEffect(filePicked) {
-                coroutineScope.launch {
-                    viewModel.addMessage(
-                        topicId = topicId,
-                        content = "",
-                        priority = messagePriority,
-                        fileType = 112,
-                        filePath = filePath
-                    )
-                }
-            }*/
-
-
-
 
     IconButton( // ADD BUTTON
         onClick = {
@@ -213,65 +183,67 @@ fun InputBarMessageScreen(
             .width(5.dp)
             .focusRequester(focusRequester)
     )
+        var tempInputText:String = inputText
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+        val copiedFilePathList = mutableListOf<String>()
+        var tempFilePath:String = ""
     IconButton( // SEND BUTTON
-        // TODO Enable sending blank message if attachments is available
-        onClick = {
+        onClick={
+            copiedFilePathList.clear()
+            tempFilePath = ""
+            Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
+            tempInputText = inputText
+            inputText = ""
             viewModel.setToFocusTextbox(false)
+            if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
+                if (bEditMode) {
 
-            if (inputText.isNotBlank()) {
-                val tempInput = inputText
-                inputText = ""
-                if (tempMessageID > -1) { // Edit Mode
                     coroutineScope.launch {
                         viewModel.editMessage(
                             messageId = tempMessageID,
                             topicId = topicId,
-                            content = tempInput,
+                            content = tempInputText,
                             priority = messagePriority
                         )
-                        tempMessageID = -1
+                        viewModel.setEditMode(false)
                     }
-                } else { //Send Mode
+                } else {
+                    // Write message to db
                     coroutineScope.launch {
-                        // Write message to DB
                         val messageId = viewModel.addMessage(
                             topicId = topicId,
-                            content = tempInput,
+                            content = tempInputText,
                             priority = messagePriority,
-                            type = 1, //based on if check to see what type - message or image or file etc
+                            type = 0, //based on if check to see what type - message or image or file etc
                             categoryID = 1
                         )
 
-                        // Copy files and write file paths to DB
                         if (!selectedFileUris.value.isNullOrEmpty()) {
-
-                            Log.d("room", "writing files now")
+                            tempFilePath = ""
+                            // Copyfile, get list of paths as return value
                             selectedFileUris.value?.forEach { uri ->
-                                    copyFileToUserFolder(context, viewModel, uri)
+                                tempFilePath = copyFileToUserFolder(context, viewModel, uri)
+                                Log.d("THIS IS THE FILE PATH ADDED TO THE ARRAY", "${tempFilePath}")
+                                copiedFilePathList.add(tempFilePath)
 
-                                Log.d("DEBUG_LOG uri written","${uri.toString()}")
+                                // add list of paths to DB
                                 viewModel.addFile(
                                     topicId = topicId,
                                     messageId = messageId.toInt(),
                                     fileType = determineFileType(context, uri),
-                                //   filePath = uri.toString(),
-                                   // filePath = uri.toString(),
-                                    filePath = viewModel.destURI.value,
+                                    filePath = tempFilePath,
                                     description = "",
-                                    iconPath = "",
                                     categoryId = 1,
                                 )
+                                selectedFileUris.value = emptyList()
                             }
                         }
-
-
                     }
                 }
-                // TODO Change THIS!
-            //    viewModel.setImagePaths(emptyList())
             }
         },
-        modifier = Modifier
+            modifier = Modifier
             .size(vButtonSize)
             .fillMaxWidth(1f)
             //.background(Color.Transparent)

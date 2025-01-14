@@ -2,9 +2,8 @@
 package com.example.topics2.model
 
 import android.content.Context
-import android.util.Log
-import javax.xml.parsers.DocumentBuilderFactory
 import java.io.File
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
@@ -56,7 +55,6 @@ object SettingsManager {
         // Write each setting from the map to XML
         for ((key, value) in settings) {
             val element = document.createElement(key)
-            //document.
             element.appendChild(document.createTextNode(value.toString()))
             rootElement.appendChild(element)
         }
