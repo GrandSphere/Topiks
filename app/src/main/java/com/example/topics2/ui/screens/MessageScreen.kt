@@ -37,8 +37,6 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-//import com.example.topics2.ui.viewmodels.TopicViewModel
-
 @Composable
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     viewModel.collectMessages(topicId)
@@ -97,14 +95,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
 
-              //  Log.d("DEBUG_MESSAGES IMAGE PATHS: ", "${pictureList}")
-              //  Log.d("DEBUG_MESSAGES attachements PATHS: ", "${attachmentList}")
                 // Call MessageBubble
                 MessageBubble(
                     navController = navController,
                     topicColor = topicColor,
                     topicFontColor = topicFontColor,
-                    viewModel = viewModel,
                     messageContent = message.content,
                     containsPictures = hasPictures,
                     containsAttachments = hasAttachments,

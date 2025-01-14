@@ -32,7 +32,6 @@ import picturesPreview
 @Composable
 fun MessageBubble( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
-    viewModel: MessageViewModel,
     navController: NavController,
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
