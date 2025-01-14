@@ -1,6 +1,5 @@
-package com.example.topics2.ui.screens
+package com.example.topics2.unused.messageScreen
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,13 +31,14 @@ import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+//import com.example.topics2.ui.viewmodels.TopicViewModel
+
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+fun TestMessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     viewModel.collectMessages(topicId)
     viewModel.setTopicColor(topicColor)
 
@@ -94,12 +94,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 }
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+                    //viewModel.setImagePaths(pictureList)
 
                 // Call MessageBubble
-                MessageBubble(
+                TestMessageBubble(
                     navController = navController,
                     topicColor = topicColor,
                     topicFontColor = topicFontColor,
+                    viewModel = viewModel,
                     messageContent = message.content,
                     containsPictures = hasPictures,
                     containsAttachments = hasAttachments,
@@ -107,6 +109,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     listOfAttachmentsP = attachmentList,
                     timestamp = timestamp
                 )
+                //Log.d("aabbcc",message)
             }
             item {
                 Spacer(
