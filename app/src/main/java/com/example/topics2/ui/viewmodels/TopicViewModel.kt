@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+//import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,13 +19,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
+import com.example.topics2.ui.themes.CustomTertiary
 
 // TODO ADD CATEGORY TO DB WHEN ADDING TOPIC
 
+
 class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     val cTopicID: Int = 1
-    var cTopicColor: Color = Color.Cyan
-    var cFontColor: Color = Color.Red
+    val defaultColor: Color = Color(0xFFDCD0FF)
+//    val defaultColor: Color = CustomTertiary
+    var cTopicColor: Color = defaultColor
+    var cFontColor: Color = Color.Black
+
+
 
     // Get and refresh the topic list
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
@@ -35,11 +43,11 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     }
 
     // This is when adding topic colour
-    private val _colour = MutableStateFlow<Color>(Color.Cyan)
+    private val _colour = MutableStateFlow<Color>(defaultColor)
     val colour: StateFlow<Color> = _colour
     fun setColour(newColor: Color) { _colour.value = newColor }
 
-    private val _tempColour = MutableStateFlow<Color>(Color.Cyan)
+    private val _tempColour = MutableStateFlow<Color>(defaultColor)
     val tempColour: StateFlow<Color> = _tempColour
     fun settempColour(newColor: Color) { _tempColour.value = newColor }
 
