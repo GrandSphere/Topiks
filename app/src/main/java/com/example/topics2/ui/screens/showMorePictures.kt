@@ -1,6 +1,8 @@
 package com.example.topics2.ui.screens
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,12 +24,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.topics2.unused.getFileNameFromString
 import com.example.topics2.utilities.helper.TemporaryDataHolder
+import com.example.topics2.utilities.openFile
 
 @Composable
 fun ShowMorePictures( // State 2
@@ -36,13 +41,12 @@ fun ShowMorePictures( // State 2
     topicColor: Color = MaterialTheme.colorScheme.primary,
     topicFontColor: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
-
    // val topicColor: Color = viewModel.topicColor.collectAsState().value
     //val topicFontColor: Color = viewModel.topicFontColor.collectAsState().value
    // val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
     //val imagePaths = by remeberTemporaryDataHolder.getImagePaths()
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
-    Log.d("zzee", "${imagePaths}")
+    val contex: Context = LocalContext.current;
    // val imagePaths = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210430-054520_Camera.jpg")
     //
     Box(
@@ -63,11 +67,21 @@ fun ShowMorePictures( // State 2
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
+
                         )
                     },
                     modifier = Modifier
                         .fillMaxWidth() // Take full width
                         .padding(bottom = 2.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    openFile(context = contex, imagePath)
+                                },
+                                onLongPress = {
+                                }
+                            )
+                        } ,
                     //.border(2.dp, Color.Black) // Add border around the image
                 )
             }
