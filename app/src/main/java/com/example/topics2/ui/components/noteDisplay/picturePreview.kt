@@ -91,7 +91,7 @@ fun picturesPreview( // State 1
                     modifier = Modifier
                         .pointerInput(Unit) {
                             detectTapGestures(
-                                onPress = {
+                                onTap= {
                                     openFile(context,imagePath)
                                 },
                                 onLongPress = {

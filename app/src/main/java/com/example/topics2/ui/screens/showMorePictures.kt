@@ -75,7 +75,7 @@ fun ShowMorePictures( // State 2
                         .padding(bottom = 2.dp)
                         .pointerInput(Unit) {
                             detectTapGestures(
-                                onPress = {
+                                onTap = {
                                     openFile(context = contex, imagePath)
                                 },
                                 onLongPress = {
