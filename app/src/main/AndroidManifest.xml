@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         android:name=".DbTopics"
         android:allowBackup="true"
@@ -28,6 +31,19 @@
 
         <activity
             android:name=".activities.TestActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"
+            android:label="Topics2-Test"
+            android:theme="@style/Theme.Topics">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.TTSActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="Topics2-Test"
