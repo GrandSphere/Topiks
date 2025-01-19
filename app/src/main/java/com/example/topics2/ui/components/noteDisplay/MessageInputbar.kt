@@ -8,20 +8,29 @@ package com.example.topics2.ui.components.noteDisplay
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -38,8 +47,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -49,6 +60,7 @@ import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import com.example.topics2.unused.getFileNameFromString
 import kotlinx.coroutines.launch
 import multipleFilePicker
 
@@ -62,6 +74,7 @@ fun InputBarMessageScreen(
 
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
     val vButtonSize: Dp = 40.dp // You can change this value as needed
+    val vClearButtonSize: Dp = 15.dp // You can change this value as needed
     val vIconSize: Dp = 25.dp // You can change this value as needed
     val vMaxLinesSize: Dp = 80.dp
 
@@ -137,130 +150,198 @@ fun InputBarMessageScreen(
 
     var tempMessageID by remember { mutableStateOf(-1) }
     val bEditMode by viewModel.bEditMode.collectAsState()
+    val iNumToTake: Int = 10
+    Column() {
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp)
-    ) {
-        CustomTextBox(
-            inputText = inputText,
-            onValueChange = { newText -> inputText = newText },
-            vMaxLinesSize = vMaxLinesSize,
-            vFontSize = vFontSize,
-            sPlaceHolder = "Type a message...",
-            isFocused = true,
-            focusModifier = focusModifier.focusRequester(focusRequester),
-            boxModifier = Modifier
-                .weight(1f)
-                .padding(0.dp)
-                .align(Alignment.CenterVertically),
-            onFocus=onFocus
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-    IconButton( // ADD BUTTON
-        onClick = {
-            openFileLauncher.launch(arrayOf("*/*"))
-        },
-        modifier = Modifier
-            .size(vButtonSize)
-            .align(Alignment.Bottom)
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "Attach",
-            //tint = colors.tertiary,
-            tint = topicColour,
+        Column(
             modifier = Modifier
-                .height(vIconSize)
-        )
-    }
-
-    Spacer(
-        modifier = focusModifier
-            .width(5.dp)
-            .focusRequester(focusRequester)
-    )
-        var tempInputText:String = inputText
-        val coroutineScope = rememberCoroutineScope()
-        val context = LocalContext.current
-        val copiedFilePathList = mutableListOf<String>()
-        var tempFilePath:String = ""
-    IconButton( // SEND BUTTON
-        onClick={
-            copiedFilePathList.clear()
-            tempFilePath = ""
-            Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
-            tempInputText = inputText
-            inputText = ""
-            viewModel.setToFocusTextbox(false)
-            if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
-                if (bEditMode) {
-
-                    coroutineScope.launch {
-                        viewModel.editMessage(
-                            messageId = tempMessageID,
-                            topicId = topicId,
-                            content = tempInputText,
-                            priority = messagePriority
-                        )
-                        viewModel.setEditMode(false)
-                    }
-                } else {
-                    // Write message to db
-                    coroutineScope.launch {
-                        val messageId = viewModel.addMessage(
-                            topicId = topicId,
-                            content = tempInputText,
-                            priority = messagePriority,
-                            type = 0, //based on if check to see what type - message or image or file etc
-                            categoryID = 1
-                        )
-
-                        if (!selectedFileUris.value.isNullOrEmpty()) {
-                            tempFilePath = ""
-                            // Copy file, get list of paths as return value
-                            selectedFileUris.value?.forEach { uri ->
-                                tempFilePath = copyFileToUserFolder(context, viewModel, uri)
-                                Log.d("THIS IS THE FILE PATH ADDED TO THE ARRAY", "${tempFilePath}")
-                                copiedFilePathList.add(tempFilePath)
-
-                                // add list of paths to DB
-                                viewModel.addFile(
-                                    topicId = topicId,
-                                    messageId = messageId.toInt(),
-                                    fileType = determineFileType(context, uri),
-                                    filePath = tempFilePath,
-                                    description = "",
-                                    categoryId = 1,
+                .fillMaxWidth()
+                .heightIn(max = 200.dp) // Set your maximum height here
+                .verticalScroll(rememberScrollState()) // Makes the content scrollable
+        ) {
+        selectedFileUris?.value?.forEachIndexed() { index, attachment ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ) {
+                    Text( // get text name from path
+                        text = "\u2022 " + getFileNameFromString(attachment.toString()), // TODO do this somewhere it might be more effecient. Maybe even in database
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .padding(start = 1.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onPress = {
+                                    },
+                                    onLongPress = {
+                                    }
                                 )
-                                selectedFileUris.value = emptyList()
-                            }
-                        }
+                            },
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            color = topicColour,
+//                    textDecoration = TextDecoration.Underline
+                        )
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton( // CLEAR BUTTON
+                        onClick = {
+//                        val updated = selectedFileUris.value!!.toMutableList().apply { removeAt(4)}
+//                        selectedFileUris.value=updated
+//                        updated.clear()
+                            selectedFileUris.value =
+                                selectedFileUris.value!!.toMutableList().apply { removeAt(index) }
+                        },
+                        modifier = Modifier
+                            .size(vClearButtonSize)
+                            //.align(Alignment.Bottom)
+                            .align(Alignment.Bottom)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = "clear",
+                            //tint = colors.tertiary,
+                            tint = topicColour,
+                            modifier = Modifier
+                                .height(vClearButtonSize)
+                        )
                     }
                 }
             }
-        },
+
+        }
+
+
+
+        Row(
             modifier = Modifier
-            .size(vButtonSize)
-            .fillMaxWidth(1f)
-            //.background(Color.Transparent)
-            .align(Alignment.Bottom)
-    ) {
-        Icon(
-            imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
-            //imageVector = Icons.Filled.Send, // Attach file icon
-            contentDescription = "Attach",
-            //tint = colors.tertiary,
-            tint = topicColour,
-            modifier = Modifier
-                .size(vIconSize)
-            //.aspectRatio(2.5f)
-        )
+                .fillMaxWidth()
+                .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp)
+        ) {
+
+
+            CustomTextBox(
+                inputText = inputText,
+                onValueChange = { newText -> inputText = newText },
+                vMaxLinesSize = vMaxLinesSize,
+                vFontSize = vFontSize,
+                sPlaceHolder = "Type a message...",
+                isFocused = true,
+                focusModifier = focusModifier.focusRequester(focusRequester),
+                boxModifier = Modifier
+                    .weight(1f)
+                    .padding(0.dp)
+                    .align(Alignment.CenterVertically),
+                onFocus = onFocus
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            IconButton( // ADD BUTTON
+                onClick = {
+                    openFileLauncher.launch(arrayOf("*/*"))
+                },
+                modifier = Modifier
+                    .size(vButtonSize)
+                    .align(Alignment.Bottom)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Attach",
+                    //tint = colors.tertiary,
+                    tint = topicColour,
+                    modifier = Modifier
+                        .height(vIconSize)
+                )
+            }
+
+            Spacer(
+                modifier = focusModifier
+                    .width(5.dp)
+                    .focusRequester(focusRequester)
+            )
+            var tempInputText: String = inputText
+            val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current
+            val copiedFilePathList = mutableListOf<String>()
+            var tempFilePath: String = ""
+            IconButton( // SEND BUTTON
+                onClick = {
+                    copiedFilePathList.clear()
+                    tempFilePath = ""
+                    Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
+                    tempInputText = inputText
+                    inputText = ""
+                    viewModel.setToFocusTextbox(false)
+                    if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
+                        if (bEditMode) {
+                            coroutineScope.launch {
+                                viewModel.editMessage(
+                                    messageId = tempMessageID,
+                                    topicId = topicId,
+                                    content = tempInputText,
+                                    priority = messagePriority
+                                )
+                                viewModel.setEditMode(false)
+                            }
+                        } else {
+                            // Write message to db
+                            coroutineScope.launch {
+                                val messageId = viewModel.addMessage(
+                                    topicId = topicId,
+                                    content = tempInputText,
+                                    priority = messagePriority,
+                                    type = 0, //based on if check to see what type - message or image or file etc
+                                    categoryID = 1
+                                )
+
+                                if (!selectedFileUris.value.isNullOrEmpty()) {
+                                    tempFilePath = ""
+                                    // Copy file, get list of paths as return value
+                                    selectedFileUris.value?.forEach { uri ->
+                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri)
+                                        Log.d(
+                                            "THIS IS THE FILE PATH ADDED TO THE ARRAY",
+                                            "${tempFilePath}"
+                                        )
+                                        copiedFilePathList.add(tempFilePath)
+
+                                        // add list of paths to DB
+                                        viewModel.addFile(
+                                            topicId = topicId,
+                                            messageId = messageId.toInt(),
+                                            fileType = determineFileType(context, uri),
+                                            filePath = tempFilePath,
+                                            description = "",
+                                            categoryId = 1,
+                                        )
+                                        selectedFileUris.value = emptyList()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .size(vButtonSize)
+                    .fillMaxWidth(1f)
+                    //.background(Color.Transparent)
+                    .align(Alignment.Bottom)
+            ) {
+                Icon(
+                    imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
+                    //imageVector = Icons.Filled.Send, // Attach file icon
+                    contentDescription = "Attach",
+                    //tint = colors.tertiary,
+                    tint = topicColour,
+                    modifier = Modifier
+                        .size(vIconSize)
+                    //.aspectRatio(2.5f)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+        }
     }
-        Spacer(modifier = Modifier.width(12.dp))
-    }
-    // Request focus initially
 }
+// Request focus initially
