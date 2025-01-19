@@ -76,7 +76,7 @@ fun showAttachments(
                 modifier = Modifier
                     .pointerInput(Unit) {
                         detectTapGestures(
-                            onPress = {
+                            onTap = {
                                 openFile(context, attachment)
                             },
                             onLongPress = {
