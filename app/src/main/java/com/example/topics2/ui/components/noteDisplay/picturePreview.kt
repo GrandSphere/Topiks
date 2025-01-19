@@ -1,7 +1,9 @@
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.topics2.utilities.helper.TemporaryDataHolder
+import com.example.topics2.utilities.openFile
 
 
 fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBorder: Dp): Dp {
@@ -58,6 +63,7 @@ fun picturesPreview( // State 1
     val cPadding: Dp = 8.dp
     val cBorder: Dp = 2.dp
     val cCrop: Dp = cPadding-cBorder
+    val context: Context = LocalContext.current
     when (iPictureCount) {
         1 -> { iPicturesToShow = 1
             iNumberColumns=1 }
@@ -83,6 +89,15 @@ fun picturesPreview( // State 1
             items(imagePaths.take(iPicturesToShow)) { imagePath ->
                 Image(
                     modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    openFile(context,imagePath)
+                                },
+                                onLongPress = {
+                                }
+                            )
+                        }
 
                         .border(cBorder, Color.White.copy(1f), RoundedCornerShape(cPadding))
 //                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
