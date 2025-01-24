@@ -101,7 +101,7 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "newSearch") {
+                NavHost(navController = navController, startDestination = "navTopics") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
@@ -121,7 +121,7 @@ fun TestApp(context: Context) {
                     composable("navTest") { testScreen() }
                    // composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
-                    composable("navtopicListScreen") {
+                    composable("navTopics") {
                         TopicListScreen(
                             navController,
                             topicViewModel

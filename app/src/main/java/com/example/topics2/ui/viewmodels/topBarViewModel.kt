@@ -16,6 +16,7 @@ class TopBarViewModel : ViewModel() {
                 val topicName = currentBackStackEntry?.arguments?.getString("topicName") ?: "Chat"
                 topicName
             }
+            "newSearch" -> "Search All"
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
             "navtopicListScreen" -> "Topics"

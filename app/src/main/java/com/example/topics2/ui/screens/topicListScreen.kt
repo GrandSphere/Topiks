@@ -51,6 +51,7 @@ import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.unused.generateTableData
 import kotlinx.coroutines.launch
 
 
@@ -80,7 +81,12 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
         ) {
             // TODO:: Search Box focus
-            CustomSearchBox(inputText = inputText, onValueChange = {newtext -> inputText = newtext})
+            CustomSearchBox(
+                inputText = inputText,
+                sPlaceHolder = "Search Topics...",
+                onValueChange = {newtext -> inputText = newtext},
+                oncHold = { navController.navigate("newSearch") }
+            )
             //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
             // Topic List

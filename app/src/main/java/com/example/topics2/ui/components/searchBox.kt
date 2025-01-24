@@ -1,5 +1,8 @@
 package com.example.topics2.ui.components
 
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,18 +40,22 @@ import androidx.compose.ui.unit.sp
 fun CustomSearchBox(
     inputText: String,
     onValueChange: (String) -> Unit,
+    oncHold: () -> Unit = {},
     sPlaceHolder: String = "Enter message",
     isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
     boxModifier: Modifier = Modifier // Modifier for the Box
 ) {
     val colors = MaterialTheme.colorScheme
-//    var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var isSearchFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top=5.dp, bottom=5.dp),
+//            .pointerInput(Unit) { detectTapGestures( onLongPress = { oncHold() } ) }
+            .padding(top = 5.dp, bottom = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Surface(
@@ -52,21 +63,24 @@ fun CustomSearchBox(
             color = colors.secondary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal=12.dp, vertical=0.dp)
+                .padding(horizontal = 12.dp, vertical = 0.dp)
         ) {
             Row(
                 modifier = Modifier
                     .padding(0.dp),
-                //.height(40.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BasicTextField(
                     value = inputText,
-                    onValueChange = onValueChange,
+                    onValueChange = {
+                        onValueChange(it)
+                        isSearchFocused = it.isNotEmpty()
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp)
-                        .padding(horizontal = 20.dp, vertical = 0.dp),
+                        .padding(horizontal = 20.dp, vertical = 0.dp)
+                        .focusRequester(focusRequester),
                     textStyle = TextStyle(
                         fontSize = 18.sp,
                         color = colors.onSecondary,
@@ -74,49 +88,48 @@ fun CustomSearchBox(
                     ),
                     singleLine = true,
                     decorationBox = { innerTextField ->
-                        Box(contentAlignment = Alignment.CenterStart) {
+                        Box(
+                            modifier = Modifier.pointerInput(Unit) {
+                                detectTapGestures(
+                                    onLongPress = { oncHold() },
+                                    onTap = {
+                                        focusRequester.requestFocus()
+                                    }
+                                )
+                            },
+                            contentAlignment = Alignment.CenterStart
+                        ) {
                             if (inputText.isEmpty() && !isSearchFocused) {
                                 Text(
-                                    text = "Search...",
+                                    text = sPlaceHolder,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
                             innerTextField()
                         }
                     },
-                    cursorBrush = SolidColor(colors.tertiary) // White cursor
+                    cursorBrush = SolidColor(colors.tertiary) // Cursor color
                 )
 
                 Spacer(modifier = Modifier.width(5.dp))
-                if (isSearchFocused) {
 
-                    IconButton( // ADD BUTTON
-                        onClick = {
-                            // Handle button click (e.g., show file picker or attachment options)
-                        },
-                        modifier = Modifier.size(30.dp)
-                            .align(Alignment.CenterVertically) // Align button vertically in the center
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Search, // Attach file icon
-                            contentDescription = "Attach",
-                            tint = colors.onBackground, // Set the icon color to white
-                            modifier = Modifier
-                                .height(25.dp)
-                            //.align(Alignment.Center)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(5.dp))
-
+/*
+                IconButton(
+                    onClick = { oncHold() },
+                    modifier = Modifier.size(30.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search",
+                        tint = colors.onBackground,
+                        modifier = Modifier.height(25.dp)
+                    )
                 }
+*/
+
+                Spacer(modifier = Modifier.width(5.dp))
             }
         }
     }
-
-    // Update search focus state
-//    LaunchedEffect(inputText.text) {
-//        isSearchFocused = input.text.isNotEmpty()
-//    }
 }
