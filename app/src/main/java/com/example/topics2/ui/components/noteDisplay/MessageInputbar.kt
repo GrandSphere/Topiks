@@ -94,6 +94,7 @@ fun InputBarMessageScreen(
     //val filePath: String = viewModel.fileURI.collectAsState().value
 
     // FilePicker Logic
+
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
         fileTypes = arrayOf("*/*"),
@@ -122,6 +123,7 @@ fun InputBarMessageScreen(
 
     LaunchedEffect(Unit) {
         // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
+        viewModel.setEditMode(false)
         viewModel.setToFocusTextbox(true)
     }
 
@@ -148,9 +150,30 @@ fun InputBarMessageScreen(
             isFocused = focusState.isFocused
         }
 
-    var tempMessageID by remember { mutableStateOf(-1) }
+//    var tempMessageID by remember { mutableStateOf(viewModel.tempMessageId.value) }
+
+    val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
     val bEditMode by viewModel.bEditMode.collectAsState()
     val iNumToTake: Int = 10
+    var uriList: List<Uri> = emptyList()
+
+    LaunchedEffect(bEditMode) {
+        Log.d("arst","bedit changed")
+        if (bEditMode) {
+            Log.d("arst", "bedit true")
+            inputText = "arst"
+            viewModel.getFilesByMessageId(tempMessageID).collect { list ->
+                uriList = list.map { list -> Uri.parse(list) }
+                selectedFileUris.value = uriList
+//                selectedFileUris.value =Uri.parse( list)}
+
+            }
+        }
+        else {
+            viewModel.setTempMessageId(-1)
+        }
+    }
+
     Column() {
 
         Column(
@@ -276,6 +299,7 @@ fun InputBarMessageScreen(
                     viewModel.setToFocusTextbox(false)
                     if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
                         if (bEditMode) {
+                            Log.d("arst","i am supposed to populate")
                             coroutineScope.launch {
                                 viewModel.editMessage(
                                     messageId = tempMessageID,
