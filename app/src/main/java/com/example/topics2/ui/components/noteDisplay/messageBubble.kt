@@ -1,31 +1,44 @@
 package com.example.topics2.ui.components.noteDisplay
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
 import com.example.topics.ui.themes.cShowMoreFont
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.launch
 import picturesPreview
 
 
@@ -41,11 +54,16 @@ fun MessageBubble( // New Message Bubble
     containsMessage: Boolean = true,
     listOfPictures: List<String> = emptyList<String>(),
     listOfAttachmentsP: List<String> = emptyList<String>(),
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+
     timestamp: String
 ) {
     var messagecontent = messageContent
     val imagePaths = listOfPictures
 
+    var showMenu by remember { mutableStateOf(false) }
+    val clipboardManager = LocalClipboardManager.current
     val listOfAttachments: List<String> =  listOfAttachmentsP
     val iPictureCount: Int = imagePaths.size
 
@@ -59,6 +77,15 @@ fun MessageBubble( // New Message Bubble
         tonalElevation = 0.dp, // Remove shadow
         border = null,
         modifier = Modifier.padding(horizontal = 12.dp , vertical = 4.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        showMenu=true
+//                        Log.d("arst","in messagebuble")
+                    }
+                )
+            }
+
     ) { // Allignment of message bubble
         Column( // Message Bubble to align messageContent, additional Content and timestamp
             modifier = Modifier
@@ -107,6 +134,25 @@ fun MessageBubble( // New Message Bubble
                     maxLines = if(bshowMore) Int.MAX_VALUE else 10,
                     onTextLayout = { textLaoutResult -> isOverFlowing= textLaoutResult.hasVisualOverflow }, // TODO THIS IS NOT EFFECIENT
                     modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                            onLongPress = {
+
+//                                viewModel.setToUnFocusTextbox(true)
+//                                //viewModel.setTempMessage(message.content)
+//                                //viewModel.setAmEditing(true)
+//                                viewModel.setTempMessageId(message.id)
+//                                showMenu = false
+//                                viewModel.setToFocusTextbox(true)
+
+//                                Log.d("arst","in messagebuble")
+                                showMenu = true
+//                                onEditClick()
+                            }
+
+//                                onLongPress = { Log.d("arst","arst")}
+                            )
+                        }
                         .padding(vertical = 4.dp)
                 )
             }
@@ -132,5 +178,49 @@ fun MessageBubble( // New Message Bubble
             )
 
         }
+    }
+
+    DropdownMenu(
+        expanded = showMenu,
+        modifier = Modifier
+            .wrapContentHeight()
+//            .fillMaxHeight()
+            .fillMaxWidth(0.4f)
+            .background(Color.Black)
+        ,
+
+        onDismissRequest = {
+            //viewModel.setToFocusTextbox(false)
+            showMenu = false },
+    ) {
+
+        DropdownMenuItem(
+            text = { Text("Copy", color = Color.White) },
+//colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
+            onClick = {
+                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
+                showMenu = false
+            }
+        )
+
+
+        DropdownMenuItem(
+            text = { Text("Edit", color = Color.White) },
+            onClick = {
+                showMenu = false
+                onEditClick()
+            }
+        )
+
+        DropdownMenuItem(
+            text = { Text("Delete Message", color = Color.White) },
+            onClick = {
+                onDeleteClick()
+//                coroutineScope.launch {
+//                    viewModel.deleteMessage(message.id, topicId,)
+//                    showMenu = false
+//                }
+            }
+        )
     }
 }

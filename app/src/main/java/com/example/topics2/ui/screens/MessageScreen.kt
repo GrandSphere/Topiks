@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -45,12 +47,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
+    val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
     val scrollState = rememberLazyListState()
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
+    var showMenu: Boolean by remember { mutableStateOf(false ) }
 
     Box(
         modifier = Modifier
@@ -105,7 +109,25 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     containsAttachments = hasAttachments,
                     listOfPictures = pictureList,
                     listOfAttachmentsP = attachmentList,
-                    timestamp = timestamp
+                    timestamp = timestamp,
+                    onDeleteClick = {
+                                        coroutineScope.launch {
+                    viewModel.deleteMessage(message.id, topicId,)
+                }
+},
+                    onEditClick = {
+
+//                        viewModel.setToUnFocusTextbox(true)
+                        //viewModel.setTempMessage(message.content)
+                        //viewModel.setAmEditing(true)
+                        viewModel.setTempMessageId(message.id)
+                        Log.d("arst","messageid:"+message.id.toString())
+//                        showMenu = false
+                        viewModel.setEditMode(true)
+//                        viewModel.setToFocusTextbox(true)
+//                        viewModel.setEditMode(true)
+                        Log.d("arst", "we are here")
+                    }
                 )
             }
             item {
@@ -128,6 +150,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
     }
+LaunchedEffect(showMenu) {
+//    if (showmenu){
+        Log.d("arst","showmenu changed")
+
+//    }
+}
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {

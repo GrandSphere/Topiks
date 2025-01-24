@@ -101,13 +101,14 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navTopics") {
+                NavHost(navController = navController, startDestination = "navDebugChat2") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
 
                     composable("navShowMorePictures") { ShowMorePictures(navController) }
                     composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
+                    composable("navDebugChat2") {MessageScreen(navController, messageViewModel,3)}
 //                    composable("navDebugChat") { MessageScreen(navController,messageViewModel,1)}
                     composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
