@@ -21,6 +21,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.topics.ui.themes.cMessageFont
+import com.example.topics.ui.themes.cSearchTopicFont
 import com.example.topics2.model.T2SearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
 
@@ -59,11 +61,16 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-                    Text(
+
+                    Text( // Topic
+                            text=item.topicName.take(20),
+                                            style = cSearchTopicFont,
+                    )
+                    Text( // result string
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.Gray)) {
-                                append(item.topicName.take(8) + " ")
-                            }
+//                            withStyle(style = SpanStyle(color = Color.Gray)) {
+//                                append(item.topicName.take(8) + " ")
+//                            }
 
                             val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = item.messageContent.split(" ")
@@ -80,6 +87,7 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                                         withStyle(style = SpanStyle(color = Color.White)) {
                                             append(word.substring(currentIndex, matchIndex))
                                         }
+
 
                                         // Append the matched part
                                         withStyle(style = SpanStyle(color = highlightColor)) {
