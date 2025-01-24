@@ -34,6 +34,7 @@ import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.ShowMorePictures
+import com.example.topics2.ui.screens.T2SearchUI
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
@@ -45,6 +46,7 @@ import com.example.topics2.unused.PreviewChatBubble
 import com.example.topics2.unused.PreviewOverflowingLayout
 import com.example.topics2.unused.UniqueFuzzySearchScreen
 import com.example.topics2.unused.fTestSearchScreen
+import com.example.topics2.unused.generateTableData
 import com.example.topics2.unused.messageScreen.TestMessageScreen
 import com.example.topics2.unused.testScreen
 
@@ -99,7 +101,7 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navDebugChat") {
+                NavHost(navController = navController, startDestination = "newSearch") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
@@ -109,7 +111,8 @@ fun TestApp(context: Context) {
 //                    composable("navDebugChat") { MessageScreen(navController,messageViewModel,1)}
                     composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
-                    composable("newSearch") { NewSearchScreen () }
+                    //composable("newSearch") { NewSearchScreen () }
+                    composable("newSearch") {T2SearchUI(generateTableData(2000))}
                     //composable("navFuzzy") { FuzzySearchScreen () }
                     composable("navTest4") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }

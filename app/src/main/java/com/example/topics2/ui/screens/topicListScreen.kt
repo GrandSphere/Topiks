@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.topics2.db.enitities.TopicTbl
+import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -57,6 +58,7 @@ import kotlinx.coroutines.launch
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
     val focusManager = LocalFocusManager.current
+    var inputText by remember{ mutableStateOf("")}
 
     //val inputColor = Color.Gray     // Example input color
     //val outputColor = chooseColorBasedOnLuminance(inputColor)
@@ -78,7 +80,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
         ) {
             // TODO:: Search Box focus
-            //CustomSearchBox()
+            CustomSearchBox(inputText = inputText, onValueChange = {newtext -> inputText = newtext})
             //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
             // Topic List
