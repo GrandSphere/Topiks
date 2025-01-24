@@ -37,6 +37,7 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = 8.dp, vertical = 1.dp)
             .clip(RoundedCornerShape(4.dp))
     ) {
         CustomSearchBox(

@@ -30,12 +30,14 @@ import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.ShowMorePictures
+import com.example.topics2.ui.screens.T2SearchUI
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.CategoryViewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.unused.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -112,6 +114,8 @@ class MainActivity : ComponentActivity() {
                                 topicViewModel
                             )
                         }
+                        composable("newSearch") {T2SearchUI(generateTableData(2000))}
+
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
                         composable("navcolourpicker") {
                             ColourPickerScreen(
