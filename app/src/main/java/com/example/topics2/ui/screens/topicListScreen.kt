@@ -93,9 +93,13 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(topics.size) { index ->
-                    val topic = topics[index]
-                    TopicItem(navController, viewModel, topic)
+                if (inputText.length > 0) {
+                    // dizzy
+                } else {
+                    items(topics.size) { index ->
+                        val topic = topics[index]
+                        TopicItem(navController, viewModel, topic)
+                    }
                 }
             }
         }
