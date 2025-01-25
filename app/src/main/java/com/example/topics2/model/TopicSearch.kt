@@ -1,7 +1,6 @@
 package com.example.topics2.model
 
 import android.util.Log
-import com.example.topics2.unused.TableEntry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

@@ -87,7 +87,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 inputText = inputText,
                 sPlaceHolder = "Search Topics...",
                 onValueChange = { newText ->
-                   // inputText = newtext
+                    inputText = newText
                     viewModel.search(newText)
                 },
                 oncHold = { navController.navigate("newSearch") }
