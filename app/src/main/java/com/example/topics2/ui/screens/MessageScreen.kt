@@ -43,6 +43,7 @@ import java.util.Locale
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     viewModel.collectMessages(topicId)
     viewModel.setTopicColor(topicColor)
+    viewModel.setTopicId(topicId)
 
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }

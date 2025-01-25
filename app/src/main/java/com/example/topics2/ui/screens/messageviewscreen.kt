@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,18 +25,18 @@ import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.utilities.helper.TemporaryDataHolder
+import kotlinx.coroutines.launch
 
 @Composable
 fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel) {
-    var inputText by remember { mutableStateOf(""
-  // viewModel.messages(3)
-  //      viewModel.gettempID()
-    ) }
+    val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
+    var inputText by remember { mutableStateOf( viewModel.getMessageContentById(tempMessageID))}
+    val coroutineScope = rememberCoroutineScope()
     Box(){
 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
     CustomTextBox(
         onValueChange = { newtext -> inputText = newtext },
-        inputText = inputText,
+        inputText = inputText ?: "",
         sPlaceHolder = "",
         boxModifier = Modifier.weight(1f),
         focusModifier = Modifier.weight(1f)
@@ -43,12 +45,16 @@ Column(modifier = Modifier.padding(horizontal = 8.dp)) {
 }
     FloatingActionButton(
         onClick = {
-//            viewModel.editMessage(
-//            messageId = tempMessageID,
-//            topicId = topicId,
-//            content = tempInputText,
-//            priority = messagePriority
-//            )
+            coroutineScope.launch {
+                viewModel.editMessage(
+                    messageId = tempMessageID,
+                    topicId = viewModel.topicId.value,
+                    content = inputText ?: "",
+                    priority = 1,
+                    categoryId = 1,
+                    type = 1
+                )
+            }
             navController.popBackStack()
         },
         shape = CircleShape, // Change the shape to rounded corners

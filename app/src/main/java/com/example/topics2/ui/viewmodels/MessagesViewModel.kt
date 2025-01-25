@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -73,18 +74,26 @@ class MessageViewModel (
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
-        messageDao.getMessagesForTopic(topicId).onEach { messageList ->_messages.value = messageList
+        messageDao.getMessagesForTopic(topicId).onEach { messageList ->
+            _messages.value = messageList
+            _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
         }.launchIn(viewModelScope)
     }
+
+    private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
+    val messagesContentById: StateFlow<Map<Int, String>> = _messagesContentById
+    fun getMessageContentById(messageId: Int): String? {
+        return _messagesContentById.value[messageId]
+    }
+
+    // TempID, used only for editing a message
+    private val _topicID = MutableStateFlow<Int>(0)
+    val topicId: StateFlow<Int> = _topicID
+    fun setTopicId(newValue: Int) { _topicID.value = newValue }
 
     // Delete Message
     suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
-    }
-
-    suspend fun getMessageWithID(messageId: Int): String
-    {
-       return messageDao.getMessageWithID(messageId)
     }
 
     // Add Message
@@ -94,7 +103,7 @@ class MessageViewModel (
         priority: Int,
         type: Int,
         categoryID: Int
-     ): Long {
+    ): Long {
         val timestamp = System.currentTimeMillis()
         val newMessage = MessageTbl(
             topicId = topicId,
@@ -104,7 +113,7 @@ class MessageViewModel (
             createTime = timestamp,
             lastEditTime =  timestamp,
             categoryId = categoryID
-            )
+        )
         topicDao.updateLastModifiedTopic(topicId, timestamp)
         return messageDao.insertMessage(newMessage) // Insert the message into the database
     }
@@ -136,7 +145,7 @@ class MessageViewModel (
                 iconPath = iconPath,
                 categoryId = categoryId,
                 createTime = createTime
-        )
+            )
         )
     }
 
@@ -146,6 +155,8 @@ class MessageViewModel (
         topicId: Int,
         content: String,
         priority: Int,
+        categoryId: Int,
+        type: Int,
         messageTimestamp: Long = System.currentTimeMillis()
     )
     {
@@ -156,11 +167,11 @@ class MessageViewModel (
             createTime = messageTimestamp,
             priority = priority,
             lastEditTime =  messageTimestamp,
-            categoryId = 1,
-            type =  1
+            categoryId = categoryId,
+            type =  type
         )
+        Log.d("AASSDDFF", editedMessage.toString())
         messageDao.updateMessage(editedMessage)
-      //  fetchMessages(topicId)
     }
 
     companion object {
