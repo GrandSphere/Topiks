@@ -43,13 +43,12 @@ Column(modifier = Modifier.padding(horizontal = 8.dp)) {
 }
     FloatingActionButton(
         onClick = {
-//                                            viewModel.editMessage(
-//                                    messageId = tempMessageID,
-//                                    topicId = topicId,
-//                                    content = tempInputText,
-//                                    priority = messagePriority
-//                                )
-
+//            viewModel.editMessage(
+//            messageId = tempMessageID,
+//            topicId = topicId,
+//            content = tempInputText,
+//            priority = messagePriority
+//            )
             navController.popBackStack()
         },
         shape = CircleShape, // Change the shape to rounded corners

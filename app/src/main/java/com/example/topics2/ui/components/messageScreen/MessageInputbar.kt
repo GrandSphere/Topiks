@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -154,18 +155,20 @@ fun InputBarMessageScreen(
     val bEditMode by viewModel.bEditMode.collectAsState()
     val iNumToTake: Int = 10
     var uriList: List<Uri> = emptyList()
+    var bEditedMode by remember { mutableStateOf(false) }
 
     LaunchedEffect(bEditMode) {
         Log.d("arst","bedit changed")
         if (bEditMode) {
+            bEditedMode = true
             Log.d("arst", "bedit true")
-            inputText = "arst"
+            inputText = viewModel.getMessageWithID(tempMessageID)
             // use tempMessageID to get inputText
             viewModel.getFilesByMessageId(tempMessageID).collect { list ->
                 uriList = list.map { list -> Uri.parse(list) }
                 selectedFileUris.value = uriList
 //                selectedFileUris.value =Uri.parse( list)}
-
+            viewModel.setEditMode(false)
             }
         }
         else {
@@ -297,7 +300,7 @@ fun InputBarMessageScreen(
                     inputText = ""
                     viewModel.setToFocusTextbox(false)
                     if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
-                        if (bEditMode) {
+                        if (bEditedMode) {
                             Log.d("arst","i am supposed to populate")
                             coroutineScope.launch {
                                 viewModel.editMessage(
@@ -307,6 +310,7 @@ fun InputBarMessageScreen(
                                     priority = messagePriority
                                 )
                                 viewModel.setEditMode(false)
+                                bEditedMode = false
                             }
                         } else {
                             // Write message to db
@@ -353,7 +357,7 @@ fun InputBarMessageScreen(
                     .align(Alignment.Bottom)
             ) {
                 Icon(
-                    imageVector = if (tempMessageID > 0) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
+                    imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
                     //imageVector = Icons.Filled.Send, // Attach file icon
                     contentDescription = "Attach",
                     //tint = colors.tertiary,

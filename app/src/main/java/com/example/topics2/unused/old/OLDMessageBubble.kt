@@ -133,7 +133,7 @@ fun OLDMessageBubble(
                 text = { Text("Delete Message") },
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.deleteMessage(message.id, topicId,)
+                        viewModel.deleteMessage(message.id)
                         showMenu = false
                     }
                 }

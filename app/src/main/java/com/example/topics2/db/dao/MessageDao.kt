@@ -19,6 +19,9 @@ interface MessageDao {
     @Query("SELECT * FROM message_tbl WHERE topicId = :topicId")
     fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
 
+    @Query("SELECT content FROM message_tbl WHERE id = :messageID")
+    suspend fun getMessageWithID(messageID: Int): String
+
     @Query("DELETE FROM message_tbl WHERE topicId = :topicId")
     suspend fun deleteMessagesForTopic(topicId: Int)
 
