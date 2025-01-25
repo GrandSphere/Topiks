@@ -26,9 +26,9 @@ import com.example.topics2.utilities.helper.TemporaryDataHolder
 
 @Composable
 fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel) {
-    var inputText by remember { mutableStateOf(
-   viewModel.messages(3)
-        viewModel.gettempID()
+    var inputText by remember { mutableStateOf(""
+  // viewModel.messages(3)
+  //      viewModel.gettempID()
     ) }
     Box(){
 Column(modifier = Modifier.padding(horizontal = 8.dp)) {

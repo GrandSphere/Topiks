@@ -117,7 +117,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         }
                     },
                     onViewMessage = {
-                        TemporaryDataHolder.setMessage(message.content)
+                        //TemporaryDataHolder.setMessage(message.content)
                     navController.navigate("navViewMessage")
                     },
                     onEditClick = {
