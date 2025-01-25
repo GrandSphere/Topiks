@@ -30,7 +30,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
-import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
+import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale

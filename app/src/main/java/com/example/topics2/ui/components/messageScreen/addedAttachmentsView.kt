@@ -1,4 +1,4 @@
-package com.example.topics2.ui.components.noteDisplay
+package com.example.topics2.ui.components.messageScreen
 
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
