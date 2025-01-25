@@ -1,30 +1,33 @@
-/*
+package com.example.topics2.unused.old/*
+
 package com.example.topics2.unused
-// TODO This is the most working branch
+//first attempt at matching colours
 // Necessary Imports
+// Necessary Imports
+
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.topics2.ui.components.CustomSearchBox
 import kotlinx.coroutines.*
 import kotlin.random.Random
 
 // Data Classes
 
 // ViewModel-like functionality using a single class
-class T2SearchHandler(private val dataset: List<TableEntry>) {
+class T2SearchHandler() {
+    //private val dataset: List<TableEntry>
     private var results: List<TableEntry> = listOf()
     private var currentJob: Job? = null // blue: Store current search job
 
@@ -56,6 +59,7 @@ class T2SearchHandler(private val dataset: List<TableEntry>) {
     }
 }
 
+// Composable UI for Search Results
 @Composable
 fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) {
     var query by remember { mutableStateOf("") }
@@ -65,20 +69,18 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(4.dp))
+            .background(Color.Black)
+            .padding(16.dp)
     ) {
-        CustomSearchBox(
-            inputText = query,
+        TextField(
+            value = query,
             onValueChange = { newQuery ->
                 query = newQuery
                 searchHandler.search(newQuery) { updatedResults -> results = updatedResults }
             },
-            sPlaceHolder = "Search...",
-            isFocused = true,
-            focusModifier = Modifier,
-            boxModifier = Modifier,
+            modifier = Modifier.fillMaxWidth().background((Color.DarkGray)),
+            placeholder = { Text("Search...", color = Color.Gray) }
         )
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(8.dp)
@@ -95,40 +97,40 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
                                 append(item.topicName.take(8) + " ")
                             }
 
-                            val normalizedQuery = query.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
+                            // Split the message content into words and process each word
                             val contentWords = item.messageContent.split(" ")
-
                             contentWords.forEach { word ->
-                                var currentIndex = 0 // Track the current position in the word
-
-                                normalizedQuery.forEach { substring ->
-                                    while (true) {
-                                        val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
-                                        if (matchIndex == -1) break
-
-                                        // Append the part before the match
+                                // blue: Track current word without altering spacing
+                                var currentWord = word
+                                var startIdx = 0
+                                query.split(" ").forEach { queryPart ->
+                                    if (queryPart.isNotEmpty() && currentWord.contains(queryPart, ignoreCase = true)) {
+                                        // blue: Find the position of the match and split the word accordingly
+                                        val parts = currentWord.split(queryPart, ignoreCase = true)
+                                        // blue: Append the part before the match in normal color
                                         withStyle(style = SpanStyle(color = Color.White)) {
-                                            append(word.substring(currentIndex, matchIndex))
+                                            append(parts[0])
                                         }
-
-                                        // Append the matched part
+                                        // blue: Highlight the matching part
                                         withStyle(style = SpanStyle(color = highlightColor)) {
-                                            append(word.substring(matchIndex, matchIndex + substring.length))
+                                            append(queryPart)
                                         }
-
-                                        // Move the index forward
-                                        currentIndex = matchIndex + substring.length
+                                        // blue: Append the part after the match in normal color
+                                        if (parts.size > 1) {
+                                            withStyle(style = SpanStyle(color = Color.White)) {
+                                                append(parts[1])
+                                            }
+                                        }
+                                        currentWord = parts.getOrElse(1) { "" }
                                     }
                                 }
-
-                                // Append the remaining part of the word
-                                if (currentIndex < word.length) {
+                                // blue: If no match was found, append the word normally
+                                if (currentWord.isNotEmpty()) {
                                     withStyle(style = SpanStyle(color = Color.White)) {
-                                        append(word.substring(currentIndex))
+                                        append(currentWord)
                                     }
                                 }
-
-                                append(" ") // Add space between words
+                                append(" ") // blue: Ensure space is added after each word
                             }
                         }
                     )
@@ -138,9 +140,13 @@ fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) 
     }
 }
 
+// Helper function to generate sample data (for testing purposes)
 
+// Call this function to run the app
 @Composable
 fun T2RunApp() {
+    //val testDataset = generateTableData(1000)
+    //androidx.compose.ui.window.singleWindowApplication {
     T2SearchUI(generateTableData(1000000)) // blue: Updated dataset size for testing
 }
 */

@@ -133,7 +133,6 @@ class MessageViewModel (
                 categoryId = categoryId,
                 createTime = createTime
         )
-
         )
     }
 

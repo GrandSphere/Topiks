@@ -40,15 +40,14 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.MyScreen
-import com.example.topics2.unused.NewSearchScreen
-import com.example.topics2.unused.PreviewChatBubble
-import com.example.topics2.unused.PreviewOverflowingLayout
-import com.example.topics2.unused.UniqueFuzzySearchScreen
-import com.example.topics2.unused.fTestSearchScreen
-import com.example.topics2.unused.generateTableData
+import com.example.topics2.unused.old.MyScreen
+import com.example.topics2.unused.old.PreviewChatBubble
+import com.example.topics2.unused.old.PreviewOverflowingLayout
+import com.example.topics2.unused.old.UniqueFuzzySearchScreen
+import com.example.topics2.unused.old.fTestSearchScreen
+import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.unused.messageScreen.TestMessageScreen
-import com.example.topics2.unused.testScreen
+import com.example.topics2.unused.old.testScreen
 
 
 class TestActivity : ComponentActivity() {

@@ -38,7 +38,7 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.ui.screens.MessageViewScreen
-import com.example.topics2.unused.generateTableData
+import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
