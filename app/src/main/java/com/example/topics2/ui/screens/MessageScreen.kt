@@ -35,6 +35,7 @@ import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
 import com.example.topics2.ui.components.noteDisplay.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import com.example.topics2.utilities.helper.TemporaryDataHolder
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -111,10 +112,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     listOfAttachmentsP = attachmentList,
                     timestamp = timestamp,
                     onDeleteClick = {
-                                        coroutineScope.launch {
-                    viewModel.deleteMessage(message.id, topicId,)
-                }
-},
+                        coroutineScope.launch {
+                            viewModel.deleteMessage(message.id, topicId,)
+                        }
+                    },
+                    onViewMessage = {
+                        TemporaryDataHolder.setMessage(message.content)
+                    navController.navigate("navViewMessage")
+                    },
                     onEditClick = {
 
 //                        viewModel.setToUnFocusTextbox(true)
@@ -150,12 +155,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
     }
-LaunchedEffect(showMenu) {
+    LaunchedEffect(showMenu) {
 //    if (showmenu){
         Log.d("arst","showmenu changed")
 
 //    }
-}
+    }
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {

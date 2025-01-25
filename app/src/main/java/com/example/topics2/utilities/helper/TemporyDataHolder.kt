@@ -14,4 +14,5 @@ object TemporaryDataHolder {
         return _imagePaths.also { _imagePaths = emptyList() }
         Log.d("zzee Current size:", _imagePaths.size.toString())
     }
+
 }

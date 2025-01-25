@@ -37,6 +37,7 @@ import com.example.topics2.ui.viewmodels.CategoryViewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.ui.screens.MessageViewScreen
 import com.example.topics2.unused.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
 
@@ -116,6 +117,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("newSearch") {T2SearchUI(generateTableData(2000))}
 
+                        composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
                         composable("navcolourpicker") {
                             ColourPickerScreen(
