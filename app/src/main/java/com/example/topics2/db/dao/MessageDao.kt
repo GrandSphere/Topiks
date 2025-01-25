@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.model.MessageSearchContent
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,7 +32,9 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
-
+    // GET MESSAGE ID, CONTENT AND TOPIC ID FOR SEARCH
+    @Query("SELECT id, content, topicId FROM message_tbl ORDER BY lastEditTime DESC")
+    fun getSearchMessages(): List<MessageSearchContent>
 
 
 
