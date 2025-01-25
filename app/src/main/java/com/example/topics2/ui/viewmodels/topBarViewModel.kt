@@ -17,6 +17,7 @@ class TopBarViewModel : ViewModel() {
                 topicName
             }
             "newSearch" -> "Search All"
+            "navViewMessage" -> "View Message"
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
             "navtopicListScreen" -> "Topics"

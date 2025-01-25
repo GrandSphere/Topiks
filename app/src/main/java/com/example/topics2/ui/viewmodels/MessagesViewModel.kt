@@ -27,6 +27,14 @@ class MessageViewModel (
     private val filesDao: FilesDao
 ): ViewModel() {
 
+    private var _tempID: Int= -1
+    fun settempID(message: Int) {
+        _tempID = message
+    }
+    fun gettempID(): Int{
+        return _tempID.also{_tempID=-1}
+    }
+
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox

@@ -56,6 +56,7 @@ fun MessageBubble( // New Message Bubble
     listOfAttachmentsP: List<String> = emptyList<String>(),
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
+    onViewMessage: () -> Unit = {},
 
     timestamp: String
 ) {
@@ -183,8 +184,7 @@ fun MessageBubble( // New Message Bubble
     DropdownMenu(
         expanded = showMenu,
         modifier = Modifier
-            .wrapContentHeight()
-//            .fillMaxHeight()
+            .fillMaxHeight()
             .fillMaxWidth(0.4f)
             .background(Color.Black)
         ,
@@ -212,6 +212,13 @@ fun MessageBubble( // New Message Bubble
             }
         )
 
+        DropdownMenuItem(
+            text = { Text("View", color = Color.White) },
+            onClick = {
+                showMenu = false
+                onViewMessage()
+            }
+        )
         DropdownMenuItem(
             text = { Text("Delete Message", color = Color.White) },
             onClick = {
