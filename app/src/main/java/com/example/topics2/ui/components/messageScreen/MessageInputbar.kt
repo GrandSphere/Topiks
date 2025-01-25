@@ -1,11 +1,5 @@
 package com.example.topics2.ui.components.messageScreen
 
-
-//import com.example.topics.utilities.SelectFileWithPicker
-//import com.example.topics.utilities.SelectImageWithPicker
-//import com.example.topics.utilities.copyFileToUserFolder
-
-
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -88,9 +82,7 @@ fun InputBarMessageScreen(
     val toUnFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
-
-    // val filePicked: Boolean = viewModel.filePicked.collectAsState().value
-    //val filePath: String = viewModel.fileURI.collectAsState().value
+    var bEditedMode by remember { mutableStateOf(false) }
 
     // FilePicker Logic
 
@@ -123,6 +115,8 @@ fun InputBarMessageScreen(
     LaunchedEffect(Unit) {
         // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
         viewModel.setEditMode(false)
+        bEditedMode = false
+        viewModel.setTempMessageId(-1)
         viewModel.setToFocusTextbox(true)
     }
 
@@ -155,14 +149,13 @@ fun InputBarMessageScreen(
     val bEditMode by viewModel.bEditMode.collectAsState()
     val iNumToTake: Int = 10
     var uriList: List<Uri> = emptyList()
-    var bEditedMode by remember { mutableStateOf(false) }
 
     LaunchedEffect(bEditMode) {
         Log.d("arst","bedit changed")
         if (bEditMode) {
             bEditedMode = true
             Log.d("arst", "bedit true")
-            inputText = viewModel.getMessageWithID(tempMessageID)
+            inputText = viewModel.getMessageContentById(tempMessageID) ?: ""
             // use tempMessageID to get inputText
             viewModel.getFilesByMessageId(tempMessageID).collect { list ->
                 uriList = list.map { list -> Uri.parse(list) }
@@ -172,7 +165,7 @@ fun InputBarMessageScreen(
             }
         }
         else {
-            viewModel.setTempMessageId(-1)
+            //viewModel.setTempMessageId(-1)
         }
     }
 
@@ -300,15 +293,35 @@ fun InputBarMessageScreen(
                     inputText = ""
                     viewModel.setToFocusTextbox(false)
                     if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
-                        if (bEditedMode) {
+                        if ((bEditedMode) && (viewModel.tempMessageId.value > -1)){
                             Log.d("arst","i am supposed to populate")
                             coroutineScope.launch {
                                 viewModel.editMessage(
                                     messageId = tempMessageID,
                                     topicId = topicId,
                                     content = tempInputText,
-                                    priority = messagePriority
+                                    priority = messagePriority,
+                                    categoryId = 1,
+                                    type = 1
                                 )
+
+                                if (!selectedFileUris.value.isNullOrEmpty()) {
+                                    tempFilePath = ""
+                                    // Copy file, get list of paths as return value
+                                    selectedFileUris.value?.forEach { uri ->
+                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri)
+                                        // add list of paths to DB
+                                        viewModel.addFile(
+                                            topicId = topicId,
+                                            messageId = tempMessageID,
+                                            fileType = determineFileType(context, uri),
+                                            filePath = tempFilePath,
+                                            description = "",
+                                            categoryId = 1,
+                                        )
+                                        selectedFileUris.value = emptyList()
+                                    }
+                                }
                                 viewModel.setEditMode(false)
                                 bEditedMode = false
                             }
@@ -328,10 +341,6 @@ fun InputBarMessageScreen(
                                     // Copy file, get list of paths as return value
                                     selectedFileUris.value?.forEach { uri ->
                                         tempFilePath = copyFileToUserFolder(context, viewModel, uri)
-                                        Log.d(
-                                            "THIS IS THE FILE PATH ADDED TO THE ARRAY",
-                                            "${tempFilePath}"
-                                        )
                                         copiedFilePathList.add(tempFilePath)
 
                                         // add list of paths to DB
@@ -349,8 +358,20 @@ fun InputBarMessageScreen(
                             }
                         }
                     }
+                   viewModel.setTempMessageId(-1)
                 },
                 modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = { offset ->
+                                inputText=""
+                                selectedFileUris.value = emptyList()
+                                viewModel.setTempMessageId(-1)
+                                viewModel.setEditMode(false)
+                                bEditedMode=false
+                            }
+                        )
+                    }
                     .size(vButtonSize)
                     .fillMaxWidth(1f)
                     //.background(Color.Transparent)
