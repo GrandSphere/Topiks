@@ -112,7 +112,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     timestamp = timestamp,
                     onDeleteClick = {
                         coroutineScope.launch {
-                            viewModel.deleteMessage(message.id, topicId,)
+                            viewModel.deleteMessage(message.id)
                         }
                     },
                     onViewMessage = {
@@ -123,6 +123,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     },
                     onEditClick = {
 
+                        Log.d("WHAHAHA", "IN HERE")
 //                        viewModel.setToUnFocusTextbox(true)
                         //viewModel.setTempMessage(message.content)
                         //viewModel.setAmEditing(true)

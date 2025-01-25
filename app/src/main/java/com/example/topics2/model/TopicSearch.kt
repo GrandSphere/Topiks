@@ -17,9 +17,9 @@ class TopicSearchHandler(private var dataset: List<tblTopicIdName>) {
         val excludes = mutableListOf<String>()
 
         query.split(" ").forEach { part ->
-            if (part.startsWith("!")) {
-                excludes.add(part.substring(1).lowercase())
-            } else {
+            if (part.startsWith("!") && part.length > 1) {
+                excludes.add(part.drop(1).lowercase())
+            } else if (!part.startsWith("!")) {
                 includes.add(part.lowercase())
             }
         }

@@ -78,9 +78,13 @@ class MessageViewModel (
     }
 
     // Delete Message
-    suspend fun deleteMessage(messageId: Int, topicId: Int?) {
+    suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
+    }
 
+    suspend fun getMessageWithID(messageId: Int): String
+    {
+       return messageDao.getMessageWithID(messageId)
     }
 
     // Add Message
