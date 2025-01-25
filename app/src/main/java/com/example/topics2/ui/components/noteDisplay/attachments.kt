@@ -20,7 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.topics2.unused.getFileNameFromString
+import com.example.topics2.unused.old.getFileNameFromString
 
 @Composable
 fun TestshowAttachments(

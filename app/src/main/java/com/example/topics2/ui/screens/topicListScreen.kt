@@ -51,7 +51,6 @@ import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.generateTableData
 import kotlinx.coroutines.launch
 
 

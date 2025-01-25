@@ -1,6 +1,6 @@
 package com.example.topics2.model
 
-import com.example.topics2.unused.TableEntry
+import com.example.topics2.unused.old.TableEntry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

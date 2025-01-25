@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import com.example.topics2.unused.getFileNameFromString
+import com.example.topics2.unused.old.getFileNameFromString
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text

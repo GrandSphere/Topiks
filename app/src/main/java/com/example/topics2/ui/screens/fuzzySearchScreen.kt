@@ -21,12 +21,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.topics.ui.themes.cMessageFont
 import com.example.topics.ui.themes.cSearchTopicFont
 import com.example.topics2.model.T2SearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
 
-import com.example.topics2.unused.TableEntry
+import com.example.topics2.unused.old.TableEntry
 
 @Composable
 fun T2SearchUI(dataset: List<TableEntry>, highlightColor: Color = Color.Yellow) {
