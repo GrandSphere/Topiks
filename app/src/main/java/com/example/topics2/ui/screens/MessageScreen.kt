@@ -32,10 +32,9 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
-import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
+import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
+import com.example.topics2.ui.components.messageScreen.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.utilities.helper.TemporaryDataHolder
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -118,6 +117,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     },
                     onViewMessage = {
                         //TemporaryDataHolder.setMessage(message.content)
+
+                        viewModel.setTempMessageId(message.id)
                     navController.navigate("navViewMessage")
                     },
                     onEditClick = {
@@ -126,12 +127,10 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         //viewModel.setTempMessage(message.content)
                         //viewModel.setAmEditing(true)
                         viewModel.setTempMessageId(message.id)
-                        Log.d("arst","messageid:"+message.id.toString())
 //                        showMenu = false
                         viewModel.setEditMode(true)
 //                        viewModel.setToFocusTextbox(true)
 //                        viewModel.setEditMode(true)
-                        Log.d("arst", "we are here")
                     }
                 )
             }

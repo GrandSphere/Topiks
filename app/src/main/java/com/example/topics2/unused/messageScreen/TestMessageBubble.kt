@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
-import com.example.topics2.ui.components.noteDisplay.TestshowAttachments
+import com.example.topics2.ui.components.messageScreen.TestshowAttachments
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import picturesPreview
 

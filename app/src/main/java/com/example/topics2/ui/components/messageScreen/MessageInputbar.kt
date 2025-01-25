@@ -1,4 +1,4 @@
-package com.example.topics2.ui.components.noteDisplay
+package com.example.topics2.ui.components.messageScreen
 
 
 //import com.example.topics.utilities.SelectFileWithPicker
@@ -160,6 +160,7 @@ fun InputBarMessageScreen(
         if (bEditMode) {
             Log.d("arst", "bedit true")
             inputText = "arst"
+            // use tempMessageID to get inputText
             viewModel.getFilesByMessageId(tempMessageID).collect { list ->
                 uriList = list.map { list -> Uri.parse(list) }
                 selectedFileUris.value = uriList
