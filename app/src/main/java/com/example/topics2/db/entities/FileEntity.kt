@@ -40,4 +40,12 @@ data class FileTbl(
     val categoryId: Int, // Foreign key from CategoryTbl
     val createTime: Long
 )
+data class FileInfo(
+   val filePath: String,
+   val fileType: String
+)
+data class FilePath(
+    val id: Int,
+    val filePath: String
+)
 

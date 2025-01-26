@@ -54,6 +54,7 @@ import com.example.topics.utilities.determineFileType
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.old.getFileNameFromString
+import com.example.topics2.utilities.helper.compareFileLists
 import kotlinx.coroutines.launch
 import multipleFilePicker
 
@@ -87,10 +88,12 @@ fun InputBarMessageScreen(
     // FilePicker Logic
 
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
+    val selectedFileUrisBeforeEdit: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
         fileTypes = arrayOf("*/*"),
         onUserFilesSelected = { uris -> selectedFileUris.value = uris }
     )
+    var compareFilesResult: Pair<List<Uri>, List<Uri>> by remember {mutableStateOf(Pair(emptyList(), emptyList()))}
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
@@ -148,21 +151,16 @@ fun InputBarMessageScreen(
     val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
     val bEditMode by viewModel.bEditMode.collectAsState()
     val iNumToTake: Int = 10
-    var uriList: List<Uri> = emptyList()
 
     LaunchedEffect(bEditMode) {
         Log.d("arst","bedit changed")
         if (bEditMode) {
             bEditedMode = true
-            Log.d("arst", "bedit true")
             inputText = viewModel.getMessageContentById(tempMessageID) ?: ""
             // use tempMessageID to get inputText
-            viewModel.getFilesByMessageId(tempMessageID).collect { list ->
-                uriList = list.map { list -> Uri.parse(list) }
-                selectedFileUris.value = uriList
-//                selectedFileUris.value =Uri.parse( list)}
+            selectedFileUris.value = viewModel.getFilesByMessageId(tempMessageID)
+            selectedFileUrisBeforeEdit.value = selectedFileUris.value
             viewModel.setEditMode(false)
-            }
         }
         else {
             //viewModel.setTempMessageId(-1)
@@ -177,7 +175,7 @@ fun InputBarMessageScreen(
                 .heightIn(max = 200.dp) // Set your maximum height here
                 .verticalScroll(rememberScrollState()) // Makes the content scrollable
         ) {
-        selectedFileUris?.value?.forEachIndexed() { index, attachment ->
+            selectedFileUris?.value?.forEachIndexed() { index, attachment ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -205,9 +203,6 @@ fun InputBarMessageScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton( // CLEAR BUTTON
                         onClick = {
-//                        val updated = selectedFileUris.value!!.toMutableList().apply { removeAt(4)}
-//                        selectedFileUris.value=updated
-//                        updated.clear()
                             selectedFileUris.value =
                                 selectedFileUris.value!!.toMutableList().apply { removeAt(index) }
                         },
@@ -296,36 +291,53 @@ fun InputBarMessageScreen(
                         if ((bEditedMode) && (viewModel.tempMessageId.value > -1)){
                             Log.d("arst","i am supposed to populate")
                             coroutineScope.launch {
+                                val messageID: Int = tempMessageID
                                 viewModel.editMessage(
-                                    messageId = tempMessageID,
+                                    messageId = messageID,
                                     topicId = topicId,
                                     content = tempInputText,
                                     priority = messagePriority,
                                     categoryId = 1,
                                     type = 1
                                 )
-
-                                if (!selectedFileUris.value.isNullOrEmpty()) {
+                                val(deletedFiles, addedFiles) = compareFileLists(
+                                    selectedFileUrisBeforeEdit.value,
+                                    selectedFileUris.value
+                                )
+                                // Add any additional files to the DB
+                                if (!addedFiles.isNullOrEmpty()) {
                                     tempFilePath = ""
                                     // Copy file, get list of paths as return value
-                                    selectedFileUris.value?.forEach { uri ->
+                                    addedFiles.forEach { uri ->
                                         tempFilePath = copyFileToUserFolder(context, viewModel, uri)
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
-                                            messageId = tempMessageID,
+                                            messageId = messageID,
                                             fileType = determineFileType(context, uri),
                                             filePath = tempFilePath,
                                             description = "",
                                             categoryId = 1,
                                         )
-                                        selectedFileUris.value = emptyList()
                                     }
                                 }
+                                // Remove deleted files from db
+                                if (!deletedFiles.isNullOrEmpty()) {
+                                    val fileIDsToDelete: List<Int> =
+                                        deletedFiles.mapNotNull { uri ->
+                                            val filePath = uri.path
+                                            filePath?.let { viewModel.getIdForFilePath(it) }
+                                        }
+                                    if (fileIDsToDelete.isNotEmpty()) {
+                                        viewModel.deleteFiles(fileIDsToDelete)
+                                    }
+                                }
+                                selectedFileUris.value = emptyList()
                                 viewModel.setEditMode(false)
                                 bEditedMode = false
                             }
                         } else {
+                            Log.d("ARST", "THIS IS WHERE WE ARE")
                             // Write message to db
                             coroutineScope.launch {
                                 val messageId = viewModel.addMessage(
@@ -352,13 +364,13 @@ fun InputBarMessageScreen(
                                             description = "",
                                             categoryId = 1,
                                         )
-                                        selectedFileUris.value = emptyList()
                                     }
+                                    selectedFileUris.value = emptyList()
                                 }
                             }
                         }
                     }
-                   viewModel.setTempMessageId(-1)
+                    viewModel.setTempMessageId(-1)
                 },
                 modifier = Modifier
                     .pointerInput(Unit) {
@@ -392,4 +404,3 @@ fun InputBarMessageScreen(
         }
     }
 }
-// Request focus initially
