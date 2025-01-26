@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,8 @@ import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.entities.FileInfo
+import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -91,6 +94,9 @@ class MessageViewModel (
     val topicId: StateFlow<Int> = _topicID
     fun setTopicId(newValue: Int) { _topicID.value = newValue }
 
+    // HashMap to store filePath and corresponding id
+    private val filePathMap = mutableMapOf<String, Int>()
+
     // Delete Message
     suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
@@ -118,13 +124,34 @@ class MessageViewModel (
         return messageDao.insertMessage(newMessage) // Insert the message into the database
     }
 
-    fun getFilesByMessageId(messageId: Int): Flow<List<String>> {
-        return filesDao.getFilesByMessageId(messageId)
-            .map { fileList -> fileList.map { it.filePath } }
+    suspend fun getFilesByMessageId(messageId: Int): List<Uri> {
+        val filePaths = filesDao.getFilesByMessageId(messageId)
+        // Populate the HashMap and list of file paths
+        filePaths.forEach { filePath ->
+            filePathMap[filePath.filePath] = filePath.id
+        }
+        return filePaths.map { Uri.parse(it.filePath)}
+    }
+    // Function to get the ID of a filePath from the HashMap
+    fun getIdForFilePath(filePath: String): Int? {
+        return filePathMap[filePath]
+    }
+
+    suspend fun deleteFiles(fileIds: List<Int>) {
+        if (fileIds.isNotEmpty()) {
+            // Call DAO to delete the files by their IDs
+            filesDao.deleteFilesByIds(fileIds)
+        }
+    }
+
+    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
+        return filesDao.getFilesByMessageIdFlow(messageId)
+            .map{ fileList -> fileList.map { it.filePath }}
     }
 
     // Add File to File_tbl
     suspend fun addFile(
+
         topicId: Int,
         messageId: Int,
         fileType: String,

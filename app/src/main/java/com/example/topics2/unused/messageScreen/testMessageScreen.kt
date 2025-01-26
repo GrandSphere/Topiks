@@ -76,7 +76,7 @@ fun TestMessageScreen(navController: NavController, viewModel: MessageViewModel,
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
                 var hasAttachments = false
-                val filePathsForMessage by viewModel.getFilesByMessageId(message.id).collectAsState(initial = emptyList())
+                val filePathsForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
 
                 // Process each file path
                 for (filePath in filePathsForMessage) {
