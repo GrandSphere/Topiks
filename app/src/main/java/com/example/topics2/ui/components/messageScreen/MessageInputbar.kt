@@ -227,8 +227,6 @@ fun InputBarMessageScreen(
 
         }
 
-
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
