@@ -34,7 +34,7 @@ interface FilesDao {
     @Query("SELECT id, filePath FROM file_tbl WHERE messageId = :messageId")
     suspend fun getFilesByMessageId(messageId: Int): List<FilePath>
 
-    @Query("SELECT filePath, fileType FROM file_tbl WHERE messageId = :messageId")
+    @Query("SELECT filePath, fileType, iconPath FROM file_tbl WHERE messageId = :messageId")
     fun getFilesByMessageIdFlow(messageId: Int): Flow<List<FileInfo>>
 
     @Query("SELECT * FROM file_tbl WHERE categoryId = :categoryId")
