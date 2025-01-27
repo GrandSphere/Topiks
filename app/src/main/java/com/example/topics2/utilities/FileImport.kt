@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 // TODO: Add to settings where user want app folder
 
 
-fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, currentUri: Uri):String{
+fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, currentUri: Uri, directoryName: String):String{
 
     if (currentUri == null || currentUri.path.isNullOrBlank()) {
         Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
@@ -24,7 +24,7 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, c
     }
 
     try {
-        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files")
+        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files/${directoryName}")
           //val externalDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "topics/files")
 
         //val externalDir = File(context.getExternalFilesDir(null)?.parentFile, "com.yourpackage.name/Topics")

@@ -91,9 +91,11 @@ fun InputBarMessageScreen(
     val selectedFileUrisBeforeEdit: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
         fileTypes = arrayOf("*/*"),
-        onUserFilesSelected = { uris -> selectedFileUris.value = uris }
+        onUserFilesSelected = { uris ->
+            selectedFileUris.value = (selectedFileUris.value ?: emptyList()) + (uris ?: emptyList())
+        }
     )
-    var compareFilesResult: Pair<List<Uri>, List<Uri>> by remember {mutableStateOf(Pair(emptyList(), emptyList()))}
+    //var compareFilesResult: Pair<List<Uri>, List<Uri>> by remember {mutableStateOf(Pair(emptyList(), emptyList()))}
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
@@ -289,7 +291,6 @@ fun InputBarMessageScreen(
                     viewModel.setToFocusTextbox(false)
                     if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
                         if ((bEditedMode) && (viewModel.tempMessageId.value > -1)){
-                            Log.d("arst","i am supposed to populate")
                             coroutineScope.launch {
                                 val messageID: Int = tempMessageID
                                 viewModel.editMessage(
@@ -300,21 +301,26 @@ fun InputBarMessageScreen(
                                     categoryId = 1,
                                     type = 1
                                 )
+
+                                Log.d("QQWWEE: sekected: ", selectedFileUris.value.toString())
                                 val(deletedFiles, addedFiles) = compareFileLists(
                                     selectedFileUrisBeforeEdit.value,
                                     selectedFileUris.value
                                 )
+                                Log.d("QQWWEE: ADDED: ", addedFiles.toString())
+                                Log.d("QQWWEE: deelted: ", deletedFiles.toString())
                                 // Add any additional files to the DB
                                 if (!addedFiles.isNullOrEmpty()) {
                                     tempFilePath = ""
                                     // Copy file, get list of paths as return value
                                     addedFiles.forEach { uri ->
-                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri)
+                                        val filetype = determineFileType(context, uri)
+                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri, filetype)
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
                                             messageId = messageID,
-                                            fileType = determineFileType(context, uri),
+                                            fileType = filetype,
                                             filePath = tempFilePath,
                                             description = "",
                                             categoryId = 1,
@@ -340,6 +346,7 @@ fun InputBarMessageScreen(
                             Log.d("ARST", "THIS IS WHERE WE ARE")
                             // Write message to db
                             coroutineScope.launch {
+
                                 val messageId = viewModel.addMessage(
                                     topicId = topicId,
                                     content = tempInputText,
@@ -352,7 +359,8 @@ fun InputBarMessageScreen(
                                     tempFilePath = ""
                                     // Copy file, get list of paths as return value
                                     selectedFileUris.value?.forEach { uri ->
-                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri)
+                                        val filetype = determineFileType(context, uri)
+                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri, filetype)
                                         copiedFilePathList.add(tempFilePath)
 
                                         // add list of paths to DB
