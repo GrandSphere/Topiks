@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.utilities.helper.TemporaryDataHolder
 import com.example.topics2.utilities.openFile
 
@@ -47,15 +48,18 @@ fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBo
 
 @Composable
 fun picturesPreview( // State 1
+    modifiera: Modifier = Modifier,
     navController: NavController,
     topicColor: Color,
     topicFontColor: Color,
-    imagePaths: List<String>,
+    listOfImages: List<FileInfoWithIcon>,
+    listOfThumbnails: List<String> = emptyList(),
     iPictureCount: Int = 4,
    // onShowMore: () -> Unit, // Pass a lambda to update the state
-    modifiera: Modifier = Modifier,
 ) {
+    val imagePaths: List<String> = listOfImages.map { it.filePath }
     TemporaryDataHolder.setImagePaths(imagePaths)
+
     val opacity2: Float = 0.1f
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     val opacity: Float = 0.2f
@@ -69,7 +73,7 @@ fun picturesPreview( // State 1
             iNumberColumns=1 }
         2 -> { iPicturesToShow = 2
             iNumberColumns=2 }
-        3 -> { iPicturesToShow = 3
+        3 -> { iPicturesToShow = 1
             iNumberColumns=2 }
         4 -> { iPicturesToShow = 4
             iNumberColumns=2 }
@@ -86,13 +90,13 @@ fun picturesPreview( // State 1
             modifier = Modifier.heightIn(max=800.dp) // TODO this is a temp fix
         ) {
 
-            items(imagePaths.take(iPicturesToShow)) { imagePath ->
+            items(listOfImages.take(iPicturesToShow)) { imagePath ->
                 Image(
                     modifier = Modifier
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap= {
-                                    openFile(context,imagePath)
+                                    openFile(context,imagePath.filePath)
                                 },
                                 onLongPress = {
                                 }
@@ -105,7 +109,7 @@ fun picturesPreview( // State 1
                         .clip(RoundedCornerShape(cCrop))
                         .background(topicFontColor.copy(opacity))
                         .aspectRatio(1f),
-                    painter = rememberAsyncImagePainter(imagePath),
+                    painter = rememberAsyncImagePainter(imagePath.iconPath),
                     contentDescription = "Image",
                     contentScale = ContentScale.Crop,
                 )

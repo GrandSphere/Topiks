@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.topics2.db.enitities.TopicTbl
+import com.example.topics2.model.TopicSearchHandler
+import com.example.topics2.model.tblTopicIdName
+import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -56,10 +61,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
+    val searchResults by viewModel.searchResults.observeAsState(emptyList())
     val focusManager = LocalFocusManager.current
-
-    //val inputColor = Color.Gray     // Example input color
-    //val outputColor = chooseColorBasedOnLuminance(inputColor)
+    var inputText by remember{ mutableStateOf("")}
 
     Box(
         modifier = Modifier
@@ -78,20 +82,41 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
         ) {
             // TODO:: Search Box focus
-            //CustomSearchBox()
+
+            CustomSearchBox(
+                inputText = inputText,
+                sPlaceHolder = "Search Topics...",
+                onValueChange = { newText ->
+                    inputText = newText
+                    viewModel.search(newText)
+                },
+                oncHold = { navController.navigate("newSearch") }
+            )
             //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
+
             ) {
-                items(topics.size) { index ->
-                    val topic = topics[index]
-                    TopicItem(navController, viewModel, topic)
+                if (inputText.length > 0) {
+                    viewModel.search(inputText)
+                    items(searchResults.size){
+                        index: Int ->
+                        val topicID: Int =  searchResults[index].id
+                        val topic = viewModel.getTopicObjectById(topicID)
+                        if(topic != null) {
+                            TopicItem(navController, viewModel, topic)
+                        }
+                    }
+                } else {
+                    items(topics.size) { index ->
+                        val topic = topics[index]
+                        TopicItem(navController, viewModel, topic)
+                    }
                 }
             }
         }
-        val localContext = LocalContext.current
             // Button to add new topic, aligned at the bottom end of the screen
             FloatingActionButton(
                 onClick = {

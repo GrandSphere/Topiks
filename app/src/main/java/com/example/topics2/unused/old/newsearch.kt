@@ -1,4 +1,4 @@
-/*
+package com.example.topics2.unused.old/*
 package com.example.topics2.unused
 // this one works better
 *//*

@@ -39,14 +39,13 @@ import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.unused.MyScreen
-import com.example.topics2.unused.NewSearchScreen
-import com.example.topics2.unused.PreviewChatBubble
-import com.example.topics2.unused.PreviewOverflowingLayout
-import com.example.topics2.unused.UniqueFuzzySearchScreen
-import com.example.topics2.unused.fTestSearchScreen
-import com.example.topics2.unused.messageScreen.TestMessageScreen
-import com.example.topics2.unused.testScreen
+import com.example.topics2.unused.old.MyScreen
+import com.example.topics2.unused.old.PreviewChatBubble
+import com.example.topics2.unused.old.PreviewOverflowingLayout
+import com.example.topics2.unused.old.UniqueFuzzySearchScreen
+import com.example.topics2.unused.old.fTestSearchScreen
+import com.example.topics2.unused.old.generateTableData
+import com.example.topics2.unused.old.testScreen
 
 
 class TestActivity : ComponentActivity() {
@@ -99,17 +98,18 @@ fun TestApp(context: Context) {
                 // Setting up the NavHost with two screens
                 //NavHost(navController = navController, startDestination = "navtopicListScreen") {
                 //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
-                NavHost(navController = navController, startDestination = "navDebugChat") {
+                NavHost(navController = navController, startDestination = "navDebugChat2") {
                   //  composable("navcTest3") {T2RunApp()}
 
 
 
                     composable("navShowMorePictures") { ShowMorePictures(navController) }
-                    composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
+                    //composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
+                    composable("navDebugChat2") {MessageScreen(navController, messageViewModel,3)}
 //                    composable("navDebugChat") { MessageScreen(navController,messageViewModel,1)}
                     composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
-                    composable("newSearch") { NewSearchScreen () }
+                    //composable("newSearch") { NewSearchScreen () }
                     //composable("navFuzzy") { FuzzySearchScreen () }
                     composable("navTest4") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }
@@ -118,7 +118,7 @@ fun TestApp(context: Context) {
                     composable("navTest") { testScreen() }
                    // composable("navMessageBubble") { MessageBubble(navController) }
                     composable("navmyscreen") { MyScreen() }
-                    composable("navtopicListScreen") {
+                    composable("navTopics") {
                         TopicListScreen(
                             navController,
                             topicViewModel

@@ -36,6 +36,10 @@ import com.example.topics2.ui.viewmodels.CategoryViewModel
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.ui.screens.MessageViewScreen
+import com.example.topics2.ui.screens.allSearch
+import com.example.topics2.ui.viewmodels.searchViewModel
+import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -53,6 +57,7 @@ class MainActivity : ComponentActivity() {
         val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
         val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
         val settingsViewModel: SettingsViewModel = viewModel()
+        val searchViewModel: searchViewModel = viewModel()
 
         //database.close()
       //  settingsViewModel.updateSetting("theme", "Very Dark")
@@ -112,6 +117,9 @@ class MainActivity : ComponentActivity() {
                                 topicViewModel
                             )
                         }
+                        //composable("newSearch") { allSearch(topicViewModel, messageViewModel, generateTableData(2000)) }
+
+                        composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
                         composable("navcolourpicker") {
                             ColourPickerScreen(

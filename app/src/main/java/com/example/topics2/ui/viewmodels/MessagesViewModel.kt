@@ -1,5 +1,7 @@
 package com.example.topics2.ui.viewmodels
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +13,9 @@ import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.db.entities.FileInfo
+import com.example.topics2.db.entities.FileInfoWithIcon
+import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +31,14 @@ class MessageViewModel (
     private val topicDao: TopicDao,
     private val filesDao: FilesDao
 ): ViewModel() {
+
+    private var _tempID: Int= -1
+    fun settempID(message: Int) {
+        _tempID = message
+    }
+    fun gettempID(): Int{
+        return _tempID.also{_tempID=-1}
+    }
 
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
@@ -65,14 +78,29 @@ class MessageViewModel (
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
-        messageDao.getMessagesForTopic(topicId).onEach { messageList ->_messages.value = messageList
+        messageDao.getMessagesForTopic(topicId).onEach { messageList ->
+            _messages.value = messageList
+            _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
         }.launchIn(viewModelScope)
     }
 
-    // Delete Message
-    suspend fun deleteMessage(messageId: Int, topicId: Int?) {
-        messageDao.deleteMessagesWithID(messageId)
+    private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
+    val messagesContentById: StateFlow<Map<Int, String>> = _messagesContentById
+    fun getMessageContentById(messageId: Int): String? {
+        return _messagesContentById.value[messageId]
+    }
 
+    // TempID, used only for editing a message
+    private val _topicID = MutableStateFlow<Int>(0)
+    val topicId: StateFlow<Int> = _topicID
+    fun setTopicId(newValue: Int) { _topicID.value = newValue }
+
+    // HashMap to store filePath and corresponding id
+    private val filePathMap = mutableMapOf<String, Int>()
+
+    // Delete Message
+    suspend fun deleteMessage(messageId: Int) {
+        messageDao.deleteMessagesWithID(messageId)
     }
 
     // Add Message
@@ -82,7 +110,7 @@ class MessageViewModel (
         priority: Int,
         type: Int,
         categoryID: Int
-     ): Long {
+    ): Long {
         val timestamp = System.currentTimeMillis()
         val newMessage = MessageTbl(
             topicId = topicId,
@@ -92,15 +120,41 @@ class MessageViewModel (
             createTime = timestamp,
             lastEditTime =  timestamp,
             categoryId = categoryID
-            )
+        )
         topicDao.updateLastModifiedTopic(topicId, timestamp)
         return messageDao.insertMessage(newMessage) // Insert the message into the database
     }
 
-    fun getFilesByMessageId(messageId: Int): Flow<List<String>> {
-        return filesDao.getFilesByMessageId(messageId)
-            .map { fileList -> fileList.map { it.filePath } }
+    suspend fun getFilesByMessageId(messageId: Int): List<Uri> {
+        val filePaths = filesDao.getFilesByMessageId(messageId)
+        // Populate the HashMap and list of file paths
+        filePaths.forEach { filePath ->
+            filePathMap[filePath.filePath] = filePath.id
+        }
+        return filePaths.map { Uri.parse(it.filePath)}
     }
+    // Function to get the ID of a filePath from the HashMap
+    fun getIdForFilePath(filePath: String): Int? {
+        return filePathMap[filePath]
+    }
+
+    suspend fun deleteFiles(fileIds: List<Int>) {
+        if (fileIds.isNotEmpty()) {
+            // Call DAO to delete the files by their IDs
+            filesDao.deleteFilesByIds(fileIds)
+        }
+    }
+
+//    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
+//        return filesDao.getFilesByMessageIdFlow(messageId)
+//            .map{ fileList -> fileList.map { it.filePath }}
+//    }
+    fun getFilesByMessageIdFlow(messageId: Int): Flow<List<FileInfoWithIcon>> {
+    return filesDao.getFilesByMessageIdFlow(messageId)
+        .map { fileList ->
+            fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
+        }
+}
 
     // Add File to File_tbl
     suspend fun addFile(
@@ -124,8 +178,7 @@ class MessageViewModel (
                 iconPath = iconPath,
                 categoryId = categoryId,
                 createTime = createTime
-        )
-
+            )
         )
     }
 
@@ -135,6 +188,8 @@ class MessageViewModel (
         topicId: Int,
         content: String,
         priority: Int,
+        categoryId: Int,
+        type: Int,
         messageTimestamp: Long = System.currentTimeMillis()
     )
     {
@@ -145,11 +200,11 @@ class MessageViewModel (
             createTime = messageTimestamp,
             priority = priority,
             lastEditTime =  messageTimestamp,
-            categoryId = 1,
-            type =  1
+            categoryId = categoryId,
+            type =  type
         )
+        Log.d("AASSDDFF", editedMessage.toString())
         messageDao.updateMessage(editedMessage)
-      //  fetchMessages(topicId)
     }
 
     companion object {

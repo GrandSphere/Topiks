@@ -1,3 +1,4 @@
+/*
 package com.example.topics2.unused.messageScreen
 
 
@@ -24,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
-import com.example.topics2.ui.components.noteDisplay.TestshowAttachments
+import com.example.topics2.ui.components.messageScreen.TestshowAttachments
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import picturesPreview
 
@@ -74,7 +75,7 @@ fun TestMessageBubble( // New Message Bubble
                         modifiera = Modifier
                             .padding(vertical = 4.dp, horizontal = 1.dp)
                             .fillMaxWidth(),
-                        imagePaths = imagePaths,
+                        listOfImages = imagePaths,
                         iPictureCount = iPictureCount,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
@@ -134,4 +135,4 @@ fun TestMessageBubble( // New Message Bubble
 
         }
     }
-}
+}*/
