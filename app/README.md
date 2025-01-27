@@ -12,16 +12,10 @@ Fix:[l] Chatscreen GUI
 Fix:[dl] Integrate search for different windows (Topics, Messages, both)
 
 ## Priorty 1
-Fix: Sending a file sends it again on next message
-Feature: Files in chat buble should be openable somehow
 Fix: Auto Scroll messages
 Feature: Add error handling. App should not crash so often. Rather give errors. Big issue is if table changed, user cannot backup.
-Fix: Send attachments without text.
-Fix: Ensure edit still works
-Fix:[d] Only show attachment names
 Fix: Image types only should be allowed for Topic Icon
 Fix: Copying files should rename previous file and keep both. Current implementation Does not allow saving 2 files with different names. Alternate solutions is making a new folder for each message topic or day
-
 
 ## Priorty 2
 Fix: Allow editing a topic

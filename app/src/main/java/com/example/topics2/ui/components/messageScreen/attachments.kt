@@ -1,11 +1,7 @@
-package com.example.topics2.ui.components.noteDisplay
+package com.example.topics2.ui.components.messageScreen
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
+
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,22 +16,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
-import com.example.topics2.unused.getFileNameFromString
-import com.example.topics2.utilities.openFile
-import java.io.File
-
+import com.example.topics2.unused.old.getFileNameFromString
 
 @Composable
-fun showAttachments(
+fun TestshowAttachments(
     topicFontColor: Color,
     topicColor: Color,
     opacity: Float = 0.0f,
@@ -43,7 +31,6 @@ fun showAttachments(
     attachments: List<String>,
 ) {
 
-    val context: Context = LocalContext.current
     var bshowMore: Boolean by remember { mutableStateOf(false) }
     var iNumToTake: Int by remember { mutableStateOf(4) }
 //   var bShowMore by remember { mutableStateOf(false)}
@@ -74,15 +61,6 @@ fun showAttachments(
             Text( // get text name from path
                 text = "\u2022 " + getFileNameFromString(attachment), // TODO do this somewhere it might be more effecient. Maybe even in database
                 modifier = Modifier
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                openFile(context, attachment)
-                            },
-                            onLongPress = {
-                            }
-                        )
-                    }
                     .widthIn(min=200.dp)
                     .padding(start=1.dp, top = 5.dp, bottom = 5.dp , end=10.dp),
                 style = TextStyle(
@@ -104,11 +82,6 @@ fun showAttachments(
                 text = if (!bshowMore) "show more" else "show less",
                 modifier = Modifier.clickable(onClick = { bshowMore = !bshowMore }),
                 textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = topicFontColor.copy(alpha = 0.5f),
-//                    textDecoration = TextDecoration.Underline
-                )
             )
         }
     }

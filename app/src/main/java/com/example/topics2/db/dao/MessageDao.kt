@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.topics2.db.enitities.MessageTbl
+import com.example.topics2.model.MessageSearchContent
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,6 +20,9 @@ interface MessageDao {
     @Query("SELECT * FROM message_tbl WHERE topicId = :topicId")
     fun getMessagesForTopic(topicId: Int?): Flow<List<MessageTbl>>
 
+    @Query("SELECT content FROM message_tbl WHERE id = :messageID")
+    suspend fun getMessageWithID(messageID: Int): String
+
     @Query("DELETE FROM message_tbl WHERE topicId = :topicId")
     suspend fun deleteMessagesForTopic(topicId: Int)
 
@@ -28,7 +32,9 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
-
+    // GET MESSAGE ID, CONTENT AND TOPIC ID FOR SEARCH
+    @Query("SELECT id, content, topicId FROM message_tbl ORDER BY lastEditTime DESC")
+    suspend fun getSearchMessages(): List<MessageSearchContent>
 
 
 

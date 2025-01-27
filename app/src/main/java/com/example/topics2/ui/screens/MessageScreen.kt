@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,10 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
+import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
-import com.example.topics2.ui.components.noteDisplay.InputBarMessageScreen
-import com.example.topics2.ui.components.noteDisplay.MessageBubble
+import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
+import com.example.topics2.ui.components.messageScreen.MessageBubble
 import com.example.topics2.ui.viewmodels.MessageViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -41,16 +44,19 @@ import java.util.Locale
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     viewModel.collectMessages(topicId)
     viewModel.setTopicColor(topicColor)
+    viewModel.setTopicId(topicId)
 
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
+    val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
     val scrollState = rememberLazyListState()
     val topicFontColor = chooseColorBasedOnLuminance(topicColor)
     viewModel.setTopicFontColor(topicFontColor)
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
+    var showMenu: Boolean by remember { mutableStateOf(false ) }
 
     Box(
         modifier = Modifier
@@ -72,26 +78,44 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
-                val pictureList = mutableListOf<String>()
+                //val pictureList = mutableListOf<String>()
+                val pictureList = mutableListOf<FileInfoWithIcon>()
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
                 var hasAttachments = false
-                val filePathsForMessage by viewModel.getFilesByMessageId(message.id).collectAsState(initial = emptyList())
-
-                // Process each file path
-                for (filePath in filePathsForMessage) {
+                //val filePathsForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
+                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
+                for (fileInfo in filesForMessage) {
+                    val filePath = fileInfo.filePath
                     val fileType = determineFileType(context, filePath.toUri())
+
                     when (fileType) {
-                        "Image" -> {
-                            pictureList.add(filePath)
+                        "Image" -> { // Contain Picture
+                            pictureList.add(fileInfo)
                             hasPictures = true
                         }
-                        else -> {
+                        else -> { // Contain other file types
                             attachmentList.add(filePath)
                             hasAttachments = true
                         }
                     }
                 }
+
+                // Process each file path
+                //for (filePath in filePathsForMessage) {
+                //    val fileType = determineFileType(context, filePath.toUri())
+                //    when (fileType) {
+                //        "Image" -> {
+                //            pictureList.add(filePath)
+                //            //thumbnailList.add(thumbnailFilePath)
+                //            hasPictures = true
+                //        }
+                //        else -> {
+                //            attachmentList.add(filePath)
+                //            hasAttachments = true
+                //        }
+                //    }
+                //}
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
 
@@ -105,7 +129,30 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     containsAttachments = hasAttachments,
                     listOfPictures = pictureList,
                     listOfAttachmentsP = attachmentList,
-                    timestamp = timestamp
+                    timestamp = timestamp,
+                    onDeleteClick = {
+                        coroutineScope.launch {
+                            viewModel.deleteMessage(message.id)
+                        }
+                    },
+                    onViewMessage = {
+                        //TemporaryDataHolder.setMessage(message.content)
+
+                        viewModel.setTempMessageId(message.id)
+                        navController.navigate("navViewMessage")
+                    },
+                    onEditClick = {
+
+                        Log.d("WHAHAHA", "IN HERE")
+//                        viewModel.setToUnFocusTextbox(true)
+                        //viewModel.setTempMessage(message.content)
+                        //viewModel.setAmEditing(true)
+                        viewModel.setTempMessageId(message.id)
+//                        showMenu = false
+                        viewModel.setEditMode(true)
+//                        viewModel.setToFocusTextbox(true)
+//                        viewModel.setEditMode(true)
+                    }
                 )
             }
             item {
@@ -127,6 +174,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         ) {
             InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
+    }
+    LaunchedEffect(showMenu) {
+//    if (showmenu){
+        Log.d("arst","showmenu changed")
+
+//    }
     }
 
     LaunchedEffect(messages.size) {

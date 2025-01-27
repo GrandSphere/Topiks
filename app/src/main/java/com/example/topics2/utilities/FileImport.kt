@@ -1,56 +1,217 @@
 package com.example.topics.utilities
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // TODO: Add to settings where user want app folder
 
+//RETURN NORMAL PATH FIRST, THEN THUMBNAIL PATH
+fun copyFileToUserFolder(
+    context: Context,
+    currentUri: Uri,
+    directoryName: String,
+    width: Int = 100,
+    height: Int = 100,
+    thumbnailOnly: Boolean = false
+): Pair<String, String> {
 
-fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, currentUri: Uri):String{
-
-    if (currentUri == null || currentUri.path.isNullOrBlank()) {
+    if (currentUri.path.isNullOrBlank()) {
         Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
-        return "E"
+        return Pair("E", "")
     }
 
     try {
-        // Use a public directory like Downloads
-        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files")
-
+        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files/$directoryName")
         if (!externalDir.exists() && !externalDir.mkdirs()) {
             throw IOException("Failed to create directory: $externalDir")
         }
-        // Extract the file name from the URI
-        val fileName = getFileNameFromUri(context, currentUri)
 
-        // Create the file in the accessible directory
-        val destinationFile = File(externalDir, fileName)
+        var fileName = getFileNameFromUri(context, currentUri)
+        var destinationFile = File(externalDir, fileName)
 
-        // TODO CHECK UNIQUENESS AND RENAME
-     //   if (destinationFile.exists()) {
-     //       Toast.makeText(context, "File already exists in destination folder.", Toast.LENGTH_SHORT).show()
-     //       return "E"
-     //   }
+        // If the file already exists, add timestamp to avoid overwrite
+        if (destinationFile.exists()) {
+            val fileExtension = destinationFile.extension
+            val baseName = destinationFile.nameWithoutExtension
 
-        // Copy the file to the accessible folder
-        val inputStream = context.contentResolver.openInputStream(currentUri) ?: throw IOException("Unable to open input stream for URI: $currentUri")
+            // Get the current date and time
+            val now = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+            val timestamp = now.format(formatter)
+
+            fileName = "$baseName-$timestamp.$fileExtension"
+            destinationFile = File(externalDir, fileName)
+        }
+
+        // Prepare the variables for the file paths
+        var thumbnailPath = ""
+
+        // Check if we need to compress the image and handle thumbnail-only logic
+        val fileType = determineFileType(context, currentUri)
+
+        if (fileType == "Image") {
+            val folderName = if (thumbnailOnly) "icons" else "thumbnails"
+            val folderDir = File(externalDir, folderName)
+
+            if (!folderDir.exists() && !folderDir.mkdirs()) {
+                throw IOException("Failed to create $folderName directory: $folderDir")
+            }
+
+            val compressedImageFile = File(folderDir, fileName)
+
+            compressImage(context, currentUri, compressedImageFile, width, height)
+
+            thumbnailPath = compressedImageFile.toString()
+            if (thumbnailOnly) {
+                return Pair(thumbnailPath, "") // Only return the thumbnail file path
+            }
+        }
+
+        // If not in "thumbnailOnly" mode, copy the original file as well
+        val inputStream = context.contentResolver.openInputStream(currentUri)
+            ?: throw IOException("Unable to open input stream for URI: $currentUri")
         val outputStream = destinationFile.outputStream()
         copyStream(inputStream, outputStream) // Use existing function to copy file contents
         inputStream.close()
         outputStream.close()
+
         Toast.makeText(context, "File imported successfully! You can find it in Documents/topics/files.", Toast.LENGTH_SHORT).show()
-        return destinationFile.toString()
+        return Pair(destinationFile.toString(), thumbnailPath)
 
     } catch (e: IOException) {
-
         Toast.makeText(context, "Error importing file: ${e.message}", Toast.LENGTH_LONG).show()
+        e.printStackTrace()
+    } catch (e: Exception) {
+        Toast.makeText(context, "Unexpected error: ${e.message}", Toast.LENGTH_LONG).show()
+        e.printStackTrace()
     }
-    return "E"
+    return Pair("E", "")
+}
+
+fun compressImage(
+    context: Context,
+    originalUri: Uri,
+    compressedFile: File,
+    maxWidth: Int = 100,
+    maxHeight: Int = 100
+): Boolean {
+    val originalBitmap = BitmapFactory.decodeStream(
+        context.contentResolver.openInputStream(originalUri)
+    )
+
+    if (originalBitmap == null) return false
+
+    // Calculate aspect ratio
+    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+    val newWidth: Int
+    val newHeight: Int
+
+    if (originalBitmap.width > originalBitmap.height) {
+        newWidth = maxWidth
+        newHeight = (maxWidth / aspectRatio).toInt()
+    } else {
+        newHeight = maxHeight
+        newWidth = (maxHeight * aspectRatio).toInt()
+    }
+
+    // Resize the bitmap while keeping the aspect ratio
+    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
+    var outputStream: FileOutputStream? = null
+    try {
+        outputStream = FileOutputStream(compressedFile)
+        // Compress the resized image
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        outputStream.flush()
+
+        return true // Successful compression and save
+    } catch (e: IOException) {
+        e.printStackTrace()
+        return false // In case of an error
+    } finally {
+        outputStream?.close()
+        resizedBitmap.recycle() // Recycle the bitmap to free up memory
+    }
 }
 
 
+
+
+//// Compress the image and save it to the thumbnails folder
+//fun compressImage(
+//    uri: Uri,
+//    context: Context,
+//    compressedFile: File,
+//    compressionPercentage: Int
+//) {
+//    // Ensure that the compression percentage is within the valid range (0-100)
+//    val validCompressionPercentage = compressionPercentage.coerceIn(0, 100)
+//    val inputStream = context.contentResolver.openInputStream(uri)
+//        ?: throw IOException("Unable to open input stream for URI: $uri")
+//
+//    val originalBitmap = BitmapFactory.decodeStream(inputStream)
+//    inputStream.close()
+//
+//    val outputStream = FileOutputStream(compressedFile)
+//    originalBitmap.compress(Bitmap.CompressFormat.JPEG, validCompressionPercentage, outputStream)
+//    outputStream.close()
+//}
+//
+//
+//fun compressImageToUri(
+//    context: Context,
+//    originalUri: Uri,
+//    compressedUri: Uri,
+//    maxWidth: Int = 100,
+//    maxHeight: Int = 100,
+//): Boolean {
+//    val originalBitmap = BitmapFactory.decodeStream(
+//        context.contentResolver.openInputStream(originalUri)
+//    )
+//
+//    if (originalBitmap == null) return false
+//
+//    // Calculate aspect ratio
+//    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+//    val newWidth: Int
+//    val newHeight: Int
+//
+//    if (originalBitmap.width > originalBitmap.height) {
+//        newWidth = maxWidth
+//        newHeight = (maxWidth / aspectRatio).toInt()
+//    } else {
+//        newHeight = maxHeight
+//        newWidth = (maxHeight * aspectRatio).toInt()
+//    }
+//    // Resize the bitmap while keeping the aspect ratio
+//    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
+//    var outputStream: FileOutputStream? = null
+//    try {
+//        val outputFile = File(compressedUri.path) // Assuming compressedUri is a file path URI
+//        outputStream = FileOutputStream(outputFile)
+//        // Compress the resized image
+//        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+//        outputStream.flush()
+//
+//        return true // Successful compression and save
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//        return false // In case of an error
+//    } finally {
+//        outputStream?.close()
+//        resizedBitmap.recycle() // Recycle the bitmap to free up memory
+//    }
+//}
+//

@@ -20,6 +20,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.example.topics2.model.TopicSearchHandler
+import com.example.topics2.model.tblTopicIdName
 import com.example.topics2.ui.themes.CustomTertiary
 
 // TODO ADD CATEGORY TO DB WHEN ADDING TOPIC
@@ -32,14 +36,41 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     var cTopicColor: Color = defaultColor
     var cFontColor: Color = Color.Black
 
-
-
     // Get and refresh the topic list
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
     val topics: StateFlow<List<TopicTbl>> = _topics
     private fun collectTopics() {
-        topicDao.getAllTopics().onEach { topicList ->_topics.value = topicList
+        topicDao.getAllTopics().onEach {
+            topicList ->_topics.value = topicList
+            createTopicsSubset(topicList)
         }.launchIn(viewModelScope)
+    }
+
+    private val topicSearchHandler: TopicSearchHandler = TopicSearchHandler(emptyList())
+    private val _topicsSubset = MutableStateFlow<List<tblTopicIdName>>(emptyList())
+    private val _topicsMap = MutableStateFlow<Map<Int, TopicTbl>>(emptyMap())
+
+    // For search results
+    private val _searchResults = MutableLiveData<List<tblTopicIdName>>()
+    val searchResults: LiveData<List<tblTopicIdName>> get() = _searchResults
+
+    fun createTopicsSubset(topicList: List<TopicTbl>) {
+        _topicsSubset.value = topicList.map { tblTopicIdName(it.id, it.name) }
+        // Create a Map for fast lookup by id
+        val topicsMap = topicList.associateBy { it.id}
+        _topicsMap.value = topicsMap
+        topicSearchHandler.updateDataset(_topicsSubset.value)
+    }
+
+    // Access the full TopicTbl based on search result id
+    fun getTopicObjectById(topicId: Int): TopicTbl? {
+        return _topicsMap.value[topicId]
+    }
+
+    fun search(query: String, debounceTime: Long = 150L) {
+        topicSearchHandler.search(query, debounceTime) { results ->
+            _searchResults.postValue(results)
+        }
     }
 
     // This is when adding topic colour

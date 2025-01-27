@@ -49,7 +49,7 @@ val cFont = Typography(
 val cSearchFont = TextStyle(
     fontFamily = FontFamily.Default,
     fontWeight = FontWeight.Normal,
-    fontSize = 20.sp,
+    fontSize = 14.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 )
@@ -73,4 +73,7 @@ val cMessageFont = TextStyle(
 )
 val cShowMoreFont = cMessageFont.copy(
     textDecoration = TextDecoration.Underline,
+)
+val cSearchTopicFont = cSearchFont.copy(
+    color=Color.Gray
 )

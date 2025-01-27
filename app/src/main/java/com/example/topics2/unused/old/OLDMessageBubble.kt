@@ -1,4 +1,4 @@
-package com.example.topics2.unused
+package com.example.topics2.unused.old
 
 //import androidx.compose.ui.Modifier
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -133,7 +133,7 @@ fun OLDMessageBubble(
                 text = { Text("Delete Message") },
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.deleteMessage(message.id, topicId,)
+                        viewModel.deleteMessage(message.id)
                         showMenu = false
                     }
                 }
