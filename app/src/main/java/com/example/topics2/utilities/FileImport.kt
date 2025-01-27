@@ -21,11 +21,10 @@ import java.time.format.DateTimeFormatter
 //RETURN NORMAL PATH FIRST, THEN THUMBNAIL PATH
 fun copyFileToUserFolder(
     context: Context,
-    messageViewModel: MessageViewModel,
     currentUri: Uri,
     directoryName: String,
-    compressionPercentage: Int? = null, // Optional parameter for compression
-    thumbnailOnly: Boolean = false // New boolean parameter to control whether to only write to thumbnails
+    compressionPercentage: Int? = null,
+    thumbnailOnly: Boolean = false
 ): Pair<String, String> {
 
     if (currentUri.path.isNullOrBlank()) {
@@ -35,7 +34,6 @@ fun copyFileToUserFolder(
 
     try {
         val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files/$directoryName")
-
         if (!externalDir.exists() && !externalDir.mkdirs()) {
             throw IOException("Failed to create directory: $externalDir")
         }
@@ -64,25 +62,24 @@ fun copyFileToUserFolder(
         val fileType = determineFileType(context, currentUri)
 
         if (compressionPercentage != null && fileType == "Image") {
-            val thumbnailDir = File(externalDir, "thumbnails")
-            if (!thumbnailDir.exists() && !thumbnailDir.mkdirs()) {
-                throw IOException("Failed to create thumbnails directory: $thumbnailDir")
+            val folderName = if (thumbnailOnly) "icons" else "thumbnails"
+            val folderDir = File(externalDir, folderName)
+
+            if (!folderDir.exists() && !folderDir.mkdirs()) {
+                throw IOException("Failed to create $folderName directory: $folderDir")
             }
 
-            val compressedImageFile = File(thumbnailDir, fileName)
+            val compressedImageFile = File(folderDir, fileName)
 
-            // Compress and save the image to the thumbnails folder
             compressImage(currentUri, context, compressedImageFile, compressionPercentage)
 
             thumbnailPath = compressedImageFile.toString()
-
-            // If the "thumbnailOnly" flag is true, we don't need to copy the original file
             if (thumbnailOnly) {
                 return Pair(thumbnailPath, "") // Only return the thumbnail file path
             }
         }
 
-        // If we're not in "thumbnailOnly" mode, copy the original file as well
+        // If not in "thumbnailOnly" mode, copy the original file as well
         val inputStream = context.contentResolver.openInputStream(currentUri)
             ?: throw IOException("Unable to open input stream for URI: $currentUri")
         val outputStream = destinationFile.outputStream()
