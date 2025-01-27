@@ -34,7 +34,6 @@ import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
 import com.example.topics2.ui.screens.ShowMorePictures
-import com.example.topics2.ui.screens.T2SearchUI
 import com.example.topics2.ui.screens.TopicListScreen
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.MessageViewModel
@@ -112,7 +111,6 @@ fun TestApp(context: Context) {
                     composable("navSearchTest") { fTestSearchScreen( navController) }
                     composable("navnewFuzzy") { UniqueFuzzySearchScreen () }
                     //composable("newSearch") { NewSearchScreen () }
-                    composable("newSearch") {T2SearchUI(generateTableData(2000))}
                     //composable("navFuzzy") { FuzzySearchScreen () }
                     composable("navTest4") { PreviewOverflowingLayout () }
                     composable("navTest2") { PreviewChatBubble () }

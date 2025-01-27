@@ -42,7 +42,8 @@ data class FileTbl(
 )
 data class FileInfo(
    val filePath: String,
-   val fileType: String
+   val fileType: String,
+   val iconPath: String
 )
 data class FilePath(
     val id: Int,
