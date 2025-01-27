@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import com.example.topics.utilities.copyFileToUserFolder
 //import com.example.topics.utilities.copyIconToAppFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
@@ -101,17 +103,22 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val nColor : Color = viewModel.colour.value
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
+                    var tempPath = Pair("","")
                     if (viewModel.fileURI.value.length > 4) {
-                        Log.d("QQWWEE: ", viewModel.fileURI.value)
-                        // TODO I BROKE THIS
-                        //copyIconToAppFolder(context, viewModel)
-                   }
+                        tempPath = copyFileToUserFolder(
+                            context = context,
+                            currentUri = viewModel.fileURI.value.toUri(),
+                            directoryName = "",
+                            compressionPercentage = 20,
+                            thumbnailOnly = true
+                        )
+                    }
                     viewModel.addTopic(
                         topicName = inputText,
                         topicColour = iColor,
 //                        topicCategory = viewModel.tempcategory.value,
                         topicCategory = 1,
-                        topicIconPath = viewModel.fileURI.value,
+                        topicIconPath = tempPath.first,
                         topicPriority = 0,
                     )
 

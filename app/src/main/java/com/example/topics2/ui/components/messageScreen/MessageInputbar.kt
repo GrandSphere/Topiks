@@ -315,7 +315,6 @@ fun InputBarMessageScreen(
                                         val filetype = determineFileType(context, uri)
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
-                                            messageViewModel = viewModel,
                                             currentUri = uri,
                                             directoryName = filetype,
                                             compressionPercentage = 40)
@@ -368,7 +367,6 @@ fun InputBarMessageScreen(
                                         val filetype = determineFileType(context, uri)
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
-                                            messageViewModel = viewModel,
                                             currentUri = uri,
                                             directoryName = filetype,
                                             compressionPercentage = 40)
