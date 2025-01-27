@@ -278,11 +278,11 @@ fun InputBarMessageScreen(
             val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
             val copiedFilePathList = mutableListOf<String>()
-            var tempFilePath: String = ""
+            var tempFilePath = Pair("","")
             IconButton( // SEND BUTTON
                 onClick = {
                     copiedFilePathList.clear()
-                    tempFilePath = ""
+                    tempFilePath = Pair("","")
                     Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
                     tempInputText = inputText
                     inputText = ""
@@ -309,19 +309,27 @@ fun InputBarMessageScreen(
                                 Log.d("QQWWEE: deelted: ", deletedFiles.toString())
                                 // Add any additional files to the DB
                                 if (!addedFiles.isNullOrEmpty()) {
-                                    tempFilePath = ""
+                                    tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     addedFiles.forEach { uri ->
                                         val filetype = determineFileType(context, uri)
-                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri, filetype)
+                                        tempFilePath = copyFileToUserFolder(
+                                            context = context,
+                                            messageViewModel = viewModel,
+                                            currentUri = uri,
+                                            directoryName = filetype,
+                                            compressionPercentage = 40)
+                                        val normalFilePath =tempFilePath.first
+                                        val thumbnailFilePath =tempFilePath.second
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
                                             messageId = messageID,
                                             fileType = filetype,
-                                            filePath = tempFilePath,
+                                            filePath = normalFilePath,
                                             description = "",
                                             categoryId = 1,
+                                            iconPath = thumbnailFilePath
                                         )
                                     }
                                 }
@@ -354,19 +362,28 @@ fun InputBarMessageScreen(
                                 )
 
                                 if (!selectedFileUris.value.isNullOrEmpty()) {
-                                    tempFilePath = ""
+                                    tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     selectedFileUris.value?.forEach { uri ->
                                         val filetype = determineFileType(context, uri)
-                                        tempFilePath = copyFileToUserFolder(context, viewModel, uri, filetype)
-                                        copiedFilePathList.add(tempFilePath)
+                                        tempFilePath = copyFileToUserFolder(
+                                            context = context,
+                                            messageViewModel = viewModel,
+                                            currentUri = uri,
+                                            directoryName = filetype,
+                                            compressionPercentage = 40)
 
+                                        val normalFilePath =tempFilePath.first
+                                        val thumbnailFilePath =tempFilePath.second
+
+                                        //copiedFilePathList.add(tempFilePath)
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
                                             messageId = messageId.toInt(),
                                             fileType = determineFileType(context, uri),
-                                            filePath = tempFilePath,
+                                            filePath = normalFilePath,
+                                            iconPath =  thumbnailFilePath,
                                             description = "",
                                             categoryId = 1,
                                         )
