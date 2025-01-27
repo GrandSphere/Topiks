@@ -287,7 +287,9 @@ fun InputBarMessageScreen(
                     tempInputText = inputText
                     inputText = ""
                     viewModel.setToFocusTextbox(false)
+
                     if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
+                        // Edit mode
                         if ((bEditedMode) && (viewModel.tempMessageId.value > -1)){
                             coroutineScope.launch {
                                 val messageID: Int = tempMessageID
@@ -300,13 +302,10 @@ fun InputBarMessageScreen(
                                     type = 1
                                 )
 
-                                Log.d("QQWWEE: sekected: ", selectedFileUris.value.toString())
                                 val(deletedFiles, addedFiles) = compareFileLists(
                                     selectedFileUrisBeforeEdit.value,
                                     selectedFileUris.value
                                 )
-                                Log.d("QQWWEE: ADDED: ", addedFiles.toString())
-                                Log.d("QQWWEE: deelted: ", deletedFiles.toString())
                                 // Add any additional files to the DB
                                 if (!addedFiles.isNullOrEmpty()) {
                                     tempFilePath = Pair("","")
@@ -347,8 +346,8 @@ fun InputBarMessageScreen(
                                 viewModel.setEditMode(false)
                                 bEditedMode = false
                             }
+
                         } else {
-                            Log.d("ARST", "THIS IS WHERE WE ARE")
                             // Write message to db
                             coroutineScope.launch {
 
