@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.topics.utilities.copyFileToUserFolder
 import com.example.topics.utilities.determineFileType
+import com.example.topics2.ui.components.global.CustomButton
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.unused.old.getFileNameFromString
@@ -251,23 +252,20 @@ fun InputBarMessageScreen(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton( // ADD BUTTON
+            CustomButton( // ADD BUTTON
                 onClick = {
                     openFileLauncher.launch(arrayOf("*/*"))
                 },
-                modifier = Modifier
+                buttonModifier = Modifier
                     .size(vButtonSize)
-                    .align(Alignment.Bottom)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Attach",
-                    //tint = colors.tertiary,
-                    tint = topicColour,
-                    modifier = Modifier
-                        .height(vIconSize)
-                )
-            }
+                    .align(Alignment.Bottom),
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Attach",
+                //tint = colors.tertiary,
+                tint = topicColour,
+                iconModifier = Modifier
+                    .height(vIconSize)
+            )
 
             Spacer(
                 modifier = focusModifier
@@ -279,7 +277,14 @@ fun InputBarMessageScreen(
             val context = LocalContext.current
             val copiedFilePathList = mutableListOf<String>()
             var tempFilePath = Pair("","")
-            IconButton( // SEND BUTTON
+            CustomButton( // SEND BUTTON
+                onLongPress = {
+                    inputText=""
+                    selectedFileUris.value = emptyList()
+                    viewModel.setTempMessageId(-1)
+                    viewModel.setEditMode(false)
+                    bEditedMode=false
+                },
                 onClick = {
                     copiedFilePathList.clear()
                     tempFilePath = Pair("","")
@@ -392,7 +397,7 @@ fun InputBarMessageScreen(
                     }
                     viewModel.setTempMessageId(-1)
                 },
-                modifier = Modifier
+                buttonModifier = Modifier
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onLongPress = { offset ->
@@ -407,19 +412,16 @@ fun InputBarMessageScreen(
                     .size(vButtonSize)
                     .fillMaxWidth(1f)
                     //.background(Color.Transparent)
-                    .align(Alignment.Bottom)
-            ) {
-                Icon(
-                    imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
-                    //imageVector = Icons.Filled.Send, // Attach file icon
-                    contentDescription = "Attach",
-                    //tint = colors.tertiary,
-                    tint = topicColour,
-                    modifier = Modifier
-                        .size(vIconSize)
-                    //.aspectRatio(2.5f)
-                )
-            }
+                    .align(Alignment.Bottom),
+                imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
+                //imageVector = Icons.Filled.Send, // Attach file icon
+                contentDescription = "Attach",
+                //tint = colors.tertiary,
+                tint = topicColour,
+                iconModifier = Modifier
+                    .size(vIconSize)
+                //.aspectRatio(2.5f)
+            )
             Spacer(modifier = Modifier.width(12.dp))
         }
     }
