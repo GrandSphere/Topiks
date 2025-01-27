@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
 import com.example.topics.ui.themes.cShowMoreFont
+import com.example.topics2.db.entities.FileInfoWithIcon
 import picturesPreview
 
 
@@ -45,7 +46,7 @@ fun MessageBubble( // New Message Bubble
     containsPictures: Boolean= false,
     containsAttachments: Boolean = false,
     containsMessage: Boolean = true,
-    listOfPictures: List<String> = emptyList<String>(),
+    listOfPictures: List<FileInfoWithIcon> = emptyList<FileInfoWithIcon>(),
     listOfAttachmentsP: List<String> = emptyList<String>(),
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -54,12 +55,11 @@ fun MessageBubble( // New Message Bubble
     timestamp: String
 ) {
     var messagecontent = messageContent
-    val imagePaths = listOfPictures
 
     var showMenu by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
     val listOfAttachments: List<String> =  listOfAttachmentsP
-    val iPictureCount: Int = imagePaths.size
+    val iPictureCount: Int = listOfPictures.size
 
     var showMore by remember { mutableStateOf(false) }
     val withContentWidth: Float = 0.8f
@@ -75,7 +75,6 @@ fun MessageBubble( // New Message Bubble
                 detectTapGestures(
                     onLongPress = {
                         showMenu=true
-//                        Log.d("arst","in messagebuble")
                     }
                 )
             }
@@ -94,7 +93,7 @@ fun MessageBubble( // New Message Bubble
                     modifiera = Modifier
                         .padding(vertical = 4.dp, horizontal = 1.dp)
                         .fillMaxWidth(),
-                    imagePaths = imagePaths,
+                    listOfImages = listOfPictures,
                     iPictureCount = iPictureCount,
                     topicColor = topicColor,
                     topicFontColor = topicFontColor,

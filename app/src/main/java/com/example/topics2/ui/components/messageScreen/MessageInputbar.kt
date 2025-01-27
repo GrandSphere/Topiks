@@ -66,7 +66,6 @@ fun InputBarMessageScreen(
     topicColour: Color = MaterialTheme.colorScheme.onPrimary,
     onFocus: () -> Unit ={},
 ) {
-
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
     val vButtonSize: Dp = 40.dp // You can change this value as needed
     val vClearButtonSize: Dp = 15.dp // You can change this value as needed
@@ -86,6 +85,8 @@ fun InputBarMessageScreen(
     val focusRequester2 = remember { FocusRequester() }
     var bEditedMode by remember { mutableStateOf(false) }
 
+    val widthSetting = 500
+    val heightSetting = 500
     // FilePicker Logic
 
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
@@ -321,7 +322,9 @@ fun InputBarMessageScreen(
                                             context = context,
                                             currentUri = uri,
                                             directoryName = filetype,
-                                            compressionPercentage = 40)
+                                            height =  heightSetting,
+                                            width = widthSetting,
+                                            )
                                         val normalFilePath =tempFilePath.first
                                         val thumbnailFilePath =tempFilePath.second
                                         // add list of paths to DB
@@ -373,7 +376,9 @@ fun InputBarMessageScreen(
                                             context = context,
                                             currentUri = uri,
                                             directoryName = filetype,
-                                            compressionPercentage = 40)
+                                            height = heightSetting,
+                                            width = widthSetting,
+                                            )
 
                                         val normalFilePath =tempFilePath.first
                                         val thumbnailFilePath =tempFilePath.second

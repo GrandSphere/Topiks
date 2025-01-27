@@ -23,7 +23,8 @@ fun copyFileToUserFolder(
     context: Context,
     currentUri: Uri,
     directoryName: String,
-    compressionPercentage: Int? = null,
+    width: Int = 100,
+    height: Int = 100,
     thumbnailOnly: Boolean = false
 ): Pair<String, String> {
 
@@ -61,7 +62,7 @@ fun copyFileToUserFolder(
         // Check if we need to compress the image and handle thumbnail-only logic
         val fileType = determineFileType(context, currentUri)
 
-        if (compressionPercentage != null && fileType == "Image") {
+        if (fileType == "Image") {
             val folderName = if (thumbnailOnly) "icons" else "thumbnails"
             val folderDir = File(externalDir, folderName)
 
@@ -71,7 +72,7 @@ fun copyFileToUserFolder(
 
             val compressedImageFile = File(folderDir, fileName)
 
-            compressImage(currentUri, context, compressedImageFile, compressionPercentage)
+            compressImage(context, currentUri, compressedImageFile, width, height)
 
             thumbnailPath = compressedImageFile.toString()
             if (thumbnailOnly) {
@@ -100,22 +101,117 @@ fun copyFileToUserFolder(
     return Pair("E", "")
 }
 
-// Compress the image and save it to the thumbnails folder
 fun compressImage(
-    uri: Uri,
     context: Context,
+    originalUri: Uri,
     compressedFile: File,
-    compressionPercentage: Int
-) {
-    // Ensure that the compression percentage is within the valid range (0-100)
-    val validCompressionPercentage = compressionPercentage.coerceIn(0, 100)
-    val inputStream = context.contentResolver.openInputStream(uri)
-        ?: throw IOException("Unable to open input stream for URI: $uri")
+    maxWidth: Int = 100,
+    maxHeight: Int = 100
+): Boolean {
+    val originalBitmap = BitmapFactory.decodeStream(
+        context.contentResolver.openInputStream(originalUri)
+    )
 
-    val originalBitmap = BitmapFactory.decodeStream(inputStream)
-    inputStream.close()
+    if (originalBitmap == null) return false
 
-    val outputStream = FileOutputStream(compressedFile)
-    originalBitmap.compress(Bitmap.CompressFormat.JPEG, validCompressionPercentage, outputStream)
-    outputStream.close()
+    // Calculate aspect ratio
+    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+    val newWidth: Int
+    val newHeight: Int
+
+    if (originalBitmap.width > originalBitmap.height) {
+        newWidth = maxWidth
+        newHeight = (maxWidth / aspectRatio).toInt()
+    } else {
+        newHeight = maxHeight
+        newWidth = (maxHeight * aspectRatio).toInt()
+    }
+
+    // Resize the bitmap while keeping the aspect ratio
+    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
+    var outputStream: FileOutputStream? = null
+    try {
+        outputStream = FileOutputStream(compressedFile)
+        // Compress the resized image
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        outputStream.flush()
+
+        return true // Successful compression and save
+    } catch (e: IOException) {
+        e.printStackTrace()
+        return false // In case of an error
+    } finally {
+        outputStream?.close()
+        resizedBitmap.recycle() // Recycle the bitmap to free up memory
+    }
 }
+
+
+
+
+//// Compress the image and save it to the thumbnails folder
+//fun compressImage(
+//    uri: Uri,
+//    context: Context,
+//    compressedFile: File,
+//    compressionPercentage: Int
+//) {
+//    // Ensure that the compression percentage is within the valid range (0-100)
+//    val validCompressionPercentage = compressionPercentage.coerceIn(0, 100)
+//    val inputStream = context.contentResolver.openInputStream(uri)
+//        ?: throw IOException("Unable to open input stream for URI: $uri")
+//
+//    val originalBitmap = BitmapFactory.decodeStream(inputStream)
+//    inputStream.close()
+//
+//    val outputStream = FileOutputStream(compressedFile)
+//    originalBitmap.compress(Bitmap.CompressFormat.JPEG, validCompressionPercentage, outputStream)
+//    outputStream.close()
+//}
+//
+//
+//fun compressImageToUri(
+//    context: Context,
+//    originalUri: Uri,
+//    compressedUri: Uri,
+//    maxWidth: Int = 100,
+//    maxHeight: Int = 100,
+//): Boolean {
+//    val originalBitmap = BitmapFactory.decodeStream(
+//        context.contentResolver.openInputStream(originalUri)
+//    )
+//
+//    if (originalBitmap == null) return false
+//
+//    // Calculate aspect ratio
+//    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+//    val newWidth: Int
+//    val newHeight: Int
+//
+//    if (originalBitmap.width > originalBitmap.height) {
+//        newWidth = maxWidth
+//        newHeight = (maxWidth / aspectRatio).toInt()
+//    } else {
+//        newHeight = maxHeight
+//        newWidth = (maxHeight * aspectRatio).toInt()
+//    }
+//    // Resize the bitmap while keeping the aspect ratio
+//    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
+//    var outputStream: FileOutputStream? = null
+//    try {
+//        val outputFile = File(compressedUri.path) // Assuming compressedUri is a file path URI
+//        outputStream = FileOutputStream(outputFile)
+//        // Compress the resized image
+//        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+//        outputStream.flush()
+//
+//        return true // Successful compression and save
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//        return false // In case of an error
+//    } finally {
+//        outputStream?.close()
+//        resizedBitmap.recycle() // Recycle the bitmap to free up memory
+//    }
+//}
+//

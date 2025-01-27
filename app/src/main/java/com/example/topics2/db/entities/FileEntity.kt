@@ -50,3 +50,7 @@ data class FilePath(
     val filePath: String
 )
 
+data class FileInfoWithIcon(
+    val filePath: String,
+    val iconPath: String?
+)
