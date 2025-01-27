@@ -3,10 +3,15 @@ package com.example.topics.utilities
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.io.File
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // TODO: Add to settings where user want app folder
 
@@ -19,26 +24,32 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, c
     }
 
     try {
-        // Use a public directory like Downloads
         val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files")
+          //val externalDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "topics/files")
+
+        //val externalDir = File(context.getExternalFilesDir(null)?.parentFile, "com.yourpackage.name/Topics")
 
         if (!externalDir.exists() && !externalDir.mkdirs()) {
             throw IOException("Failed to create directory: $externalDir")
         }
-        // Extract the file name from the URI
-        val fileName = getFileNameFromUri(context, currentUri)
+        var fileName = getFileNameFromUri(context, currentUri)
+        var destinationFile = File(externalDir, fileName)
 
-        // Create the file in the accessible directory
-        val destinationFile = File(externalDir, fileName)
+        if (destinationFile.exists()) {
+            val fileExtension =  destinationFile.extension
+            val baseName = destinationFile.nameWithoutExtension
 
-        // TODO CHECK UNIQUENESS AND RENAME
-     //   if (destinationFile.exists()) {
-     //       Toast.makeText(context, "File already exists in destination folder.", Toast.LENGTH_SHORT).show()
-     //       return "E"
-     //   }
+            // Get the current date and time
+            val now = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+            val timestamp = now.format(formatter)
 
-        // Copy the file to the accessible folder
-        val inputStream = context.contentResolver.openInputStream(currentUri) ?: throw IOException("Unable to open input stream for URI: $currentUri")
+            fileName = "$baseName-$timestamp.$fileExtension"
+            destinationFile = File(externalDir, fileName)
+        }
+        // copy the file
+        val inputStream = context.contentResolver.openInputStream(currentUri)
+            ?: throw IOException("Unable to open input stream for URI: $currentUri")
         val outputStream = destinationFile.outputStream()
         copyStream(inputStream, outputStream) // Use existing function to copy file contents
         inputStream.close()
@@ -47,8 +58,12 @@ fun copyFileToUserFolder(context: Context, messageViewModel: MessageViewModel, c
         return destinationFile.toString()
 
     } catch (e: IOException) {
-
         Toast.makeText(context, "Error importing file: ${e.message}", Toast.LENGTH_LONG).show()
+        e.printStackTrace()
+    }
+    catch (e: Exception) {
+        Toast.makeText(context, "Unexpected error: ${e.message}", Toast.LENGTH_LONG).show()
+        e.printStackTrace()
     }
     return "E"
 }
