@@ -14,6 +14,7 @@ import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.entities.FileInfo
+import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
 import kotlinx.coroutines.flow.Flow
@@ -144,10 +145,16 @@ class MessageViewModel (
         }
     }
 
-    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
-        return filesDao.getFilesByMessageIdFlow(messageId)
-            .map{ fileList -> fileList.map { it.filePath }}
-    }
+//    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
+//        return filesDao.getFilesByMessageIdFlow(messageId)
+//            .map{ fileList -> fileList.map { it.filePath }}
+//    }
+    fun getFilesByMessageIdFlow(messageId: Int): Flow<List<FileInfoWithIcon>> {
+    return filesDao.getFilesByMessageIdFlow(messageId)
+        .map { fileList ->
+            fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
+        }
+}
 
     // Add File to File_tbl
     suspend fun addFile(

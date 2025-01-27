@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
+import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.components.messageScreen.MessageBubble
@@ -77,26 +78,44 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
-                val pictureList = mutableListOf<String>()
+                //val pictureList = mutableListOf<String>()
+                val pictureList = mutableListOf<FileInfoWithIcon>()
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
                 var hasAttachments = false
-                val filePathsForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
-
-                // Process each file path
-                for (filePath in filePathsForMessage) {
+                //val filePathsForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
+                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
+                for (fileInfo in filesForMessage) {
+                    val filePath = fileInfo.filePath
                     val fileType = determineFileType(context, filePath.toUri())
+
                     when (fileType) {
-                        "Image" -> {
-                            pictureList.add(filePath)
+                        "Image" -> { // Contain Picture
+                            pictureList.add(fileInfo)
                             hasPictures = true
                         }
-                        else -> {
+                        else -> { // Contain other file types
                             attachmentList.add(filePath)
                             hasAttachments = true
                         }
                     }
                 }
+
+                // Process each file path
+                //for (filePath in filePathsForMessage) {
+                //    val fileType = determineFileType(context, filePath.toUri())
+                //    when (fileType) {
+                //        "Image" -> {
+                //            pictureList.add(filePath)
+                //            //thumbnailList.add(thumbnailFilePath)
+                //            hasPictures = true
+                //        }
+                //        else -> {
+                //            attachmentList.add(filePath)
+                //            hasAttachments = true
+                //        }
+                //    }
+                //}
                 // Format timestamp
                 val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
 
@@ -120,7 +139,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         //TemporaryDataHolder.setMessage(message.content)
 
                         viewModel.setTempMessageId(message.id)
-                    navController.navigate("navViewMessage")
+                        navController.navigate("navViewMessage")
                     },
                     onEditClick = {
 

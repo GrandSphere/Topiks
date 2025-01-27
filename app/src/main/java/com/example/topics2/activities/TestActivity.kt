@@ -45,7 +45,6 @@ import com.example.topics2.unused.old.PreviewOverflowingLayout
 import com.example.topics2.unused.old.UniqueFuzzySearchScreen
 import com.example.topics2.unused.old.fTestSearchScreen
 import com.example.topics2.unused.old.generateTableData
-import com.example.topics2.unused.messageScreen.TestMessageScreen
 import com.example.topics2.unused.old.testScreen
 
 
@@ -105,7 +104,7 @@ fun TestApp(context: Context) {
 
 
                     composable("navShowMorePictures") { ShowMorePictures(navController) }
-                    composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
+                    //composable("navDebugChat") {TestMessageScreen(navController, messageViewModel,3)}
                     composable("navDebugChat2") {MessageScreen(navController, messageViewModel,3)}
 //                    composable("navDebugChat") { MessageScreen(navController,messageViewModel,1)}
                     composable("navSearchTest") { fTestSearchScreen( navController) }

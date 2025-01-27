@@ -1,3 +1,4 @@
+/*
 package com.example.topics2.unused.messageScreen
 
 
@@ -74,7 +75,7 @@ fun TestMessageBubble( // New Message Bubble
                         modifiera = Modifier
                             .padding(vertical = 4.dp, horizontal = 1.dp)
                             .fillMaxWidth(),
-                        imagePaths = imagePaths,
+                        listOfImages = imagePaths,
                         iPictureCount = iPictureCount,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
@@ -134,4 +135,4 @@ fun TestMessageBubble( // New Message Bubble
 
         }
     }
-}
+}*/

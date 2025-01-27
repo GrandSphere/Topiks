@@ -52,6 +52,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
     var isFocused by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
     viewModel.settemptopicname(inputText)
+    val widthSetting = 100
+    val heightSetting = 100
 
 
     val colors = MaterialTheme.colorScheme
@@ -109,7 +111,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                             context = context,
                             currentUri = viewModel.fileURI.value.toUri(),
                             directoryName = "",
-                            compressionPercentage = 20,
+                            width = widthSetting,
+                            height = heightSetting,
                             thumbnailOnly = true
                         )
                     }
