@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -101,7 +102,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
                     if (viewModel.fileURI.value.length > 4) {
-
+                        Log.d("QQWWEE: ", viewModel.fileURI.value)
                         // TODO I BROKE THIS
                         //copyIconToAppFolder(context, viewModel)
                    }
