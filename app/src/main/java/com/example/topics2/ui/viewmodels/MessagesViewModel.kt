@@ -83,6 +83,11 @@ class MessageViewModel (
             _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
         }.launchIn(viewModelScope)
     }
+    fun clearMessages()
+    {
+        _messages.value = emptyList()
+    }
+
 
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
     val messagesContentById: StateFlow<Map<Int, String>> = _messagesContentById
