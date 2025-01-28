@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -188,4 +189,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             scrollState.scrollToItem(messages.size - 1)
         }
     }
+
+   // BackHandler {
+   //     navController.popBackStack()
+   //     viewModel.clearMessages()
+   // }
 }
