@@ -17,6 +17,7 @@ import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
+import com.example.topics2.model.MessageSearchContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -108,6 +109,21 @@ class MessageViewModel (
         messageDao.deleteMessagesWithID(messageId)
     }
 
+   // suspend fun getSearchMessages():List<MessageSearchContent>
+   // {
+   //     return messageDao.getSearchMessages()
+   // }
+    // Retrieve messages
+    private val _searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
+    val searchMessages: StateFlow<List<MessageSearchContent>> = _searchMessages
+    fun collectSearchMessages() {
+        messageDao.getSearchMessages().onEach { messageList ->
+            _searchMessages.value = messageList
+        }.launchIn(viewModelScope)
+    }
+  //  suspend fun collectSearchMessages(): List<MessageSearchContent> {
+  //          return messageDao.getSearchMessages()
+  // }
     // Add Message
     suspend fun addMessage(
         topicId: Int,
@@ -150,16 +166,16 @@ class MessageViewModel (
         }
     }
 
-//    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
+    //    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
 //        return filesDao.getFilesByMessageIdFlow(messageId)
 //            .map{ fileList -> fileList.map { it.filePath }}
 //    }
     fun getFilesByMessageIdFlow(messageId: Int): Flow<List<FileInfoWithIcon>> {
-    return filesDao.getFilesByMessageIdFlow(messageId)
-        .map { fileList ->
-            fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
-        }
-}
+        return filesDao.getFilesByMessageIdFlow(messageId)
+            .map { fileList ->
+                fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
+            }
+    }
 
     // Add File to File_tbl
     suspend fun addFile(
