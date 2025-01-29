@@ -24,7 +24,6 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
  suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
 
-
  //@Query("DELETE FROM message_tbl WHERE topicId = :topicId")
  //suspend fun deleteMessagesForTopic(topicId: Int)
 

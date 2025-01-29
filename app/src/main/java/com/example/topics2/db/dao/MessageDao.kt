@@ -34,9 +34,5 @@ interface MessageDao {
 
     // GET MESSAGE ID, CONTENT AND TOPIC ID FOR SEARCH
     @Query("SELECT id, content, topicId FROM message_tbl ORDER BY lastEditTime DESC")
-    suspend fun getSearchMessages(): List<MessageSearchContent>
-
-
-
-
+    fun getSearchMessages(): Flow<List<MessageSearchContent>>
 }
