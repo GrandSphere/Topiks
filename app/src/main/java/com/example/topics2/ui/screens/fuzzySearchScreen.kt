@@ -83,19 +83,17 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                 ) {
 
                     Text( // Topic
-                        text=searchResults[item].topicId.toString(),
+                        text=searchResults[item].topicName.toString(),
                         style = cSearchTopicFont,
                     )
                     Text( // result string
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = Color.Gray)) {
-                                //append(searchResults[item].topicName.take(8) + " ")
                                 append(searchResults[item].content.take(8) + " ")
                             }
 
                             val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = searchResults[item].content.split(" ")
-                            //val contentWords = listOf("abc as")
 
                             contentWords.forEach { word ->
                                 var currentIndex = 0 // Track the current position in the word
@@ -109,7 +107,6 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                                         withStyle(style = SpanStyle(color = Color.White)) {
                                             append(word.substring(currentIndex, matchIndex))
                                         }
-
 
                                         // Append the matched part
                                         withStyle(style = SpanStyle(color = highlightColor)) {
