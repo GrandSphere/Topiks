@@ -7,19 +7,18 @@ import com.example.topics2.model.allSearchHandler
 
 class searchViewModel : ViewModel() {
 
-
     private val allSearchHandler: allSearchHandler = allSearchHandler(emptyList())
     private val _searchResults = MutableLiveData<List<MessageSearchContent>>()
     val searchResults: LiveData<List<MessageSearchContent>> get() = _searchResults
 
-    fun search(query: String, debounceTime: Long = 150L) {
+    fun allSearch(query: String, debounceTime: Long = 150L) {
         allSearchHandler.search(query, debounceTime) { results ->
             _searchResults.postValue(results)
         }
     }
-    fun updateDataset(newDataset: List<MessageSearchContent>)
+    fun updateAllSearchDataset(newDataset: List<MessageSearchContent>)
     {
        allSearchHandler.updateDataset(newDataset)
     }
-
 }
+
