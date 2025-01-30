@@ -23,6 +23,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.topics.ui.themes.cSearchTopicFont
 //import com.example.topics2.model.allSearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
@@ -30,7 +31,7 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.searchViewModel
 
 @Composable
-fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel,
+fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel, navController: NavController,
                highlightColor: Color = Color.Yellow) {
 
     messageViewModel.collectSearchMessages()
@@ -77,6 +78,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                     Text( // Topic
                         text=searchResults[item].topicName.toString(),
                         style = cSearchTopicFont,
+
                     )
                     Text( // result string
                         text = buildAnnotatedString {
@@ -116,11 +118,11 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                                         append(word.substring(currentIndex))
                                     }
                                 }
-
                                 append(" ") // Add space between words
                             }
                         }
                     )
+
                 }
             }
         }

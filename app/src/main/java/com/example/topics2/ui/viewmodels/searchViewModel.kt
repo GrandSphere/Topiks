@@ -21,4 +21,3 @@ class searchViewModel : ViewModel() {
        allSearchHandler.updateDataset(newDataset)
     }
 }
-
