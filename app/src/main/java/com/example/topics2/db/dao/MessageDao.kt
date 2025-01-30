@@ -32,10 +32,6 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
-    // GET MESSAGE ID, CONTENT AND TOPIC ID FOR SEARCH
- //   @Query("SELECT id, content, topicId FROM message_tbl ORDER BY lastEditTime DESC")
- //   fun getSearchMessages(): Flow<List<MessageSearchContent>>
-
      @Query("""
         SELECT m.id, m.content, m.topicId, t.name AS topicName
         FROM message_tbl m

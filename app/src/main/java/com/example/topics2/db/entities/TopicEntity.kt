@@ -26,4 +26,3 @@ data class TopicTbl(
     val iconPath: String,
     val priority: Int
 )
-

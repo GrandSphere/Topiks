@@ -1,6 +1,5 @@
 package com.example.topics2.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,34 +23,27 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topics.ui.themes.cSearchTopicFont
-import com.example.topics2.model.MessageSearchContent
-import com.example.topics2.model.allSearchHandler
 //import com.example.topics2.model.allSearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.MessageViewModel
-import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.ui.viewmodels.searchViewModel
-
 
 @Composable
 fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel,
                highlightColor: Color = Color.Yellow) {
 
     messageViewModel.collectSearchMessages()
+    var inputText by remember { mutableStateOf("") }
     val dataset by messageViewModel.searchMessages.collectAsState(emptyList())
-
-
     val searchResults by searchViewModel.searchResults.observeAsState(emptyList())
+
     LaunchedEffect (dataset){
         if (dataset.isNotEmpty())
         {
-            searchViewModel.updateDataset(dataset)
+            searchViewModel.updateAllSearchDataset(dataset)
         }
     }
-
-    var inputText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -63,7 +55,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
             inputText = inputText,
             onValueChange = { newText ->
                 inputText = newText
-                searchViewModel.search(newText)
+                searchViewModel.allSearch(newText)
             },
             sPlaceHolder = "Search...",
             isFocused = true,
