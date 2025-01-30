@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         //composable("newSearch") { allSearch(topicViewModel, messageViewModel, generateTableData(2000)) }
-                        composable("newSearch") { allSearch(messageViewModel, searchViewModel ) }
+                        composable("newSearch") { allSearch(messageViewModel, searchViewModel, navController ) }
 
                         composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
