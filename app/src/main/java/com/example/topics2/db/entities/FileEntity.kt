@@ -2,6 +2,7 @@ package com.example.topics2.db.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.db.enitities.TopicTbl
@@ -27,6 +28,10 @@ import com.example.topics2.db.enitities.TopicTbl
             childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["topicId"]),  // Index on topicId for faster lookups by topic
+        Index(value = ["messageId"])  // Index on messageId for faster lookups by message
     ]
 )
 data class FileTbl(

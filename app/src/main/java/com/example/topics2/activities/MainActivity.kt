@@ -1,6 +1,5 @@
 package com.example.topics2.activities
 
-
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -43,7 +42,7 @@ import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
 
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
         val searchViewModel: searchViewModel = viewModel()
 
         //database.close()
-      //  settingsViewModel.updateSetting("theme", "Very Dark")
+        //  settingsViewModel.updateSetting("theme", "Very Dark")
 
         settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
             Log.d("SETTINGS_DEBUG", "${settings}")
@@ -75,17 +74,16 @@ class MainActivity : ComponentActivity() {
         //Add test category
         LaunchedEffect(true)
         {
-            Log.d("AABBCC", "ADDED CAT")
             categoryViewModel.addtestcat()
         }
-        //messageViewModel.insertTestMessages()
-        //  Log.d("aabbccd", colorToArgb(Color.Cyan).toString())
 
         // Listen for changes in the navController's back stack and update the title accordingly
         LaunchedEffect(backStackEntry.value) {
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
+            Log.d("QQWWEE CURREN ROUTE: ", "${currentRoute}")
         }
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -104,11 +102,9 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
                 ) {
-                    // Setting up the NavHost with two screens
-                    //NavHost(navController = navController, startDestination = "navnotescreen/1/abc") {
                     NavHost(
                         navController = navController,
-                       // startDestination = "navtopicListScreen"
+                        // startDestination = "navtopicListScreen"
                         startDestination = "navtopicListScreen"
                     ) {
                         composable("navtopicListScreen") {
@@ -118,6 +114,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         //composable("newSearch") { allSearch(topicViewModel, messageViewModel, generateTableData(2000)) }
+                        composable("newSearch") { allSearch(messageViewModel, searchViewModel, navController ) }
 
                         composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
@@ -136,14 +133,19 @@ class MainActivity : ComponentActivity() {
                         composable("navShowMorePictures") { ShowMorePictures(navController) }
 
                         composable(
-                            "navnotescreen/{topicId}/{topicName}",
-                            arguments = listOf(navArgument("topicId") { type = NavType.IntType })
+                            "navnotescreen/{topicId}/{topicName}/{messageId}",
+                            //arguments = listOf(navArgument("topicId") { type = NavType.IntType })
+                            arguments = listOf(
+                                navArgument("topicId") { type = NavType.IntType },
+                                navArgument("messageId") { type = NavType.IntType }
+                            )
                         ) { backStackEntry ->
                             val topicId = backStackEntry.arguments?.getInt("topicId")
+                            val messageId = backStackEntry.arguments?.getInt("messageId") ?: -1
                             if (topicId != -1) {
                                 MessageScreen(
                                     navController, messageViewModel, topicId ?: -1,
-                                    topicColor = topicViewModel.cTopicColor,
+                                    topicColor = topicViewModel.cTopicColor, messageId = messageId
                                 )
                             }
 
@@ -153,7 +155,5 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-
-
 }
 
