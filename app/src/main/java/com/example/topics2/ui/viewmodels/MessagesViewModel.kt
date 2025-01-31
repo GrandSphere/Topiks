@@ -2,6 +2,8 @@ package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -72,20 +74,24 @@ class MessageViewModel (
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
+    private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
         messageDao.getMessagesForTopic(topicId).onEach { messageList ->
             _messages.value = messageList
             _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
+           // Generate HashMap
+           _messageIndexMap.value = messageList
+            .mapIndexed { index, message -> message.id to index }
+            .toMap()
         }.launchIn(viewModelScope)
     }
-    fun clearMessages()
-    {
-        _messages.value = emptyList()
+
+    fun getMessageIndexFromID(messageID: Int):Int {
+        return _messageIndexMap.value[messageID] ?: -1
     }
 
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
-    val messagesContentById: StateFlow<Map<Int, String>> = _messagesContentById
     fun getMessageContentById(messageId: Int): String? {
         return _messagesContentById.value[messageId]
     }

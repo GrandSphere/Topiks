@@ -1,5 +1,8 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cSearchTopicFont
 //import com.example.topics2.model.allSearchHandler
@@ -73,13 +77,21 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
+                    .clickable {
+                        val topicId = searchResults[item].topicId
+                        val name = searchResults[item].topicName
+                        val messageId = searchResults[item].id
+                        //messageViewModel.setSelectedSearchMessageID(messageId)
+                        Log.d("QQWWEE", "THIS IS THE MESAGEID: ${messageId}")
+                        Log.d("QQWWEE", "Navigating to navnotescreen with TopicId: $topicId and name: $name and messageID:$messageId")
+                        navController.navigate("navnotescreen/${topicId}/${name}/${messageId}")
+                    }
                 ) {
-
                     Text( // Topic
                         text=searchResults[item].topicName.toString(),
                         style = cSearchTopicFont,
 
-                    )
+                        )
                     Text( // result string
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = Color.Gray)) {
@@ -122,9 +134,12 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                             }
                         }
                     )
-
                 }
             }
         }
+        BackHandler(onBack = {
+            searchViewModel.setSearchResultsEmpty()
+            navController.popBackStack()
+        })
     }
 }

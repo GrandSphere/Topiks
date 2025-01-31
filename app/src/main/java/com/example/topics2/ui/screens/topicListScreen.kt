@@ -154,7 +154,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     onTap = { // Go to specific Topic
                         viewModel.cTopicColor=argbToColor(topic.colour)
                         //viewModel.setTopicColor(topic)
-                        navController.navigate("navnotescreen/${topic.id}/${topic.name}")
+                        navController.navigate("navnotescreen/${topic.id}/${topic.name}/-1")
                     },
                     onLongPress = { showMenu = true }
                 )

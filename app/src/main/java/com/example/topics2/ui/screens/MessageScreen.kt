@@ -42,7 +42,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
+fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int,
+                  messageId: Int = -1, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
     viewModel.collectMessages(topicId)
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
@@ -58,6 +59,38 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
+
+//    LaunchedEffect(selectedSearchMessageID) {
+//        selectedSearchMessageID?.let { messageId ->
+//            val messageIndex = viewModel.getMessageIndexFromID(messageId)
+//            if (messageIndex >= 0) {
+//                scrollState.animateScrollToItem(messageIndex)
+//            }
+//        }
+//        viewModel.setSelectedSearchMessageID(-1)
+//    }
+//
+//    LaunchedEffect(messages.size) {
+//        if (messages.isNotEmpty()) {
+//            //scrollState.animateScrollToItem(messages.size - 1)
+//            scrollState.scrollToItem(messages.size - 1)
+//        }
+//    }
+    // Scroll to selected message if it's set
+
+    LaunchedEffect(messages.size) {
+        if (messageId != -1) {
+            val messageIndex = viewModel.getMessageIndexFromID(messageId)
+            if (messageIndex >= 0) {
+                scrollState.scrollToItem(messageIndex)
+            }
+        } else {
+            // Scroll to the last message if no specific message ID is selected
+            if (messages.isNotEmpty()) {
+                scrollState.scrollToItem(messages.size - 1)
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -84,7 +117,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
                 var hasAttachments = false
-                //val filePathsForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
                 val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
                 for (fileInfo in filesForMessage) {
                     val filePath = fileInfo.filePath
@@ -143,8 +175,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         navController.navigate("navViewMessage")
                     },
                     onEditClick = {
-
-                        Log.d("WHAHAHA", "IN HERE")
 //                        viewModel.setToUnFocusTextbox(true)
                         //viewModel.setTempMessage(message.content)
                         //viewModel.setAmEditing(true)
@@ -177,21 +207,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         }
     }
     LaunchedEffect(showMenu) {
-//    if (showmenu){
         Log.d("arst","showmenu changed")
 
-//    }
     }
-
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            //scrollState.animateScrollToItem(messages.size - 1)
-            scrollState.scrollToItem(messages.size - 1)
-        }
-    }
-
-   // BackHandler {
-   //     navController.popBackStack()
-   //     viewModel.clearMessages()
-   // }
 }
