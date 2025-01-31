@@ -39,7 +39,7 @@ class TopicViewModel (private val topicDao: TopicDao): ViewModel() {
     // Get and refresh the topic list
     private val _topics = MutableStateFlow<List<TopicTbl>>(emptyList())
     val topics: StateFlow<List<TopicTbl>> = _topics
-    private fun collectTopics() {
+     fun collectTopics() {
         topicDao.getAllTopics().onEach {
             topicList ->_topics.value = topicList
             createTopicsSubset(topicList)

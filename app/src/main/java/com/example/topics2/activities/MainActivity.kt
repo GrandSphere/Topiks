@@ -1,6 +1,7 @@
 package com.example.topics2.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -81,7 +82,6 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(backStackEntry.value) {
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
-            Log.d("QQWWEE CURREN ROUTE: ", "${currentRoute}")
         }
 
         Scaffold(
@@ -93,6 +93,7 @@ class MainActivity : ComponentActivity() {
                     reloadTopics = {//topicController.loadTopics()
                     },
                     navController = navController,
+                    topicViewModel = topicViewModel
                 )
             },
 
@@ -154,6 +155,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         )
+    }
+     fun restartActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        finish()
+        startActivity(intent)
+         Log.d("QQWWEE", "restarted")
     }
 }
 
