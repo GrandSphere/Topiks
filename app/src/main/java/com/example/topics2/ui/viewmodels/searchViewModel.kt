@@ -11,6 +11,11 @@ class searchViewModel : ViewModel() {
     private val _searchResults = MutableLiveData<List<MessageSearchContent>>()
     val searchResults: LiveData<List<MessageSearchContent>> get() = _searchResults
 
+    fun setSearchResultsEmpty()
+    {
+        _searchResults.value = emptyList()
+    }
+
     fun allSearch(query: String, debounceTime: Long = 150L) {
         allSearchHandler.search(query, debounceTime) { results ->
             _searchResults.postValue(results)

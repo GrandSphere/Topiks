@@ -14,7 +14,7 @@ import com.example.topics2.db.entities.CategoriesTbl
 import com.example.topics2.db.entities.FileTbl
 
 
-@Database(entities = [TopicTbl::class, MessageTbl::class, CategoriesTbl::class, FileTbl::class], version = 2)
+@Database(entities = [TopicTbl::class, MessageTbl::class, CategoriesTbl::class, FileTbl::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun topicDao(): TopicDao
     abstract fun messageDao(): MessageDao
