@@ -65,20 +65,3 @@ fun multipleFilePicker(
     )
     return openFilesLauncher
 }
-@Composable
-fun FilePicker(onFileSelected: (Uri?) -> Unit) {
-    val context = LocalContext.current
-    val pickFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-        onResult = { uri: Uri? ->
-            onFileSelected(uri) // Return the selected URI
-        }
-    )
-
-    // Trigger file picker when clicked
-    Button(onClick = {
-        pickFileLauncher.launch(arrayOf("*/*")) // Open any file
-    }) {
-        Text("Pick a File")
-    }
-}
