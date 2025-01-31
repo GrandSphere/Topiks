@@ -5,11 +5,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class TopicSearchHandler(private var dataset: List<tblTopicIdName>) {
-    private var results: List<tblTopicIdName> = listOf()
+class allSearchHandler(private var dataset: List<MessageSearchContent>) {
+
+    private var results: List<MessageSearchContent> = listOf()
     private var currentJob: Job? = null
 
-    fun search(query: String, debounceTime: Long = 150L, onResults: (List<tblTopicIdName>) -> Unit) {
+    fun search(query: String, debounceTime: Long = 150L, onResults: (List<MessageSearchContent>) -> Unit) {
         currentJob?.cancel()
 
         val includes = mutableListOf<String>()
@@ -28,20 +29,18 @@ class TopicSearchHandler(private var dataset: List<tblTopicIdName>) {
 
             if (query.isNotEmpty()) {
                 results = dataset.filter { entry ->
-                    val matchesInclude = includes.all { word -> word in entry.name.lowercase() }
-                    val matchesExclude = excludes.none { word -> word in entry.name.lowercase() }
+                    val matchesInclude = includes.all { word -> word in entry.content.lowercase() }
+                    val matchesExclude = excludes.none { word -> word in entry.content.lowercase() }
                     matchesInclude && matchesExclude
                 }.take(30)
-
             } else {
                 results = emptyList()
             }
-
             onResults(results)
         }
     }
 
-    fun updateDataset(newDataset: List<tblTopicIdName>) {
+    fun updateDataset(newDataset: List<MessageSearchContent>) {
         dataset = newDataset
     }
 }

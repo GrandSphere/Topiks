@@ -2,6 +2,7 @@ package com.example.topics2.db.enitities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.topics2.db.entities.CategoriesTbl
 
@@ -21,6 +22,10 @@ import com.example.topics2.db.entities.CategoriesTbl
             childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["topicId"]),  // Index on topicId for faster lookups by topic
+        Index(value = ["lastEditTime"])  // Index on lastEditTime for faster sorting by last edit time
     ]
 )
 data class MessageTbl(

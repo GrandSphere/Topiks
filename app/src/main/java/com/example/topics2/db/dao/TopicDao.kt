@@ -24,10 +24,6 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("UPDATE topic_tbl SET LastEditTime = :lastEdit WHERE id = :topicId")
  suspend fun updateLastModifiedTopic(topicId: Int, lastEdit: Long)
 
-
- //@Query("DELETE FROM message_tbl WHERE topicId = :topicId")
- //suspend fun deleteMessagesForTopic(topicId: Int)
-
  // selects the last 50 unique colours from data base to populate recent colours
  @Query("SELECT DISTINCT Colour FROM topic_tbl ORDER BY CreateTime DESC LIMIT 50")
  fun getDistinctColorsOrdered(): Flow<List<Int>>

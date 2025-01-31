@@ -2,6 +2,8 @@ package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +19,7 @@ import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
+import com.example.topics2.model.MessageSearchContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,11 +62,6 @@ class MessageViewModel (
     val tempMessageId: StateFlow<Int> = _tempMessageId
     fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
 
-  //  //Temp message, used only for editing a message
-  //  private val _tempMessage = MutableStateFlow<String>("")
-  //  val tempMessage: StateFlow<String> = _tempMessage
-  //  fun setTempMessage(newCategory: String) {_tempMessage.value = newCategory}
-
     // Topic Color
     private val _topicColor = MutableStateFlow<Color>(Color.Cyan)
     val topicColor: StateFlow<Color> = _topicColor
@@ -76,21 +74,24 @@ class MessageViewModel (
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
+    private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
         messageDao.getMessagesForTopic(topicId).onEach { messageList ->
             _messages.value = messageList
             _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
+           // Generate HashMap
+           _messageIndexMap.value = messageList
+            .mapIndexed { index, message -> message.id to index }
+            .toMap()
         }.launchIn(viewModelScope)
     }
-    fun clearMessages()
-    {
-        _messages.value = emptyList()
+
+    fun getMessageIndexFromID(messageID: Int):Int {
+        return _messageIndexMap.value[messageID] ?: -1
     }
 
-
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
-    val messagesContentById: StateFlow<Map<Int, String>> = _messagesContentById
     fun getMessageContentById(messageId: Int): String? {
         return _messagesContentById.value[messageId]
     }
@@ -106,6 +107,15 @@ class MessageViewModel (
     // Delete Message
     suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
+    }
+
+    // Retrieve messages from all Topics, to search through
+    private val _searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
+    val searchMessages: StateFlow<List<MessageSearchContent>> = _searchMessages
+    fun collectSearchMessages() {
+        messageDao.getSearchMessages().onEach { messageList ->
+            _searchMessages.value = messageList
+        }.launchIn(viewModelScope)
     }
 
     // Add Message
@@ -150,16 +160,12 @@ class MessageViewModel (
         }
     }
 
-//    fun getFilesByMessageIdFlow(messageId: Int):Flow<List<String>> {
-//        return filesDao.getFilesByMessageIdFlow(messageId)
-//            .map{ fileList -> fileList.map { it.filePath }}
-//    }
     fun getFilesByMessageIdFlow(messageId: Int): Flow<List<FileInfoWithIcon>> {
-    return filesDao.getFilesByMessageIdFlow(messageId)
-        .map { fileList ->
-            fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
-        }
-}
+        return filesDao.getFilesByMessageIdFlow(messageId)
+            .map { fileList ->
+                fileList.map { FileInfoWithIcon(it.filePath, it.iconPath) }
+            }
+    }
 
     // Add File to File_tbl
     suspend fun addFile(
@@ -208,7 +214,6 @@ class MessageViewModel (
             categoryId = categoryId,
             type =  type
         )
-        Log.d("AASSDDFF", editedMessage.toString())
         messageDao.updateMessage(editedMessage)
     }
 
@@ -219,7 +224,6 @@ class MessageViewModel (
             override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
                 // Get the Application object from extras
                 val application = checkNotNull(extras[APPLICATION_KEY])
-
                 // Get the TopicDao from the Application class
                 val myApplication = application as DbTopics
                 return MessageViewModel(myApplication.messageDao, myApplication.topicDao, myApplication.filesDao) as T
