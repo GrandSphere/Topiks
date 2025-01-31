@@ -1,10 +1,16 @@
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 
 // FilePicker composable
 // Utility function for handling the file picking
@@ -59,4 +65,20 @@ fun multipleFilePicker(
     )
     return openFilesLauncher
 }
+@Composable
+fun FilePicker(onFileSelected: (Uri?) -> Unit) {
+    val context = LocalContext.current
+    val pickFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            onFileSelected(uri) // Return the selected URI
+        }
+    )
 
+    // Trigger file picker when clicked
+    Button(onClick = {
+        pickFileLauncher.launch(arrayOf("*/*")) // Open any file
+    }) {
+        Text("Pick a File")
+    }
+}

@@ -1,6 +1,7 @@
 package com.example.topics2.db
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -30,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getDatabase(context: Context): AppDatabase {
             // If an instance already exists, return it
             return INSTANCE ?: synchronized(this) {
+                Log.d("QQWWEE", "WHJAHAHJAJHAJAJAJAJAJA")
                 // If no instance exists, create one
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -39,6 +41,10 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE = instance
                 instance
             }
+        }
+                // Add this function to clear the existing instance
+        fun clearInstance() {
+            INSTANCE = null
         }
     }
 }
