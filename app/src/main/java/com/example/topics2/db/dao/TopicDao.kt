@@ -16,6 +16,9 @@ interface TopicDao {
  @Insert
 suspend  fun insertTopic(topic: TopicTbl)
 
+   @Insert
+    suspend fun insert(topic: TopicTbl): Long // used for test data
+
  @Query("SELECT * FROM topic_tbl ORDER BY LastEditTime DESC")
  fun getAllTopics(): Flow<List<TopicTbl>>
 
@@ -35,5 +38,7 @@ suspend  fun insertTopic(topic: TopicTbl)
 
 @RawQuery
     fun checkpoint(query: SupportSQLiteQuery): Int
-}
 
+@Query("SELECT EXISTS(SELECT 1 FROM topic_tbl WHERE name IN (:names) LIMIT 1)")
+    suspend fun anyTopicsExist(names: List<String>): Boolean
+}

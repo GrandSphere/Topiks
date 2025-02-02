@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -39,8 +41,11 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.ui.screens.MessageViewScreen
 import com.example.topics2.ui.screens.allSearch
 import com.example.topics2.ui.viewmodels.searchViewModel
+import com.example.topics2.unused.old.generateSampleMessage
 import com.example.topics2.unused.old.generateTableData
+import com.example.topics2.utilities.helper.DatabaseSeeder
 import com.example.topics2.viewmodel.SettingsViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -60,6 +65,7 @@ class MainActivity : ComponentActivity() {
         val settingsViewModel: SettingsViewModel = viewModel()
         val searchViewModel: searchViewModel = viewModel()
 
+        val databaseSeeder = DatabaseSeeder(topicDao = AppDatabase.getDatabase(context).topicDao(), messageDao = AppDatabase.getDatabase(context).messageDao())
         //database.close()
         //  settingsViewModel.updateSetting("theme", "Very Dark")
 
@@ -76,7 +82,10 @@ class MainActivity : ComponentActivity() {
         //Add test category
         LaunchedEffect(true)
         {
+
             categoryViewModel.addtestcat()
+//            databaseSeeder.generateSampleData(1)
+        databaseSeeder.generateSampleData(categoryId = 1)
         }
 
         // Listen for changes in the navController's back stack and update the title accordingly
@@ -157,4 +166,5 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
+
 }
