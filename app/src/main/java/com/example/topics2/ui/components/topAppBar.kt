@@ -28,10 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.topics.utilities.importDatabaseFromUri
+import com.example.topics2.db.AppDatabase
+import com.example.topics2.db.AppDatabase_Impl
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import iconFilePicker
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,7 +120,11 @@ fun CustomTopMenu(
             text = { Text("Import", color = colors.onBackground) }, // Use onSurface for text color
             onClick = {
                 openFileLauncher.launch(arrayOf("*/*"))
-                Log.d("QQWWEE THIS IS SELECTED", "${selectedFileUri.value}")
+                AppDatabase.getDatabase(context)
+                val databaseName = "topics_database"
+                val currentDatabaseFile = File(context.getDatabasePath(databaseName).absolutePath)
+
+                Log.d("QQWWEE THIS IS SELECTED", "${currentDatabaseFile}")
                 onDismiss()
             }
         )
