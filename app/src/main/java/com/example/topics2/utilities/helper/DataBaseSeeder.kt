@@ -12,9 +12,9 @@ class DatabaseSeeder(
     private val messageDao: MessageDao
 ) {
     private companion object {
-        const val MESSAGES_PER_TOPIC = 500
-        const val REQUIRED_TOPIC_COUNT = 100
-        const val WORDS_PER_MESSAGE = 500
+        const val MESSAGES_PER_TOPIC = 200
+        const val REQUIRED_TOPIC_COUNT = 30
+        const val WORDS_PER_MESSAGE = 300
         val TOPIC_NAMES = List(REQUIRED_TOPIC_COUNT) { "Sample Topic ${it + 1}" }
 
         val adjectives = listOf("beautiful", "fast", "slow", "ancient", "bright", "dark",
