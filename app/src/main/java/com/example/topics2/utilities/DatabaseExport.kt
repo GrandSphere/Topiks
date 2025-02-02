@@ -44,7 +44,6 @@ suspend fun ExportDatabaseWithPicker(context: Context) {
     }
 }
 
-
 suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
     try {
         val databaseName = "topics_database"
@@ -80,6 +79,7 @@ suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
         // Handle any I/O exceptions (on the main thread)
         withContext(Dispatchers.Main) {
             Toast.makeText(context, "Error exporting database: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.d("FILEACCESS", "${e.message}")
         }
     }
 }

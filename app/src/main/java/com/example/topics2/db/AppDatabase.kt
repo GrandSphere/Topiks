@@ -31,7 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
         fun getDatabase(context: Context): AppDatabase {
             // If an instance already exists, return it
             return INSTANCE ?: synchronized(this) {
-                Log.d("QQWWEE", "WHJAHAHJAJHAJAJAJAJAJA")
                 // If no instance exists, create one
                 val instance = Room.databaseBuilder(
                     context.applicationContext,

@@ -29,6 +29,7 @@ class DbTopics : Application() {
         val db = AppDatabase.getDatabase(this)  // Get database instance
         db.categoryDao()
     }
+
     override fun onCreate() {
         super.onCreate()
     }

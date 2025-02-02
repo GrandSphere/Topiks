@@ -41,6 +41,7 @@ import com.example.topics2.ui.screens.allSearch
 import com.example.topics2.ui.viewmodels.searchViewModel
 import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,11 +157,4 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-     fun restartActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        finish()
-        startActivity(intent)
-         Log.d("QQWWEE", "restarted")
-    }
 }
-
