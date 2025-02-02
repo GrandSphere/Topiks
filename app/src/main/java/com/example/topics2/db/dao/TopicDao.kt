@@ -3,6 +3,8 @@ package com.example.topics2.db.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.flow.Flow
 
@@ -31,5 +33,7 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("SELECT * FROM topic_tbl WHERE categoryId = :categoryId")
  fun getTopicsByCategoryId(categoryId: Int): Flow<List<TopicTbl>>
 
+@RawQuery
+    fun checkpoint(query: SupportSQLiteQuery): Int
 }
 

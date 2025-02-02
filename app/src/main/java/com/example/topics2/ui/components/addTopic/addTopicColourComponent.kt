@@ -52,8 +52,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
     val openFileLauncher = iconFilePicker(
         fileTypes = imageMimeTypes,
         onFileSelected = { uri: Uri? ->
-            //selectedFileUri.value = uri ?: Uri.parse("")
-            Log.d("Debug_ this is where i set", "${uri}")
+            selectedFileUri.value = uri ?: Uri.parse("")
             viewModel.setFileURI(uri.toString())
         }
     )

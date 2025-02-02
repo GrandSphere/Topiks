@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Update
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.topics2.db.entities.CategoriesTbl
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +28,8 @@ interface CategoriesDao {
 
     @Query("SELECT * FROM categories_tbl WHERE id = :categoryId")
     fun getCategoryById(categoryId: Int): Flow<CategoriesTbl>
+
+    @RawQuery
+    fun checkpoint(query: SupportSQLiteQuery): Int
+
 }

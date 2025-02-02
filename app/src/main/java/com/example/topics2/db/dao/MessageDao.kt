@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Update
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.topics2.db.enitities.MessageTbl
 import com.example.topics2.model.MessageSearchContent
 import kotlinx.coroutines.flow.Flow
@@ -39,4 +41,7 @@ interface MessageDao {
         ORDER BY m.lastEditTime DESC
     """)
     fun getSearchMessages(): Flow<List<MessageSearchContent>>
+
+    @RawQuery
+    fun checkpoint(query: SupportSQLiteQuery): Int
 }

@@ -85,7 +85,7 @@ fun TestApp(context: Context) {
                 onSettingsClick = { /* Handle settings click here */ },
                 reloadTopics = {//topicController.loadTopics()
                 },
-                navController = navController,
+                navController = navController, topicViewModel
             )
         },
 
