@@ -1,6 +1,7 @@
 package com.example.topics2.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -40,6 +41,7 @@ import com.example.topics2.ui.screens.allSearch
 import com.example.topics2.ui.viewmodels.searchViewModel
 import com.example.topics2.unused.old.generateTableData
 import com.example.topics2.viewmodel.SettingsViewModel
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +83,6 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(backStackEntry.value) {
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
-            Log.d("QQWWEE CURREN ROUTE: ", "${currentRoute}")
         }
 
         Scaffold(
@@ -93,6 +94,7 @@ class MainActivity : ComponentActivity() {
                     reloadTopics = {//topicController.loadTopics()
                     },
                     navController = navController,
+                    topicViewModel = topicViewModel
                 )
             },
 
@@ -156,4 +158,3 @@ class MainActivity : ComponentActivity() {
         )
     }
 }
-

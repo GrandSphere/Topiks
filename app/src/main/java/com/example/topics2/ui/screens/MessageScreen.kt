@@ -60,28 +60,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
 
-//    LaunchedEffect(selectedSearchMessageID) {
-//        selectedSearchMessageID?.let { messageId ->
-//            val messageIndex = viewModel.getMessageIndexFromID(messageId)
-//            if (messageIndex >= 0) {
-//                scrollState.animateScrollToItem(messageIndex)
-//            }
-//        }
-//        viewModel.setSelectedSearchMessageID(-1)
-//    }
-//
-//    LaunchedEffect(messages.size) {
-//        if (messages.isNotEmpty()) {
-//            //scrollState.animateScrollToItem(messages.size - 1)
-//            scrollState.scrollToItem(messages.size - 1)
-//        }
-//    }
-    // Scroll to selected message if it's set
 
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
             if (messageIndex >= 0) {
+                Log.d("QQWWEE", "Scrolling to messageID: ${messageId}, and messageIndex: ${messageIndex}")
                 scrollState.scrollToItem(messageIndex)
             }
         } else {

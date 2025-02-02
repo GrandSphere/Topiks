@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Update
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
@@ -39,4 +41,8 @@ interface FilesDao {
 
     @Query("SELECT * FROM file_tbl WHERE categoryId = :categoryId")
     fun getFilesByCategoryId(categoryId: Int): Flow<List<FileTbl>>
+
+    @RawQuery
+    fun checkpoint(query: SupportSQLiteQuery): Int
+
 }
