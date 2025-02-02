@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -33,6 +34,8 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.entities.FileInfoWithIcon
+import com.example.topics2.ui.components.CustomSearchBox
+import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.components.messageScreen.MessageBubble
@@ -59,7 +62,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
-
+var bSearch: Boolean by remember { mutableStateOf(false ) }
 
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
@@ -75,8 +78,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             }
         }
     }
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             //.background(Color.Red)
@@ -86,14 +88,24 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 })
             }
     ) {
+
+
+        bSearch= true
+        if (bSearch) {
+            CustomSearchBox("", {})
+        }
+
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .fillMaxSize()
+//                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
             // Checks attachments and photos before sending to messageBubble
+
             items(messages.size) { index ->
                 val message = messages[index]
                 //val pictureList = mutableListOf<String>()
@@ -170,22 +182,18 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     }
                 )
             }
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .height(0.dp)
-                )
-            }
+//            item { Spacer( modifier = Modifier .height(0.dp) ) }
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 //.background(Color.Transparent)
-                .align(Alignment.BottomCenter)
-                .onSizeChanged { size ->
-                    inputBarHeightPx = size.height
-                }
+//                .align(Alignment.BottomCenter)
+//                .align(Alignment.Bottom)
+//                .onSizeChanged { size ->
+//                    inputBarHeightPx = size.height
+//                }
         ) {
             InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
