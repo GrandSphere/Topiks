@@ -1,14 +1,20 @@
 package com.example.topics2.ui.components
 
-import ExportDatabaseWithPicker
-import android.net.Uri
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,122 +24,95 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
-import com.example.topics.utilities.importDatabaseFromUri
-import com.example.topics2.db.AppDatabase
-import com.example.topics2.db.AppDatabase_Impl
-import com.example.topics2.ui.viewmodels.TopicViewModel
-import iconFilePicker
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import java.io.File
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun CustomTopAppBar(
     title: String,
-    onSettingsClick: () -> Unit,
-    reloadTopics:() -> Unit,
     navController: NavController,
-    topicViewModel: TopicViewModel
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
-    val colors = MaterialTheme.colorScheme
 
     TopAppBar(
+//        CenterAlignedTopAppBar(
+         modifier = Modifier.height(45.dp),
+//        title = { Text(text = title) },
         title = {
-            Text(text = title)
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()           // Take the full height of the TopAppBar
+                    .padding(vertical = 0.dp), // Remove extra vertical padding
+                contentAlignment = Alignment.CenterStart // Center only vertically and align to start (left)
+            ) {
+                Text(text = title)
+            }
         },
         actions = {
-            IconButton(onClick = { isMenuExpanded = true }) {
+            IconButton(
+                onClick = { isMenuExpanded = true }
+
+            ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Settings",
-                    //tint = colors.onSurface
                 )
             }
-
-            CustomTopMenu (
+            CustomTopMenu(
                 isMenuExpanded = isMenuExpanded,
                 onDismiss = { isMenuExpanded = false },
-                reloadTopics = reloadTopics,
-                navController = navController,
-                topicViewModel = topicViewModel
+                navController = navController
             )
         },
     )
 }
 
 
+
 @Composable
 fun CustomTopMenu(
     isMenuExpanded: Boolean,
     onDismiss: () -> Unit,
-    reloadTopics: () -> Unit,
     navController: NavController,
-    topicViewModel: TopicViewModel
 ) {
-    val colors = MaterialTheme.colorScheme // Use the theme color scheme
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val menuItems by topBarViewModel.menuItems.collectAsState()
 
-    // FilePicker Logic
-
-    // FilePicker Logic
-    val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
-    val openFileLauncher = iconFilePicker(
-        onFileSelected = { uri: Uri? ->
-            selectedFileUri.value = uri ?: Uri.parse("")
-            Log.d("QQWWEE Debug_ this is where i set", "${uri}")
-            // TODO: DO additional checks if valid db
-            if (uri != null && uri != Uri.parse("")) {
-                coroutineScope.launch {
-                    importDatabaseFromUri(context, uri)
-                }
-            }
-        }
-    )
     DropdownMenu(
         expanded = isMenuExpanded,
         onDismissRequest = { onDismiss() },
-        modifier = Modifier.background(colors.background) // Background color for the dropdown
+        properties = PopupProperties(focusable = true),
+        modifier = Modifier
+            .background(Color.Black)
     ) {
-        DropdownMenuItem(
-            text = { Text("Export", color = colors.onBackground) },
-            onClick = {
-                coroutineScope.launch {
-                    ExportDatabaseWithPicker(context)
+        Box(
+            modifier = Modifier.fillMaxSize(), // Ensure it always takes up full height
+            contentAlignment = Alignment.TopStart // Keep items at the top
+        ) {
+            Column {
+                menuItems.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(item.label, color = Color.White) },
+                        onClick = {
+                            item.onClick()
+                            onDismiss()
+                        }
+                    )
                 }
-                onDismiss()
-
             }
-        )
-        DropdownMenuItem(
-            text = { Text("Import", color = colors.onBackground) }, // Use onSurface for text color
-            onClick = {
-                openFileLauncher.launch(arrayOf("*/*"))
-                AppDatabase.getDatabase(context)
-                val databaseName = "topics_database"
-                val currentDatabaseFile = File(context.getDatabasePath(databaseName).absolutePath)
-
-                Log.d("QQWWEE THIS IS SELECTED", "${currentDatabaseFile}")
-                onDismiss()
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Close", color = colors.onBackground) }, // Use onSurface for text color
-            onClick = {
-                onDismiss()
-                // Handle Close action here
-            }
-        )
+        }
     }
 }
