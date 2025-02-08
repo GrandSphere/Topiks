@@ -95,6 +95,7 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
 
         bSearch= true
         if (bSearch) {
+
             CustomSearchBox(
                 inputText = inputText,
                 sPlaceHolder = "Search Topics...",
@@ -102,6 +103,7 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
                     inputText = newText
                     viewModel.messageSearch(newText)
                 },
+                bShowSearchNav = true,
             )
         }
 
@@ -127,34 +129,9 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
                     {
 
                         Log.d("QWERT","${messageObj.toString()}")
-                        //MessageBubble(
-                        //    navController = navController,
-                        //    topicColor = topicColor,
-                        //    topicFontColor = topicFontColor,
-                        //    messageContent = messageObj.content,
-                        //    containsPictures = false,
-                        //    containsAttachments = false,
-                        //    listOfPictures = emptyList(),
-                        //    listOfAttachmentsP = emptyList(),
-                        //    timestamp = timestamp,
-                        //    onDeleteClick = {
-                        //        coroutineScope.launch {
-                        //            viewModel.deleteMessage(messageObj.id)
-                        //        }
-                        //    },
-                        //    onViewMessage = {
-                        //        //TemporaryDataHolder.setMessage(message.content)
-
-                        //        viewModel.setTempMessageId(messageObj.id)
-                        //        navController.navigate("navViewMessage")
-                        //    },
-                        //    onEditClick = {
-                        //        viewModel.setTempMessageId(messageObj.id)
-                        //        viewModel.setEditMode(true)
-                        //    }
-                        //)
                     }
-                }
+               }
+
             } else {
                 // Checks attachments and photos before sending to messageBubble
 
