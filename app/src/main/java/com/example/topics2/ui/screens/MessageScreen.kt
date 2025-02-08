@@ -63,6 +63,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
 var bSearch: Boolean by remember { mutableStateOf(false ) }
+    var inputText by remember{ mutableStateOf("")}
 
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
@@ -92,7 +93,14 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
 
         bSearch= true
         if (bSearch) {
-            CustomSearchBox("", {})
+            CustomSearchBox(
+                inputText = inputText,
+                sPlaceHolder = "Search Topics...",
+                onValueChange = { newText ->
+                    inputText = newText
+                    viewModel.messageSearch(newText)
+                },
+            )
         }
 
         LazyColumn(
