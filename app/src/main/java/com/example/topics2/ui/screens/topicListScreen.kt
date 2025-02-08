@@ -220,6 +220,13 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             onDismissRequest = { showMenu = false }
         ) {
             DropdownMenuItem( // Delete Topic Button
+                text = { Text("Edit") },
+                onClick = {
+                    // Edit here
+                    showMenu = false
+                }
+            )
+            DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
                     viewModel.deleteTopic(topic.id)
