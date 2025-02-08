@@ -155,7 +155,9 @@ class MessageViewModel (
     private val _searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
     val searchMessages: StateFlow<List<MessageSearchContent>> = _searchMessages
     fun collectSearchMessages() {
-        messageDao.getSearchMessages().onEach { messageList ->
+        messageDao.getSearchMessages()
+            .distinctUntilChanged()
+            .onEach { messageList ->
             _searchMessages.value = messageList
         }.launchIn(viewModelScope)
     }
@@ -185,7 +187,7 @@ class MessageViewModel (
     suspend fun getFilesByMessageId(messageId: Int): List<Uri> {
         val filePaths = filesDao.getFilesByMessageId(messageId)
         // Populate the HashMap and list of file paths
-        filePaths.forEach { filePath ->
+        filePaths .forEach { filePath ->
             filePathMap[filePath.filePath] = filePath.id
         }
         return filePaths.map { Uri.parse(it.filePath)}

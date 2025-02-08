@@ -19,6 +19,7 @@ import com.example.topics2.DbTopics
 import com.example.topics2.activities.MainActivity
 import com.example.topics2.db.AppDatabase
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.utilities.logFunc
 import iconFilePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +31,6 @@ import java.io.IOException
 
 // Called from topAppBar
 
-
 suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val databaseName = "topics_database"
@@ -38,20 +38,21 @@ suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Disp
         val walFile = File(context.getDatabasePath("$databaseName-wal").absolutePath)
         val shmFile = File(context.getDatabasePath("$databaseName-shm").absolutePath)
 
-        Log.d("Import Database from: ", "$uri")
-        Log.d("Import Database to: ", "$currentDatabaseFile")
-        Log.d("Database File: ", "$currentDatabaseFile")
-        Log.d("WAL File: ", "$walFile")
-        Log.d("SHM File: ", "$shmFile")
+        logFunc(context, "Import Database from: $uri")
+        logFunc(context, "Import Database to: $currentDatabaseFile")
+        logFunc(context, "Database File: $currentDatabaseFile")
+        logFunc(context, "WAL File: $walFile")
+        logFunc(context, "SHM File: $shmFile")
 
         // Close the database connection
         val dbconn = AppDatabase.getDatabase(context)
         dbconn.close()
 
-        Log.d("DELETED DB: " ,"${context.deleteDatabase(databaseName)}")
+        logFunc(context, "DELETED DB: ${context.deleteDatabase(databaseName)}")
         AppDatabase.clearInstance()
+
         // Delete WAL and SHM files
-        deleteWalFiles(walFile, shmFile, currentDatabaseFile)
+        deleteWalFiles(walFile, shmFile, currentDatabaseFile, context)
 
         val resolver: ContentResolver = context.contentResolver
         resolver.openInputStream(uri)?.use { inputStream ->
@@ -70,8 +71,14 @@ suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Disp
             }
         }
     } catch (e: IOException) {
+        logFunc(context, "Error importing database: ${e.message}")
         withContext(Dispatchers.Main) {
             Toast.makeText(context, "Error importing database: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    } catch (e: Exception) {
+        logFunc(context, "Unexpected error: ${e.message}")
+        withContext(Dispatchers.Main) {
+            Toast.makeText(context, "Unexpected error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     } finally {
         // Clear and reopen the database to initialize it with the new data
@@ -80,27 +87,18 @@ suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Disp
     }
 }
 
-
-fun deleteWalFiles(walFile: File, shmFile: File, currentDBFile: File) {
-    if (shmFile.exists()) {
-        shmFile.delete()
-    }
-    if (walFile.exists()) {
-        walFile.delete()
-    }
-    if (currentDBFile.exists()) {
-        currentDBFile.delete()
-    }
-}
-fun isFileAccessible(file: File): Boolean {
-    return try {
-        // Try opening the file for reading and writing (non-blocking)
-        val fileInputStream = FileInputStream(file)
-        fileInputStream.close()  // Close immediately after checking
-        true  // File is accessible
+fun deleteWalFiles(walFile: File, shmFile: File, currentDBFile: File, context: Context) {
+    try {
+        if (shmFile.exists()) {
+            shmFile.delete()
+        }
+        if (walFile.exists()) {
+            walFile.delete()
+        }
+        if (currentDBFile.exists()) {
+            currentDBFile.delete()
+        }
     } catch (e: IOException) {
-        // File is either locked or not accessible
-        Log.e("FileAccess", "Error accessing file: ${e.message}")
-        false
+        logFunc(context, "Error deleting WAL/SHM files: ${e.message}")
     }
 }
