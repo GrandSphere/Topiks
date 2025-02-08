@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import com.example.topics.ui.themes.cSearchTopicFont
 //import com.example.topics2.model.allSearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.searchViewModel
 
@@ -43,6 +44,13 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
     val dataset by messageViewModel.searchMessages.collectAsState(emptyList())
     val searchResults by searchViewModel.searchResults.observeAsState(emptyList())
 
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     LaunchedEffect (dataset){
         if (dataset.isNotEmpty())
         {

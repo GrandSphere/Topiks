@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -21,12 +22,20 @@ import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.TopicCategory
 import com.example.topics2.ui.components.addTopic.TopicColour
 import com.example.topics2.ui.components.addTopic.TopicName
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel) {
     val focusManager = LocalFocusManager.current // For clearing focus
 
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
