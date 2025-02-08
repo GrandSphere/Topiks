@@ -39,14 +39,6 @@ class MessageViewModel (
     private val filesDao: FilesDao
 ): ViewModel() {
 
-    private var _tempID: Int= -1
-    fun settempID(message: Int) {
-        _tempID = message
-    }
-    fun gettempID(): Int{
-        return _tempID.also{_tempID=-1}
-    }
-
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
@@ -94,8 +86,6 @@ class MessageViewModel (
 
 
     }
-
-
     // For search results
     private val _searchResults = MutableLiveData<List<Message>>()
     val searchResults: LiveData<List<Message>> get() = _searchResults
@@ -119,10 +109,6 @@ class MessageViewModel (
         }
     }
 
-    // Access the full MessageObj based on search result id
-    fun getMessageObjectById(topicId: Int): Message? {
-        return _messageMap.value[topicId]
-    }
     fun getMessageIndexFromID(messageID: Int):Int {
         return _messageIndexMap.value[messageID] ?: -1
     }
@@ -130,6 +116,10 @@ class MessageViewModel (
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
     fun getMessageContentById(messageId: Int): String? {
         return _messagesContentById.value[messageId]
+    }
+
+    fun setSearchResultEmpty(){
+        _searchResults.value = emptyList()
     }
 
     // TempID, used only for editing a message
@@ -254,7 +244,7 @@ class MessageViewModel (
     }
 
     companion object {
-        // Factory to create the ViewModel
+        // Factory to ggycreate the ViewModel
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {

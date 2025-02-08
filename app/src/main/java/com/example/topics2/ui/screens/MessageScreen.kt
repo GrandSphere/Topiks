@@ -52,6 +52,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
 
+
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
@@ -63,27 +64,24 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
+    var showSearchNav: Boolean by remember { mutableStateOf(true ) }
     var bSearch: Boolean by remember { mutableStateOf(false ) }
     var inputText by remember{ mutableStateOf("")}
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
     var searchResultCount: Int by remember { mutableStateOf(0 ) }
 
+    Log.d("QQWWEET", searchResultCount.toString())
     fun scrollMessage()
     {
         if ((searchResults.isEmpty()) || (searchResultCount >= searchResults.size) || (searchResultCount < 0)) {
             return
         }
-        //Log.d("QQWWEE", "Count: ${count}")
-        val messageId = searchResults[searchResultCount].id
+        if (searchResultCount == 0){ searchResultCount = 1}
+        val messageId = searchResults[searchResultCount -1].id
         val messageIndex = viewModel.getMessageIndexFromID(messageId)
-        //Log.d("QQWWEE", "This is messageIndex: ${messageIndex} ")
         if (messageIndex >= 0) {
             coroutineScope.launch {
                 scrollState.scrollToItem(messageIndex)
-                Log.d(
-                    "QQWWEE",
-                    "Scrolling to messageId: ${messageId} and messageIndex: ${messageIndex}"
-                )
             }
 
         }
@@ -92,7 +90,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
             if (messageIndex >= 0) {
-                Log.d("QQWWEE", "Scrolling to messageID: ${messageId}, and messageIndex: ${messageIndex}")
                 scrollState.scrollToItem(messageIndex)
             }
         } else {
@@ -112,30 +109,33 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 })
             }
     ) {
-
-
         bSearch= true
         if (bSearch) {
 
             CustomSearchBox(
                 inputText = inputText,
-                sPlaceHolder = "Search Topics...",
+                sPlaceHolder = "Search Messages...",
                 onValueChange = { newText ->
                     inputText = newText
                     viewModel.messageSearch(newText)
                     searchResultCount = 0
                 },
-                bShowSearchNav = true,
+                bShowSearchNav = showSearchNav,
                 onNextClick = {
-                    if ( searchResultCount +1 < searchResults.size) {
+                    if ( searchResultCount  < searchResults.size) {
                         searchResultCount++
-                        Log.d("QQWWEER", "${searchResultCount}")
+                        scrollMessage()
+                    } else{
+                        searchResultCount = 0
                         scrollMessage()
                     }
                 },
                 onPreviousClick = {
-                    if (searchResultCount > 0) {
+                    if (searchResultCount > 1) {
                         searchResultCount--
+                        scrollMessage()
+                    } else{
+                        searchResultCount = searchResults.size
                         scrollMessage()
                     }
                 },
@@ -156,73 +156,70 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
             if (inputText.length > 0) {
                 viewModel.messageSearch(inputText)
-
-                Log.d("QQWWEE", "${searchResults}")
                 scrollMessage()
 
-            } //else {
-                // Checks attachments and photos before sending to messageBubble
+            }
+            // Checks attachments and photos before sending to messageBubble
+            items(messages.size) { index ->
+                val message = messages[index]
+                //val pictureList = mutableListOf<String>()
+                val pictureList = mutableListOf<FileInfoWithIcon>()
+                val attachmentList = mutableListOf<String>()
+                var hasPictures = false
+                var hasAttachments = false
+                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id)
+                    .collectAsState(initial = emptyList())
+                for (fileInfo in filesForMessage) {
+                    val filePath = fileInfo.filePath
+                    val fileType = determineFileType(context, filePath.toUri())
 
-                items(messages.size) { index ->
-                    val message = messages[index]
-                    //val pictureList = mutableListOf<String>()
-                    val pictureList = mutableListOf<FileInfoWithIcon>()
-                    val attachmentList = mutableListOf<String>()
-                    var hasPictures = false
-                    var hasAttachments = false
-                    val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id)
-                        .collectAsState(initial = emptyList())
-                    for (fileInfo in filesForMessage) {
-                        val filePath = fileInfo.filePath
-                        val fileType = determineFileType(context, filePath.toUri())
+                    when (fileType) {
+                        "Image" -> { // Contain Picture
+                            pictureList.add(fileInfo)
+                            hasPictures = true
+                        }
 
-                        when (fileType) {
-                            "Image" -> { // Contain Picture
-                                pictureList.add(fileInfo)
-                                hasPictures = true
-                            }
-
-                            else -> { // Contain other file types
-                                attachmentList.add(filePath)
-                                hasAttachments = true
-                            }
+                        else -> { // Contain other file types
+                            attachmentList.add(filePath)
+                            hasAttachments = true
                         }
                     }
-
-                    // Format timestamp
-                    val timestamp = SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm",
-                        Locale.getDefault()
-                    ).format(message.createTime)
-
-                    // Call MessageBubble
-                    MessageBubble(
-                        navController = navController,
-                        topicColor = topicColor,
-                        topicFontColor = topicFontColor,
-                        messageContent = message.content,
-                        containsPictures = hasPictures,
-                        containsAttachments = hasAttachments,
-                        listOfPictures = pictureList,
-                        listOfAttachmentsP = attachmentList,
-                        timestamp = timestamp,
-                        onDeleteClick = {
-                            coroutineScope.launch {
-                                viewModel.deleteMessage(message.id)
-                            }
-                        },
-                        onViewMessage = {
-                            //TemporaryDataHolder.setMessage(message.content)
-
-                            viewModel.setTempMessageId(message.id)
-                            navController.navigate("navViewMessage")
-                        },
-                        onEditClick = {
-                            viewModel.setTempMessageId(message.id)
-                            viewModel.setEditMode(true)
-                        }
-                    )
                 }
+
+                // Format timestamp
+                val timestamp = SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm",
+                    Locale.getDefault()
+                ).format(message.createTime)
+
+                // Call MessageBubble
+                MessageBubble(
+                    navController = navController,
+                    topicColor = topicColor,
+                    topicFontColor = topicFontColor,
+                    messageContent = message.content,
+                    containsPictures = hasPictures,
+                    containsAttachments = hasAttachments,
+                    listOfPictures = pictureList,
+                    listOfAttachmentsP = attachmentList,
+                    timestamp = timestamp,
+                    onDeleteClick = {
+                        coroutineScope.launch {
+                            viewModel.deleteMessage(message.id)
+                        }
+                    },
+                    onViewMessage = {
+                        //TemporaryDataHolder.setMessage(message.content)
+
+                        viewModel.setTempMessageId(message.id)
+                        navController.navigate("navViewMessage")
+                    },
+                    onEditClick = {
+                        viewModel.setTempMessageId(message.id)
+                        viewModel.setEditMode(true)
+                    }
+                )
+            }
 //            item { Spacer( modifier = Modifier .height(0.dp) ) }
             //}
         }
@@ -241,10 +238,16 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         }
     }
     LaunchedEffect(showMenu) {
-        Log.d("arst","showmenu changed")
 
     }
+    BackHandler {
+        showSearchNav = false
+        viewModel.setSearchResultEmpty()
+        searchResultCount = 0
+        inputText = ""
+        navController.popBackStack()
 
+    }
 
 }
 
