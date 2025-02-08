@@ -51,7 +51,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
-    viewModel.settemptopicname(inputText)
+    viewModel.setTempTopicName(inputText)
     val widthSetting = 100
     val heightSetting = 100
 
