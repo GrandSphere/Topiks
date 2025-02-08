@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -211,8 +212,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     }
                 )
             }
-//            item { Spacer( modifier = Modifier .height(0.dp) ) }
-            //}
         }
 
         Column(
@@ -231,16 +230,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     LaunchedEffect(showMenu) {
 
     }
-    BackHandler {
-        showSearchNav = false
-        viewModel.setTopicId(-1)
-        viewModel.clearMessages()
-        viewModel.clearSearchResult()
-        searchResultCount = 0
-        inputText = ""
-        navController.popBackStack()
 
+    DisposableEffect(topicId) {
+        onDispose {
+            viewModel.resetState()
+        }
     }
-
 }
 

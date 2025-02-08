@@ -27,6 +27,7 @@ import com.example.topics2.model.TopicSearchHandler
 import com.example.topics2.model.tblTopicIdName
 import com.example.topics2.ui.themes.CustomTertiary
 import com.example.topics2.utilities.logFunc
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 // TODO ADD CATEGORY TO DB WHEN ADDING TOPIC
 
@@ -43,7 +44,9 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
 
     fun collectTopics() {
         try {
-            topicDao.getAllTopics().onEach { topicList ->
+            topicDao.getAllTopics()
+                .distinctUntilChanged()
+                .onEach { topicList ->
                 _topics.value = topicList
                 createTopicsSubset(topicList)
             }.launchIn(viewModelScope)
