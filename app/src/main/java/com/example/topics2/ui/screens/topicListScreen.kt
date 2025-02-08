@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -54,6 +55,8 @@ import com.example.topics2.model.tblTopicIdName
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
+import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.launch
 
@@ -64,7 +67,22 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
     val focusManager = LocalFocusManager.current
     var inputText by remember{ mutableStateOf("")}
-
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+                MenuItem("Export") {
+//                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
+                },
+                MenuItem("Import") {
+                    // Handle import logic
+                },
+                MenuItem("Close") {
+                    // Handle close logic
+                }
+            )
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +120,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 if (inputText.length > 0) {
                     viewModel.search(inputText)
                     items(searchResults.size){
-                        index: Int ->
+                            index: Int ->
                         val topicID: Int =  searchResults[index].id
                         val topic = viewModel.getTopicObjectById(topicID)
                         if(topic != null) {
@@ -117,28 +135,28 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
             }
         }
-            // Button to add new topic, aligned at the bottom end of the screen
-            FloatingActionButton(
-                onClick = {
-                    viewModel.setTempCategory("Topics")
-                    viewModel.setTempTopicName("")
-                    viewModel.setFileURI("")
-                    navController.navigate("navaddtopic")
-                          },
-                shape = CircleShape, // Change the shape to rounded corners
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Topic",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+        // Button to add new topic, aligned at the bottom end of the screen
+        FloatingActionButton(
+            onClick = {
+                viewModel.setTempCategory("Topics")
+                viewModel.setTempTopicName("")
+                viewModel.setFileURI("")
+                navController.navigate("navaddtopic")
+            },
+            shape = CircleShape, // Change the shape to rounded corners
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Topic",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
+}
 
 @Composable
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
