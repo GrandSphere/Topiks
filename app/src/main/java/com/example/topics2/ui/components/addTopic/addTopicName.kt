@@ -39,10 +39,10 @@ import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicName(navController: NavController, viewModel: TopicViewModel) {
+fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode: Boolean = false, topicId: Int = -1) {
     //val category: String by viewModel.category.collectAsState()
-    val sPlaceHolder = "Topic Name..."
-//val iMaxLines = 5
+    //val iMaxLines = 5
+    val sPlaceHolder: String = "Topic Name... "
     val vFontSize: TextUnit = 18.sp // You can change this value as needed
     val vButtonSize: Dp = 30.dp // You can change this value as needed
     val vIconSize: Dp = 30.dp // You can change this value as needed
@@ -116,14 +116,27 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel) {
                             thumbnailOnly = true
                         )
                     }
-                    viewModel.addTopic(
-                        topicName = inputText,
-                        topicColour = iColor,
+                    if (!bEditMode) {
+                        viewModel.addTopic(
+                            topicName = inputText,
+                            topicColour = iColor,
 //                        topicCategory = viewModel.tempcategory.value,
-                        topicCategory = 1,
-                        topicIconPath = tempPath.first,
-                        topicPriority = 0,
-                    )
+                            topicCategory = 1,
+                            topicIconPath = tempPath.first,
+                            topicPriority = 0,
+                        )
+                    }
+                    else{
+                        viewModel.editTopic(
+                            topicId = topicId,
+                            topicName = inputText,
+                            topicColour = iColor,
+//                        topicCategory = viewModel.tempcategory.value,
+                            topicCategory = 1,
+                            topicIconPath = tempPath.first,
+                            topicPriority = 0,
+                        )
+                    }
 
                     viewModel.setFileURI("")
                     inputText = ""

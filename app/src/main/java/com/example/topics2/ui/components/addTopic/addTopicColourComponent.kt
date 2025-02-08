@@ -56,9 +56,6 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
             viewModel.setFileURI(uri.toString())
         }
     )
-  //  if (fileURI.value.si)
-     //Log.d("THISISMYTAG", selectedFileUri.value.toString())
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

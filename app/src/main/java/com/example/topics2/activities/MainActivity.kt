@@ -125,7 +125,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("newSearch") { allSearch(messageViewModel, searchViewModel, navController ) }
                         composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
-                        composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
+                        composable(
+                            route = "navaddtopic/{topicId}",
+
+                            arguments = listOf(
+                                navArgument("topicId") { type = NavType.IntType },
+                            )
+                        ) { backStackEntry ->
+                            val topicId = backStackEntry.arguments?.getInt("topicId")
+                            AddTopicScreen(navController, topicViewModel, topicId ?: -1)
+                        }
                         composable("navcolourpicker") {
                             ColourPickerScreen(
                                 navController,
@@ -133,6 +142,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("navrecentcolours") {
+
                             ColorGridScreen(
                                 navController,
                                 topicViewModel
