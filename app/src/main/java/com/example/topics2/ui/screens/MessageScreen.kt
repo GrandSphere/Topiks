@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,6 +65,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var showMenu: Boolean by remember { mutableStateOf(false ) }
 var bSearch: Boolean by remember { mutableStateOf(false ) }
     var inputText by remember{ mutableStateOf("")}
+    val searchResults by viewModel.searchResults.observeAsState(emptyList())
 
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
@@ -112,85 +114,112 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
-            // Checks attachments and photos before sending to messageBubble
 
-            items(messages.size) { index ->
-                val message = messages[index]
-                //val pictureList = mutableListOf<String>()
-                val pictureList = mutableListOf<FileInfoWithIcon>()
-                val attachmentList = mutableListOf<String>()
-                var hasPictures = false
-                var hasAttachments = false
-                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
-                for (fileInfo in filesForMessage) {
-                    val filePath = fileInfo.filePath
-                    val fileType = determineFileType(context, filePath.toUri())
+            if (inputText.length > 0) {
+                viewModel.messageSearch(inputText)
+                items(searchResults.size) { index: Int ->
+                    val messageId: Int = searchResults[index].id
+                    val messageObj = viewModel.getMessageObjectById(messageId)
 
-                    when (fileType) {
-                        "Image" -> { // Contain Picture
-                            pictureList.add(fileInfo)
-                            hasPictures = true
-                        }
-                        else -> { // Contain other file types
-                            attachmentList.add(filePath)
-                            hasAttachments = true
-                        }
+                    val timestamp =
+                        SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(11111111)
+                    if (messageObj != null)
+                    {
+
+                        Log.d("QWERT","${messageObj.toString()}")
+                        //MessageBubble(
+                        //    navController = navController,
+                        //    topicColor = topicColor,
+                        //    topicFontColor = topicFontColor,
+                        //    messageContent = messageObj.content,
+                        //    containsPictures = false,
+                        //    containsAttachments = false,
+                        //    listOfPictures = emptyList(),
+                        //    listOfAttachmentsP = emptyList(),
+                        //    timestamp = timestamp,
+                        //    onDeleteClick = {
+                        //        coroutineScope.launch {
+                        //            viewModel.deleteMessage(messageObj.id)
+                        //        }
+                        //    },
+                        //    onViewMessage = {
+                        //        //TemporaryDataHolder.setMessage(message.content)
+
+                        //        viewModel.setTempMessageId(messageObj.id)
+                        //        navController.navigate("navViewMessage")
+                        //    },
+                        //    onEditClick = {
+                        //        viewModel.setTempMessageId(messageObj.id)
+                        //        viewModel.setEditMode(true)
+                        //    }
+                        //)
                     }
                 }
+            } else {
+                // Checks attachments and photos before sending to messageBubble
 
-                // Process each file path
-                //for (filePath in filePathsForMessage) {
-                //    val fileType = determineFileType(context, filePath.toUri())
-                //    when (fileType) {
-                //        "Image" -> {
-                //            pictureList.add(filePath)
-                //            //thumbnailList.add(thumbnailFilePath)
-                //            hasPictures = true
-                //        }
-                //        else -> {
-                //            attachmentList.add(filePath)
-                //            hasAttachments = true
-                //        }
-                //    }
-                //}
-                // Format timestamp
-                val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+                items(messages.size) { index ->
+                    val message = messages[index]
+                    //val pictureList = mutableListOf<String>()
+                    val pictureList = mutableListOf<FileInfoWithIcon>()
+                    val attachmentList = mutableListOf<String>()
+                    var hasPictures = false
+                    var hasAttachments = false
+                    val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id)
+                        .collectAsState(initial = emptyList())
+                    for (fileInfo in filesForMessage) {
+                        val filePath = fileInfo.filePath
+                        val fileType = determineFileType(context, filePath.toUri())
 
-                // Call MessageBubble
-                MessageBubble(
-                    navController = navController,
-                    topicColor = topicColor,
-                    topicFontColor = topicFontColor,
-                    messageContent = message.content,
-                    containsPictures = hasPictures,
-                    containsAttachments = hasAttachments,
-                    listOfPictures = pictureList,
-                    listOfAttachmentsP = attachmentList,
-                    timestamp = timestamp,
-                    onDeleteClick = {
-                        coroutineScope.launch {
-                            viewModel.deleteMessage(message.id)
+                        when (fileType) {
+                            "Image" -> { // Contain Picture
+                                pictureList.add(fileInfo)
+                                hasPictures = true
+                            }
+
+                            else -> { // Contain other file types
+                                attachmentList.add(filePath)
+                                hasAttachments = true
+                            }
                         }
-                    },
-                    onViewMessage = {
-                        //TemporaryDataHolder.setMessage(message.content)
-
-                        viewModel.setTempMessageId(message.id)
-                        navController.navigate("navViewMessage")
-                    },
-                    onEditClick = {
-//                        viewModel.setToUnFocusTextbox(true)
-                        //viewModel.setTempMessage(message.content)
-                        //viewModel.setAmEditing(true)
-                        viewModel.setTempMessageId(message.id)
-//                        showMenu = false
-                        viewModel.setEditMode(true)
-//                        viewModel.setToFocusTextbox(true)
-//                        viewModel.setEditMode(true)
                     }
-                )
-            }
+
+                    // Format timestamp
+                    val timestamp = SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm",
+                        Locale.getDefault()
+                    ).format(message.createTime)
+
+                    // Call MessageBubble
+                    MessageBubble(
+                        navController = navController,
+                        topicColor = topicColor,
+                        topicFontColor = topicFontColor,
+                        messageContent = message.content,
+                        containsPictures = hasPictures,
+                        containsAttachments = hasAttachments,
+                        listOfPictures = pictureList,
+                        listOfAttachmentsP = attachmentList,
+                        timestamp = timestamp,
+                        onDeleteClick = {
+                            coroutineScope.launch {
+                                viewModel.deleteMessage(message.id)
+                            }
+                        },
+                        onViewMessage = {
+                            //TemporaryDataHolder.setMessage(message.content)
+
+                            viewModel.setTempMessageId(message.id)
+                            navController.navigate("navViewMessage")
+                        },
+                        onEditClick = {
+                            viewModel.setTempMessageId(message.id)
+                            viewModel.setEditMode(true)
+                        }
+                    )
+                }
 //            item { Spacer( modifier = Modifier .height(0.dp) ) }
+            }
         }
 
         Column(
