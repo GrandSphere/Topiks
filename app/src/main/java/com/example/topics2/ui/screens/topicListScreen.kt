@@ -123,7 +123,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     viewModel.setTempCategory("Topics")
                     viewModel.setTempTopicName("")
                     viewModel.setFileURI("")
-                    navController.navigate("navaddtopic")
+                    navController.navigate("navaddtopic/-1")
                           },
                 shape = CircleShape, // Change the shape to rounded corners
                 modifier = Modifier
@@ -222,6 +222,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Delete Topic Button
                 text = { Text("Edit") },
                 onClick = {
+                    navController.navigate("navaddtopic/${topic.id}")
                     // Edit here
                     showMenu = false
                 }

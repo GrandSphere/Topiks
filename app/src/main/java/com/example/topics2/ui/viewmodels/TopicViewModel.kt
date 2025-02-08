@@ -2,6 +2,7 @@ package com.example.topics2.ui.viewmodels
 
 //import androidx.compose.material.MaterialTheme
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -199,6 +200,9 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
             }
         }
     }
+   fun getTopicById(topicId: Int): TopicTbl {
+      return topicDao.getTopicById(topicId)
+   }
 
     fun addTopic(
         topicName: String,
@@ -225,7 +229,36 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
             }
         }
     }
- companion object {
+
+    fun editTopic(
+        topicId: Int,
+        topicName: String,
+        topicColour: Int,
+        topicCategory: Int = 1,
+        topicIconPath: String,
+        topicPriority: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                val createdTime: Long = topicDao.getCreatedTimeByID(topicId)
+                val editTopic = TopicTbl(
+                    id = topicId,
+                    name = topicName,
+                    lastEditTime = System.currentTimeMillis(),
+                    createTime = createdTime,
+                    colour = topicColour,
+                    categoryId = topicCategory,
+                    iconPath = topicIconPath,
+                    priority = topicPriority
+                )
+                topicDao.editTopic(editTopic)
+            } catch (e: Exception) {
+                logFunc(context, "TopicViewModel: Error editing topic: ${e.message}")
+            }
+        }
+    }
+
+    companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
