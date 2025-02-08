@@ -23,6 +23,7 @@ import com.example.topics2.model.MessageSearchHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -70,7 +71,9 @@ class MessageViewModel (
     private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
-        messageDao.getMessagesForTopic(topicId).onEach { messageList ->
+        messageDao.getMessagesForTopic(topicId)
+            .distinctUntilChanged()
+            .onEach { messageList ->
             _messages.value = messageList
             _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
            // Generate HashMap
@@ -80,9 +83,25 @@ class MessageViewModel (
             createMessageSubset(messageList)
         }.launchIn(viewModelScope)
     }
-    fun clearMessages(){
+    // Function to reset the entire state of the ViewModel
+    fun resetState() {
+        _ToFocusTextbox.value = false
+        _ToUnFocusTextbox.value = false
+        _bEditMode.value = false
+        _tempMessageId.value = 0
+        _topicColor.value = Color.Cyan
+        _topicFontColor.value = Color.Cyan
         _messages.value = emptyList()
+        _messageIndexMap.value = emptyMap()
+        _searchResults.value = emptyList()
+        _messageSubset.value = emptyList()
+        _messageMap.value = emptyMap()
+        _messagesContentById.value = emptyMap()
+        _topicID.value = 0
+        filePathMap.clear()
+        _searchMessages.value = emptyList()
     }
+
     // For search results
     private val _searchResults = MutableLiveData<List<Message>>()
     val searchResults: LiveData<List<Message>> get() = _searchResults
