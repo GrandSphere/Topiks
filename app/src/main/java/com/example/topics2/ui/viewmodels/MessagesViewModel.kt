@@ -103,8 +103,13 @@ class MessageViewModel (
     private val messageSearchHandler: MessageSearchHandler= MessageSearchHandler(emptyList())
     // Create subset for search
     private val _messageSubset = MutableStateFlow<List<Message>>(emptyList())
-    fun createMessageSubset(topicList: List<MessageTbl>) {
-        _messageSubset.value = topicList.map { Message(it.id, it.content) }
+    private val _messageMap = MutableStateFlow<Map<Int, Message>>(emptyMap())
+    fun createMessageSubset(messageList: List<MessageTbl>) {
+        _messageSubset.value = messageList.map { Message(it.id, it.content) }
+        // Create a Map for fast lookup by id
+         val messageMap = _messageSubset.value.associateBy { it.id }
+        _messageMap.value = messageMap
+
         messageSearchHandler.updateDataset(_messageSubset.value)
     }
 
@@ -114,6 +119,10 @@ class MessageViewModel (
         }
     }
 
+    // Access the full MessageObj based on search result id
+    fun getMessageObjectById(topicId: Int): Message? {
+        return _messageMap.value[topicId]
+    }
     fun getMessageIndexFromID(messageID: Int):Int {
         return _messageIndexMap.value[messageID] ?: -1
     }
