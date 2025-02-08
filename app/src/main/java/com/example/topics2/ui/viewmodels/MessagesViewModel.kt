@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -19,7 +21,9 @@ import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
+import com.example.topics2.model.Message
 import com.example.topics2.model.MessageSearchContent
+import com.example.topics2.model.MessageSearchHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -72,6 +76,7 @@ class MessageViewModel (
     val topicFontColor: StateFlow<Color> = _topicColor
     fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
 
+
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
@@ -84,7 +89,29 @@ class MessageViewModel (
            _messageIndexMap.value = messageList
             .mapIndexed { index, message -> message.id to index }
             .toMap()
+            createMessageSubset(messageList)
         }.launchIn(viewModelScope)
+
+
+    }
+
+
+    // For search results
+    private val _searchResults = MutableLiveData<List<Message>>()
+    val searchResults: LiveData<List<Message>> get() = _searchResults
+
+    private val messageSearchHandler: MessageSearchHandler= MessageSearchHandler(emptyList())
+    // Create subset for search
+    private val _messageSubset = MutableStateFlow<List<Message>>(emptyList())
+    fun createMessageSubset(topicList: List<MessageTbl>) {
+        _messageSubset.value = topicList.map { Message(it.id, it.content) }
+        messageSearchHandler.updateDataset(_messageSubset.value)
+    }
+
+    fun messageSearch(query: String, debounceTime: Long = 150L) {
+        messageSearchHandler.search(query, debounceTime) { results ->
+            _searchResults.postValue(results)
+        }
     }
 
     fun getMessageIndexFromID(messageID: Int):Int {
