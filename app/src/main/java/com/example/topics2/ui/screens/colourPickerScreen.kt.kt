@@ -46,6 +46,7 @@ import com.example.topics2.ui.components.addTopic.colorToHex
 import com.example.topics2.ui.components.addTopic.colorToHsv
 import com.example.topics2.ui.components.addTopic.hexToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
@@ -75,14 +76,19 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     var tempClip by remember { mutableStateOf("") }
     var bShouldPaste by remember { mutableStateOf(false) }
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     LaunchedEffect(bShouldPaste) {
         if (bShouldPaste) {
-            Log.d("zzzPasting","should be pasting")
             val clip = clipboardManager.primaryClip
 
             tempClip = clip?.getItemAt(0)?.text?.toString() ?: ""  // Fallback to empty string if clipboard is empty
             var tempHsv= colorToHsv(hexToColor(tempClip))
-
 
             //var tempHsv = colorToHsv(Color.Black)
             hue = tempHsv[0]
@@ -94,7 +100,6 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
 
     }
 
-
     val newNoteColour = Color.hsv(hue, saturation, value, alpha)
     val vSpacer: Dp = 25.dp // You can change this value as needed
     val vIconSize: Dp = 25.dp // You can change this value as needed
@@ -103,16 +108,11 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     var bShouldCopy by remember { mutableStateOf(false) }
     LaunchedEffect(bShouldCopy) {
         if (bShouldCopy) {
-
-            Log.d("zzzPasting","should be pasting")
             val clip = android.content.ClipData.newPlainText("Copied Text", colorToHex(newNoteColour).toString())
             clipboardManager.setPrimaryClip(clip)
-
-
             bShouldCopy=false
         }
     }
-
 
     // Main UI
     Column(
@@ -154,11 +154,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
 
                         onLongPress = {
                             bShouldPaste =true
-                            //viewModel.settempColour(Color.Black)
-                            //newNoteColour = hexToColor(getClipboardText)    //argbToColor()
                         }
-
-
                     ) }
                     .size(100.dp)
                     .clip(CircleShape) // Make the box circular
@@ -231,34 +227,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                         bShouldCopy =true
                     }
 
-
                 ) }
-                //.size(100.dp)
-                //.clip(CircleShape) // Make the box circular
-                //.background(newNoteColour),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         )
     }
 }
-
-//fun fTemp (hue: Int, saturation : Int, value : Int, alpha: Int){
-//    //var TempHsv= colorToHsv(hexToColor(getClipboardText()))
-//    var tempHsv= colorToHsv(Color.Black)
-//    hue= tempHsv[0]
-//    saturation=tempHsv[1]
-//    value=tempHsv[2]
-//    alpha = Color.Black.alpha
-//}

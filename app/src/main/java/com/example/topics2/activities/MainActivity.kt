@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,6 +41,7 @@ import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.ui.screens.MessageViewScreen
 import com.example.topics2.ui.screens.allSearch
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.searchViewModel
 import com.example.topics2.unused.old.generateSampleMessage
 import com.example.topics2.unused.old.generateTableData
@@ -51,6 +53,7 @@ import java.io.File
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent { TopicsTheme { TopicsApp(applicationContext) } }
 
     }
@@ -66,21 +69,13 @@ class MainActivity : ComponentActivity() {
                 viewModel(factory = CategoryViewModel.Factory)
             val settingsViewModel: SettingsViewModel = viewModel()
             val searchViewModel: searchViewModel = viewModel()
-            val topBarViewModel: TopBarViewModel = viewModel()
+//            val topBarViewModel: TopBarViewModel = viewModel()
 
+        val topBarViewModel = viewModel<TopBarViewModel>()
+         GlobalViewModelHolder.setTopBarViewModel(topBarViewModel)
             val navController = rememberNavController()
             val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
             val backStackEntry = navController.currentBackStackEntryAsState()
-
-          //  val databaseSeeder = DatabaseSeeder(
-          //      topicDao = AppDatabase.getDatabase(context).topicDao(),
-          //      messageDao = AppDatabase.getDatabase(context).messageDao()
-          //  )
-
-       //  settingsViewModel.updateSetting("theme", "Very Dark")
-       // settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
-       //     Log.d("SETTINGS_DEBUG", "${settings}")
-       // })
 
         //Add test category
         LaunchedEffect(true)
@@ -98,11 +93,8 @@ class MainActivity : ComponentActivity() {
             topBar = {
                 CustomTopAppBar(
                     title = topBarTitle,
-                    onSettingsClick = { /* Handle settings click here */ },
-                    reloadTopics = {//topicController.loadTopics()
-                    },
                     navController = navController,
-                    topicViewModel = topicViewModel
+//                    topicViewModel = topicViewModel
                 )
             },
 
@@ -125,7 +117,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("newSearch") { allSearch(messageViewModel, searchViewModel, navController ) }
                         composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
-                        composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
+                        composable(
+                            route = "navaddtopic/{topicId}",
+
+                            arguments = listOf(
+                                navArgument("topicId") { type = NavType.IntType },
+                            )
+                        ) { backStackEntry ->
+                            val topicId = backStackEntry.arguments?.getInt("topicId")
+                            AddTopicScreen(navController, topicViewModel, topicId ?: -1)
+                        }
                         composable("navcolourpicker") {
                             ColourPickerScreen(
                                 navController,
@@ -133,6 +134,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("navrecentcolours") {
+
                             ColorGridScreen(
                                 navController,
                                 topicViewModel
