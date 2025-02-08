@@ -63,10 +63,31 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
-var bSearch: Boolean by remember { mutableStateOf(false ) }
+    var bSearch: Boolean by remember { mutableStateOf(false ) }
     var inputText by remember{ mutableStateOf("")}
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
+    var searchResultCount: Int by remember { mutableStateOf(0 ) }
 
+    fun scrollMessage()
+    {
+        if ((searchResults.isEmpty()) || (searchResultCount >= searchResults.size) || (searchResultCount < 0)) {
+            return
+        }
+        //Log.d("QQWWEE", "Count: ${count}")
+        val messageId = searchResults[searchResultCount].id
+        val messageIndex = viewModel.getMessageIndexFromID(messageId)
+        //Log.d("QQWWEE", "This is messageIndex: ${messageIndex} ")
+        if (messageIndex >= 0) {
+            coroutineScope.launch {
+                scrollState.scrollToItem(messageIndex)
+                Log.d(
+                    "QQWWEE",
+                    "Scrolling to messageId: ${messageId} and messageIndex: ${messageIndex}"
+                )
+            }
+
+        }
+    }
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
@@ -102,8 +123,24 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
                 onValueChange = { newText ->
                     inputText = newText
                     viewModel.messageSearch(newText)
+                    searchResultCount = 0
                 },
                 bShowSearchNav = true,
+                onNextClick = {
+                    if ( searchResultCount +1 < searchResults.size) {
+                        searchResultCount++
+                        Log.d("QQWWEER", "${searchResultCount}")
+                        scrollMessage()
+                    }
+                },
+                onPreviousClick = {
+                    if (searchResultCount > 0) {
+                        searchResultCount--
+                        scrollMessage()
+                    }
+                },
+                iSearchCount = searchResults.size,
+                iCurrentSearch = searchResultCount,
             )
         }
 
@@ -119,20 +156,11 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
 
             if (inputText.length > 0) {
                 viewModel.messageSearch(inputText)
-                items(searchResults.size) { index: Int ->
-                    val messageId: Int = searchResults[index].id
-                    val messageObj = viewModel.getMessageObjectById(messageId)
 
-                    val timestamp =
-                        SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(11111111)
-                    if (messageObj != null)
-                    {
+                Log.d("QQWWEE", "${searchResults}")
+                scrollMessage()
 
-                        Log.d("QWERT","${messageObj.toString()}")
-                    }
-               }
-
-            } else {
+            } //else {
                 // Checks attachments and photos before sending to messageBubble
 
                 items(messages.size) { index ->
@@ -196,13 +224,13 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
                     )
                 }
 //            item { Spacer( modifier = Modifier .height(0.dp) ) }
-            }
+            //}
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                //.background(Color.Transparent)
+            //.background(Color.Transparent)
 //                .align(Alignment.BottomCenter)
 //                .align(Alignment.Bottom)
 //                .onSizeChanged { size ->
@@ -216,4 +244,7 @@ var bSearch: Boolean by remember { mutableStateOf(false ) }
         Log.d("arst","showmenu changed")
 
     }
+
+
 }
+

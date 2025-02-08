@@ -47,7 +47,11 @@ fun CustomSearchBox(
     bShowSearchNav: Boolean = false,
     isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
-    boxModifier: Modifier = Modifier // Modifier for the Box
+    boxModifier: Modifier = Modifier, // Modifier for the Box
+    onNextClick: () -> Unit = {},
+    onPreviousClick: () -> Unit = {},
+    iSearchCount: Int = 0,
+    iCurrentSearch: Int = 0,
 ) {
     val colors = MaterialTheme.colorScheme
     var isSearchFocused by remember { mutableStateOf(false) }
@@ -117,8 +121,9 @@ fun CustomSearchBox(
                 Spacer(modifier = Modifier.width(5.dp))
 
                 if (bShowSearchNav) {
-                    IconButton(
-                        onClick = { oncHold() },
+                    Text(text = "${iCurrentSearch}/${iSearchCount}", fontSize = 10.sp)
+                    IconButton( // Previous
+                        onClick = { onPreviousClick() },
                         modifier = Modifier.size(30.dp)
                             .align(Alignment.CenterVertically)
                     ) {
@@ -129,9 +134,8 @@ fun CustomSearchBox(
                             modifier = Modifier.height(25.dp)
                         )
                     }
-
-                        IconButton(
-                            onClick = { oncHold() },
+                        IconButton( // next
+                            onClick = { onNextClick() },
                             modifier = Modifier.size(30.dp)
                                 .align(Alignment.CenterVertically)
                         ) {
