@@ -1,10 +1,10 @@
 package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -15,14 +15,15 @@ import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
-import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FileInfoWithIcon
-import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
+import com.example.topics2.model.Message
 import com.example.topics2.model.MessageSearchContent
+import com.example.topics2.model.MessageSearchHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -34,14 +35,6 @@ class MessageViewModel (
     private val topicDao: TopicDao,
     private val filesDao: FilesDao
 ): ViewModel() {
-
-    private var _tempID: Int= -1
-    fun settempID(message: Int) {
-        _tempID = message
-    }
-    fun gettempID(): Int{
-        return _tempID.also{_tempID=-1}
-    }
 
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
@@ -72,19 +65,64 @@ class MessageViewModel (
     val topicFontColor: StateFlow<Color> = _topicColor
     fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
 
+
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
     private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messages: StateFlow<List<MessageTbl>> = _messages
     fun collectMessages(topicId: Int) {
-        messageDao.getMessagesForTopic(topicId).onEach { messageList ->
+        messageDao.getMessagesForTopic(topicId)
+            .distinctUntilChanged()
+            .onEach { messageList ->
             _messages.value = messageList
             _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
            // Generate HashMap
            _messageIndexMap.value = messageList
             .mapIndexed { index, message -> message.id to index }
             .toMap()
+            createMessageSubset(messageList)
         }.launchIn(viewModelScope)
+    }
+    // Function to reset the entire state of the ViewModel
+    fun resetState() {
+        _ToFocusTextbox.value = false
+        _ToUnFocusTextbox.value = false
+        _bEditMode.value = false
+        _tempMessageId.value = 0
+        _topicColor.value = Color.Cyan
+        _topicFontColor.value = Color.Cyan
+        _messages.value = emptyList()
+        _messageIndexMap.value = emptyMap()
+        _searchResults.value = emptyList()
+        _messageSubset.value = emptyList()
+        _messageMap.value = emptyMap()
+        _messagesContentById.value = emptyMap()
+        _topicID.value = 0
+        filePathMap.clear()
+        _searchMessages.value = emptyList()
+    }
+
+    // For search results
+    private val _searchResults = MutableLiveData<List<Message>>()
+    val searchResults: LiveData<List<Message>> get() = _searchResults
+
+    private val messageSearchHandler: MessageSearchHandler= MessageSearchHandler(emptyList())
+    // Create subset for search
+    private val _messageSubset = MutableStateFlow<List<Message>>(emptyList())
+    private val _messageMap = MutableStateFlow<Map<Int, Message>>(emptyMap())
+    fun createMessageSubset(messageList: List<MessageTbl>) {
+        _messageSubset.value = messageList.map { Message(it.id, it.content) }
+        // Create a Map for fast lookup by id
+         val messageMap = _messageSubset.value.associateBy { it.id }
+        _messageMap.value = messageMap
+
+        messageSearchHandler.updateDataset(_messageSubset.value)
+    }
+
+    fun messageSearch(query: String, debounceTime: Long = 150L) {
+        messageSearchHandler.search(query, debounceTime) { results ->
+            _searchResults.postValue(results)
+        }
     }
 
     fun getMessageIndexFromID(messageID: Int):Int {
@@ -94,6 +132,10 @@ class MessageViewModel (
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
     fun getMessageContentById(messageId: Int): String? {
         return _messagesContentById.value[messageId]
+    }
+
+    fun clearSearchResult(){
+        _searchResults.value = emptyList()
     }
 
     // TempID, used only for editing a message
@@ -218,7 +260,7 @@ class MessageViewModel (
     }
 
     companion object {
-        // Factory to create the ViewModel
+        // Factory to ggycreate the ViewModel
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {

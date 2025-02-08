@@ -90,7 +90,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     inputText = newText
                     viewModel.search(newText)
                 },
-                oncHold = { navController.navigate("newSearch") }
+                oncHold = { navController.navigate("newSearch") },
             )
             //TextButton() { }
             Spacer(modifier = Modifier.height(10.dp))
@@ -121,7 +121,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             FloatingActionButton(
                 onClick = {
                     viewModel.setTempCategory("Topics")
-                    viewModel.settemptopicname("")
+                    viewModel.setTempTopicName("")
                     viewModel.setFileURI("")
                     navController.navigate("navaddtopic")
                           },

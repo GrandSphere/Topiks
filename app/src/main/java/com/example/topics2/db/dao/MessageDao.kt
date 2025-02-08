@@ -44,4 +44,8 @@ interface MessageDao {
 
     @RawQuery
     fun checkpoint(query: SupportSQLiteQuery): Int
+
+      @Insert
+    suspend fun insertAll(messages: List<MessageTbl>) // used for test data
+
 }

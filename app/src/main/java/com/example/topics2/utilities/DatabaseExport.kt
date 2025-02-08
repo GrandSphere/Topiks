@@ -17,6 +17,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.topics.utilities.copyStream
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -34,6 +35,7 @@ suspend fun ExportDatabaseWithPicker(context: Context) {
             "topics/files"
         )
         if (!externalDir.exists() && !externalDir.mkdirs()) {
+            logFunc(context, "Failed to create directory: $externalDir")
             throw IOException("Failed to create directory: $externalDir")
         }
         // Directly create a file path using externalDir
@@ -51,6 +53,9 @@ suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
         val databaseFile = File(context.getDatabasePath(databaseName).absolutePath)
         Log.d("Export Database from: ", "$databaseFile")
 
+        // Log the database file path
+        logFunc(context, "Export Database from: $databaseFile")
+
         // To ensure all wal writes get commit before copying the database
         val dbconn = AppDatabase.getDatabase(context)
         val checkpointQuery = SimpleSQLiteQuery("PRAGMA wal_checkpoint(FULL);")
@@ -65,15 +70,18 @@ suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
             copyStream(inputStream, outputStream)
             inputStream.close()
             outputStream.close()
+
             // Show success message on the main thread
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, "Database exported successfully!", Toast.LENGTH_SHORT).show()
             }
+            logFunc(context, "Database exported successfully to $destinationFile")
         } else {
             // Show error message if the file doesn't exist (on the main thread)
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, "Database file not found!", Toast.LENGTH_SHORT).show()
             }
+            logFunc(context, "Database file not found!")
         }
     } catch (e: IOException) {
         // Handle any I/O exceptions (on the main thread)
@@ -81,5 +89,8 @@ suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
             Toast.makeText(context, "Error exporting database: ${e.message}", Toast.LENGTH_LONG).show()
             Log.d("FILEACCESS", "${e.message}")
         }
+        // Log the exception
+        logFunc(context, "Error exporting database: ${e.message}")
     }
 }
+

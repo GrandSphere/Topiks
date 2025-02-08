@@ -3,36 +3,33 @@ package com.example.topics2.ui.screens
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.entities.FileInfoWithIcon
+import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.components.messageScreen.MessageBubble
@@ -48,6 +45,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
 
+
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
@@ -59,13 +57,31 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
+    var showSearchNav: Boolean by remember { mutableStateOf(true ) }
+    var bSearch: Boolean by remember { mutableStateOf(false ) }
+    var inputText by remember{ mutableStateOf("")}
+    val searchResults by viewModel.searchResults.observeAsState(emptyList())
+    var searchResultCount: Int by remember { mutableStateOf(0 ) }
 
+    fun scrollMessage()
+    {
+        if ((searchResults.isEmpty()) || (searchResultCount >= searchResults.size) || (searchResultCount < 0)) {
+            return
+        }
+        if (searchResultCount == 0){ searchResultCount = 1}
+        val messageId = searchResults[searchResultCount -1].id
+        val messageIndex = viewModel.getMessageIndexFromID(messageId)
+        if (messageIndex >= 0) {
+            coroutineScope.launch {
+                scrollState.scrollToItem(messageIndex)
+            }
 
+        }
+    }
     LaunchedEffect(messages.size) {
         if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
             if (messageIndex >= 0) {
-                Log.d("QQWWEE", "Scrolling to messageID: ${messageId}, and messageIndex: ${messageIndex}")
                 scrollState.scrollToItem(messageIndex)
             }
         } else {
@@ -75,8 +91,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             }
         }
     }
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             //.background(Color.Red)
@@ -86,13 +101,56 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 })
             }
     ) {
+        bSearch= true
+        if (bSearch) {
+
+            CustomSearchBox(
+                inputText = inputText,
+                sPlaceHolder = "Search Messages...",
+                onValueChange = { newText ->
+                    inputText = newText
+                    viewModel.messageSearch(newText)
+                    searchResultCount = 0
+                },
+                bShowSearchNav = showSearchNav,
+                onNextClick = {
+                    if ( searchResultCount  < searchResults.size) {
+                        searchResultCount++
+                        scrollMessage()
+                    } else{
+                        searchResultCount = 0
+                        scrollMessage()
+                    }
+                },
+                onPreviousClick = {
+                    if (searchResultCount > 1) {
+                        searchResultCount--
+                        scrollMessage()
+                    } else{
+                        searchResultCount = searchResults.size
+                        scrollMessage()
+                    }
+                },
+                iSearchCount = searchResults.size,
+                iCurrentSearch = searchResultCount,
+            )
+        }
+
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .fillMaxSize()
+//                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
+
+            if (inputText.length > 0) {
+                viewModel.messageSearch(inputText)
+                scrollMessage()
+
+            }
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
@@ -101,7 +159,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
                 var hasAttachments = false
-                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id).collectAsState(initial = emptyList())
+                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id)
+                    .collectAsState(initial = emptyList())
                 for (fileInfo in filesForMessage) {
                     val filePath = fileInfo.filePath
                     val fileType = determineFileType(context, filePath.toUri())
@@ -111,6 +170,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             pictureList.add(fileInfo)
                             hasPictures = true
                         }
+
                         else -> { // Contain other file types
                             attachmentList.add(filePath)
                             hasAttachments = true
@@ -118,23 +178,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     }
                 }
 
-                // Process each file path
-                //for (filePath in filePathsForMessage) {
-                //    val fileType = determineFileType(context, filePath.toUri())
-                //    when (fileType) {
-                //        "Image" -> {
-                //            pictureList.add(filePath)
-                //            //thumbnailList.add(thumbnailFilePath)
-                //            hasPictures = true
-                //        }
-                //        else -> {
-                //            attachmentList.add(filePath)
-                //            hasAttachments = true
-                //        }
-                //    }
-                //}
                 // Format timestamp
-                val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(message.createTime)
+                val timestamp = SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm",
+                    Locale.getDefault()
+                ).format(message.createTime)
 
                 // Call MessageBubble
                 MessageBubble(
@@ -159,21 +207,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         navController.navigate("navViewMessage")
                     },
                     onEditClick = {
-//                        viewModel.setToUnFocusTextbox(true)
-                        //viewModel.setTempMessage(message.content)
-                        //viewModel.setAmEditing(true)
                         viewModel.setTempMessageId(message.id)
-//                        showMenu = false
                         viewModel.setEditMode(true)
-//                        viewModel.setToFocusTextbox(true)
-//                        viewModel.setEditMode(true)
                     }
-                )
-            }
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .height(0.dp)
                 )
             }
         }
@@ -181,17 +217,24 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                //.background(Color.Transparent)
-                .align(Alignment.BottomCenter)
-                .onSizeChanged { size ->
-                    inputBarHeightPx = size.height
-                }
+            //.background(Color.Transparent)
+//                .align(Alignment.BottomCenter)
+//                .align(Alignment.Bottom)
+//                .onSizeChanged { size ->
+//                    inputBarHeightPx = size.height
+//                }
         ) {
             InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
         }
     }
     LaunchedEffect(showMenu) {
-        Log.d("arst","showmenu changed")
 
     }
+
+    DisposableEffect(topicId) {
+        onDispose {
+            viewModel.resetState()
+        }
+    }
 }
+
