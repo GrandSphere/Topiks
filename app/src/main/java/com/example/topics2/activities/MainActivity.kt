@@ -58,42 +58,41 @@ class MainActivity : ComponentActivity() {
     //val Purple200 = Color(0xFFBB86FC) FIX THIS
     @Composable
     fun TopicsApp(context: Context) {
-        val database = AppDatabase.getDatabase(context)
-        val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
-        val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
-        val categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory)
-        val settingsViewModel: SettingsViewModel = viewModel()
-        val searchViewModel: searchViewModel = viewModel()
+            val database = AppDatabase.getDatabase(context)
+            val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
 
-        val databaseSeeder = DatabaseSeeder(topicDao = AppDatabase.getDatabase(context).topicDao(), messageDao = AppDatabase.getDatabase(context).messageDao())
-        //database.close()
-        //  settingsViewModel.updateSetting("theme", "Very Dark")
+            val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
+            val categoryViewModel: CategoryViewModel =
+                viewModel(factory = CategoryViewModel.Factory)
+            val settingsViewModel: SettingsViewModel = viewModel()
+            val searchViewModel: searchViewModel = viewModel()
+            val topBarViewModel: TopBarViewModel = viewModel()
 
-        settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
-            Log.d("SETTINGS_DEBUG", "${settings}")
-        })
+            val navController = rememberNavController()
+            val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
+            val backStackEntry = navController.currentBackStackEntryAsState()
 
-        val topBarViewModel: TopBarViewModel = viewModel()
-        val navController = rememberNavController()
-        val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
-        val backStackEntry = navController.currentBackStackEntryAsState()
+          //  val databaseSeeder = DatabaseSeeder(
+          //      topicDao = AppDatabase.getDatabase(context).topicDao(),
+          //      messageDao = AppDatabase.getDatabase(context).messageDao()
+          //  )
 
-        //  database.close()
+       //  settingsViewModel.updateSetting("theme", "Very Dark")
+       // settingsViewModel.settingsLiveData.observe(this, Observer { settings ->
+       //     Log.d("SETTINGS_DEBUG", "${settings}")
+       // })
+
         //Add test category
         LaunchedEffect(true)
         {
-
-            categoryViewModel.addtestcat()
-//            databaseSeeder.generateSampleData(1)
-        databaseSeeder.generateSampleData(categoryId = 1)
+             categoryViewModel.addtestcat()
+            //databaseSeeder.generateSampleData(categoryId = 1)
         }
-
-        // Listen for changes in the navController's back stack and update the title accordingly
-        LaunchedEffect(backStackEntry.value) {
-            val currentRoute = navController.currentBackStackEntry?.destination?.route
-            topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
-        }
-
+    // Listen for changes in the navController's back stack and update the title accordingly
+    LaunchedEffect(backStackEntry.value) {
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
+        topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
+    }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -124,9 +123,7 @@ class MainActivity : ComponentActivity() {
                                 topicViewModel
                             )
                         }
-                        //composable("newSearch") { allSearch(topicViewModel, messageViewModel, generateTableData(2000)) }
                         composable("newSearch") { allSearch(messageViewModel, searchViewModel, navController ) }
-
                         composable("navViewMessage"){ MessageViewScreen(navController, messageViewModel) }
                         composable("navaddtopic") { AddTopicScreen(navController, topicViewModel) }
                         composable("navcolourpicker") {
@@ -159,12 +156,10 @@ class MainActivity : ComponentActivity() {
                                     topicColor = topicViewModel.cTopicColor, messageId = messageId
                                 )
                             }
-
                         }
                     }
                 }
             }
         )
     }
-
 }

@@ -121,7 +121,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             FloatingActionButton(
                 onClick = {
                     viewModel.setTempCategory("Topics")
-                    viewModel.settemptopicname("")
+                    viewModel.setTempTopicName("")
                     viewModel.setFileURI("")
                     navController.navigate("navaddtopic")
                           },
