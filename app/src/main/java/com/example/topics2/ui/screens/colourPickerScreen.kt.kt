@@ -46,6 +46,7 @@ import com.example.topics2.ui.components.addTopic.colorToHex
 import com.example.topics2.ui.components.addTopic.colorToHsv
 import com.example.topics2.ui.components.addTopic.hexToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 
@@ -75,6 +76,13 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     var tempClip by remember { mutableStateOf("") }
     var bShouldPaste by remember { mutableStateOf(false) }
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     LaunchedEffect(bShouldPaste) {
         if (bShouldPaste) {
             val clip = clipboardManager.primaryClip

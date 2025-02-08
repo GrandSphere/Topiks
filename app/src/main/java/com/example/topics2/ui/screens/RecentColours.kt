@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
@@ -37,6 +39,13 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
     // Get screen width and calculate block size (5 blocks per row
     val myNonsenseColours = viewModel.recentColoursList.collectAsState().value
 
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     Column(
         //modifier = Modifier
         //.fillMaxSize() // Make sure the Box fills the screen,,
