@@ -62,7 +62,7 @@ fun CustomSearchBox(
         modifier = Modifier
             .fillMaxWidth()
 //            .pointerInput(Unit) { detectTapGestures( onLongPress = { oncHold() } ) }
-            .padding(top = 5.dp, bottom = 5.dp),
+            .padding(top = 5.dp, bottom = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         Surface(

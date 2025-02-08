@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
@@ -33,6 +34,8 @@ import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.components.messageScreen.MessageBubble
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
+import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -62,6 +65,23 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var inputText by remember{ mutableStateOf("")}
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
     var searchResultCount: Int by remember { mutableStateOf(0 ) }
+
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+
+        topBarViewModel.setMenuItems(
+            listOf(
+                MenuItem("Search") {
+                    bSearch = !bSearch
+//                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
+                },
+                MenuItem("Back") {
+                    navController.popBackStack()
+                }
+            )
+        )
+
+    }
 
     fun scrollMessage()
     {
@@ -93,6 +113,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     }
     Column(
         modifier = Modifier
+            .padding(top = 0.dp)
             .fillMaxSize()
             //.background(Color.Red)
             .pointerInput(Unit) {
@@ -101,9 +122,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 })
             }
     ) {
-        bSearch= true
+//        bSearch= true
         if (bSearch) {
-
             CustomSearchBox(
                 inputText = inputText,
                 sPlaceHolder = "Search Messages...",

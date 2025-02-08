@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.RawQuery
+import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +15,10 @@ interface TopicDao {
 
 
  @Insert
-suspend  fun insertTopic(topic: TopicTbl)
+ suspend fun insertTopic(topic: TopicTbl)
 
-   @Insert
-    suspend fun insert(topic: TopicTbl): Long // used for test data
+ @Insert
+ suspend fun insert(topic: TopicTbl): Long // used for test data
 
  @Query("SELECT * FROM topic_tbl ORDER BY LastEditTime DESC")
  fun getAllTopics(): Flow<List<TopicTbl>>
@@ -36,9 +37,19 @@ suspend  fun insertTopic(topic: TopicTbl)
  @Query("SELECT * FROM topic_tbl WHERE categoryId = :categoryId")
  fun getTopicsByCategoryId(categoryId: Int): Flow<List<TopicTbl>>
 
-@RawQuery
-    fun checkpoint(query: SupportSQLiteQuery): Int
+ @Query("SELECT * FROM topic_tbl WHERE categoryId = :topicId")
+ fun getTopicById(topicId: Int): TopicTbl
 
-@Query("SELECT EXISTS(SELECT 1 FROM topic_tbl WHERE name IN (:names) LIMIT 1)")
-    suspend fun anyTopicsExist(names: List<String>): Boolean
+ @Query("SELECT createTime FROM topic_tbl WHERE id = :topicId")
+suspend fun getCreatedTimeByID(topicId: Int): Long
+
+ @RawQuery
+ fun checkpoint(query: SupportSQLiteQuery): Int
+
+ @Query("SELECT EXISTS(SELECT 1 FROM topic_tbl WHERE name IN (:names) LIMIT 1)")
+ suspend fun anyTopicsExist(names: List<String>): Boolean
+
+
+ @Update
+ suspend fun editTopic(updatedTopic: TopicTbl)
 }

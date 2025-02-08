@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.global.CustomTextBox
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.utilities.helper.TemporaryDataHolder
 import kotlinx.coroutines.launch
@@ -32,6 +34,14 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel)
     val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
     var inputText by remember { mutableStateOf( viewModel.getMessageContentById(tempMessageID))}
     val coroutineScope = rememberCoroutineScope()
+
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     Box(){
 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
     CustomTextBox(
