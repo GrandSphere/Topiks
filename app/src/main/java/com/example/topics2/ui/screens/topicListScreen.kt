@@ -69,6 +69,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     var inputText by remember{ mutableStateOf("")}
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
+
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Export") {
@@ -111,7 +112,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 oncHold = { navController.navigate("newSearch") },
             )
             //TextButton() { }
-            Spacer(modifier = Modifier.height(10.dp))
+//            Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
