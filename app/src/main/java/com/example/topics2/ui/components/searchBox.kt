@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,9 +44,14 @@ fun CustomSearchBox(
     onValueChange: (String) -> Unit,
     oncHold: () -> Unit = {},
     sPlaceHolder: String = "Enter message",
+    bShowSearchNav: Boolean = false,
     isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
-    boxModifier: Modifier = Modifier // Modifier for the Box
+    boxModifier: Modifier = Modifier, // Modifier for the Box
+    onNextClick: () -> Unit = {},
+    onPreviousClick: () -> Unit = {},
+    iSearchCount: Int = 0,
+    iCurrentSearch: Int = 0,
 ) {
     val colors = MaterialTheme.colorScheme
     var isSearchFocused by remember { mutableStateOf(false) }
@@ -113,20 +120,34 @@ fun CustomSearchBox(
 
                 Spacer(modifier = Modifier.width(5.dp))
 
-/*
-                IconButton(
-                    onClick = { oncHold() },
-                    modifier = Modifier.size(30.dp)
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search",
-                        tint = colors.onBackground,
-                        modifier = Modifier.height(25.dp)
-                    )
+                if (bShowSearchNav) {
+                    Text(text = "${iCurrentSearch}/${iSearchCount}", fontSize = 10.sp)
+                    IconButton( // Previous
+                        onClick = { onPreviousClick() },
+                        modifier = Modifier.size(30.dp)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowUp,
+                            contentDescription = "Search",
+                            tint = colors.onBackground,
+                            modifier = Modifier.height(25.dp)
+                        )
+                    }
+                        IconButton( // next
+                            onClick = { onNextClick() },
+                            modifier = Modifier.size(30.dp)
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                contentDescription = "Search",
+                                tint = colors.onBackground,
+                                modifier = Modifier.height(25.dp)
+                            )
+                        }
+
                 }
-*/
 
                 Spacer(modifier = Modifier.width(5.dp))
             }

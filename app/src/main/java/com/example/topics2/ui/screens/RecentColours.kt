@@ -109,7 +109,7 @@ fun colourPopulator(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                viewModel.settempColour(colours[index])
+                                viewModel.setTempColour(colours[index])
                                 navController.popBackStack()
                             }
 
