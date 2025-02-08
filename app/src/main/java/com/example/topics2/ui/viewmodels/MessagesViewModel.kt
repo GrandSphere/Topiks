@@ -1,8 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
@@ -17,9 +15,7 @@ import com.example.topics2.db.dao.FilesDao
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
-import com.example.topics2.db.entities.FileInfo
 import com.example.topics2.db.entities.FileInfoWithIcon
-import com.example.topics2.db.entities.FilePath
 import com.example.topics2.db.entities.FileTbl
 import com.example.topics2.model.Message
 import com.example.topics2.model.MessageSearchContent
@@ -83,8 +79,9 @@ class MessageViewModel (
             .toMap()
             createMessageSubset(messageList)
         }.launchIn(viewModelScope)
-
-
+    }
+    fun clearMessages(){
+        _messages.value = emptyList()
     }
     // For search results
     private val _searchResults = MutableLiveData<List<Message>>()
@@ -118,7 +115,7 @@ class MessageViewModel (
         return _messagesContentById.value[messageId]
     }
 
-    fun setSearchResultEmpty(){
+    fun clearSearchResult(){
         _searchResults.value = emptyList()
     }
 
