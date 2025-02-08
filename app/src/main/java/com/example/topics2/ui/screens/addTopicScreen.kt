@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -27,6 +28,7 @@ import com.example.topics2.ui.components.addTopic.TopicCategory
 import com.example.topics2.ui.components.addTopic.TopicColour
 import com.example.topics2.ui.components.addTopic.TopicName
 import com.example.topics2.ui.components.addTopic.argbToColor
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
@@ -36,6 +38,13 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
     val topicObj: MutableState<TopicTbl?> = remember { mutableStateOf(null) }
     bEditMode.value = topicId != -1
 
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    LaunchedEffect(Unit) {
+        topBarViewModel.setMenuItems(
+            listOf(
+            )
+        )
+    }
     if (bEditMode.value){
         topicObj.value = viewModel.getTopicObjectById(topicId)
         val topicName = topicObj.value?.name ?: ""
@@ -63,7 +72,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Bottom
-        ){
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
