@@ -51,13 +51,10 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val vLineHeight: TextUnit = 20.sp // You can change this value as needed
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
-
     val tempTopicName by viewModel.temptopicname.collectAsState()
     var inputText by remember { mutableStateOf(tempTopicName) }
-
     val bEditedMode by viewModel.bEditedMode.collectAsState()
-    Log.d("TOPICED", "TOPICNAME: ${inputText}")
-    Log.d("TOPICED", "vmTOPICNAME: ${tempTopicName}")
+
     LaunchedEffect(Unit) {
         inputText = tempTopicName
     }
@@ -65,8 +62,6 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val widthSetting = 100
     val heightSetting = 100
 
-    //  Log.d("TOPICED", "TOPICID: ${topicId}")
-    //  Log.d("TOPICED", "bEditMOde: ${bEditMode}")
     val colors = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
     val focusModifier = Modifier

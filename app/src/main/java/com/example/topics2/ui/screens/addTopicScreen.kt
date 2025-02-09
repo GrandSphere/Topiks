@@ -38,8 +38,6 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
     val focusManager = LocalFocusManager.current
 
     val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
-    val topicObj: MutableState<TopicTbl?> = remember { mutableStateOf(null) }
-    //var bEditedMode = remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
@@ -50,16 +48,12 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
         if (bEditMode) {
             viewModel.setEditedMode(true)
             val topicObj = viewModel.getTopicObjectById(topicId)
-
-            Log.d("TOPICED", "OBJ: ${topicObj}")
             viewModel.setTempTopicName(topicObj?.name ?: "")
             viewModel.setColour(argbToColor(topicObj?.colour ?: 111111))
             viewModel.setTempColour(argbToColor(topicObj?.colour ?: 111111))
             viewModel.setFileURI(topicObj?.iconPath ?: "")
             viewModel.setEditMode(false)
         }
-
-        Log.d("TOPICED", "RAN AGAIN")
     }
     Box(
         modifier = Modifier
