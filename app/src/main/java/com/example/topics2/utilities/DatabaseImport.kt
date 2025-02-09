@@ -4,28 +4,12 @@ package com.example.topics.utilities
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.core.StartOffsetType.Companion.Delay
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import com.example.topics2.DbTopics
-import com.example.topics2.activities.MainActivity
 import com.example.topics2.db.AppDatabase
-import com.example.topics2.ui.viewmodels.TopicViewModel
 import com.example.topics2.utilities.logFunc
-import iconFilePicker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -85,6 +69,7 @@ suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Disp
         AppDatabase.clearInstance()
         AppDatabase.getDatabase(context)
     }
+
 }
 
 fun deleteWalFiles(walFile: File, shmFile: File, currentDBFile: File, context: Context) {

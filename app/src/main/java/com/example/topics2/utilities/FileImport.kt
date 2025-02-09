@@ -5,14 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
-import android.webkit.MimeTypeMap
 import android.widget.Toast
-import com.example.topics2.ui.viewmodels.MessageViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -63,7 +59,7 @@ fun copyFileToUserFolder(
         val fileType = determineFileType(context, currentUri)
 
         if (fileType == "Image") {
-            val folderName = if (thumbnailOnly) "icons" else "thumbnails"
+            val folderName = if (thumbnailOnly) "Icons" else "Thumbnails"
             val folderDir = File(externalDir, folderName)
 
             if (!folderDir.exists() && !folderDir.mkdirs()) {
@@ -71,7 +67,6 @@ fun copyFileToUserFolder(
             }
 
             val compressedImageFile = File(folderDir, fileName)
-
             compressImage(context, currentUri, compressedImageFile, width, height)
 
             thumbnailPath = compressedImageFile.toString()

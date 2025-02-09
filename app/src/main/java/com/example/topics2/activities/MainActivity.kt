@@ -1,10 +1,7 @@
 package com.example.topics2.activities
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -16,9 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,23 +26,18 @@ import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
 import com.example.topics2.ui.screens.ColourPickerScreen
 import com.example.topics2.ui.screens.MessageScreen
+import com.example.topics2.ui.screens.MessageViewScreen
 import com.example.topics2.ui.screens.ShowMorePictures
 import com.example.topics2.ui.screens.TopicListScreen
+import com.example.topics2.ui.screens.allSearch
 import com.example.topics2.ui.themes.TopicsTheme
 import com.example.topics2.ui.viewmodels.CategoryViewModel
+import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import com.example.topics2.ui.viewmodels.TopBarViewModel
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import com.example.topics2.ui.screens.MessageViewScreen
-import com.example.topics2.ui.screens.allSearch
-import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.searchViewModel
-import com.example.topics2.unused.old.generateSampleMessage
-import com.example.topics2.unused.old.generateTableData
-import com.example.topics2.utilities.helper.DatabaseSeeder
 import com.example.topics2.viewmodel.SettingsViewModel
-import kotlinx.coroutines.launch
-import java.io.File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

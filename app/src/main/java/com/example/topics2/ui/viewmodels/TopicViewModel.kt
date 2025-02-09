@@ -2,8 +2,9 @@ package com.example.topics2.ui.viewmodels
 
 //import androidx.compose.material.MaterialTheme
 import android.content.Context
-import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -12,23 +13,19 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.topics2.DbTopics
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.TopicTbl
+import com.example.topics2.model.TopicSearchHandler
+import com.example.topics2.model.tblTopicIdName
 import com.example.topics2.ui.components.addTopic.argbToColor
+import com.example.topics2.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import androidx.compose.material3.MaterialTheme
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.topics2.model.TopicSearchHandler
-import com.example.topics2.model.tblTopicIdName
-import com.example.topics2.ui.themes.CustomTertiary
-import com.example.topics2.utilities.logFunc
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 // TODO ADD CATEGORY TO DB WHEN ADDING TOPIC
 
@@ -75,6 +72,16 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
             logFunc(context, "TopicViewModel: Error creating topic subset: ${e.message}")
         }
     }
+
+    // States whether you are editing or adding
+    private val _bEditMode = MutableStateFlow<Boolean>(false)
+    val bEditMode: StateFlow<Boolean> = _bEditMode
+    fun setEditMode(newValue: Boolean) { _bEditMode.value = newValue }
+
+    // States whether you are editing or adding
+    private val _bEditedMode = MutableStateFlow<Boolean>(false)
+    val bEditedMode: StateFlow<Boolean> = _bEditedMode
+    fun setEditedMode(newValue: Boolean) { _bEditedMode.value = newValue }
 
     // Access the full TopicTbl based on search result id
     fun getTopicObjectById(topicId: Int): TopicTbl? {
@@ -128,8 +135,8 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
     // Only used in addTopic, to store values when adding Colour
     private val _temptopicname = MutableStateFlow<String>("")
     val temptopicname: StateFlow<String> = _temptopicname
-    fun setTempTopicName(newCategory: String) {
-        _temptopicname.value = newCategory
+    fun setTempTopicName(newTopicName: String) {
+        _temptopicname.value = newTopicName
     }
 
     private val _recentColoursList = MutableStateFlow<List<Color>>(emptyList())

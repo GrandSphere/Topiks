@@ -1,19 +1,9 @@
 //import com.example.topics.utilities.DirectoryPicker
 //import com.example.topics.model.db.AppDatabase
-import android.content.ContentResolver
 import android.content.Context
-import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.topics.utilities.copyStream
 import com.example.topics2.db.AppDatabase
@@ -24,8 +14,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 suspend fun ExportDatabaseWithPicker(context: Context) {
@@ -40,7 +30,13 @@ suspend fun ExportDatabaseWithPicker(context: Context) {
         }
         // Directly create a file path using externalDir
         val databaseName = "topics_database"
-        val destinationFile = File(externalDir, databaseName)
+
+        // Get the current date and time
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+        val timestamp = now.format(formatter)
+        val fileName = "$databaseName-$timestamp"
+        val destinationFile = File(externalDir, fileName)
 
         exportDatabaseToUri(context, destinationFile)
     }
