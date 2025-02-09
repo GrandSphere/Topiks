@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +40,7 @@ import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
 @Composable
-fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode: Boolean = false, topicId: Int = -1) {
+fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
     //val category: String by viewModel.category.collectAsState()
     //val iMaxLines = 5
     val sPlaceHolder: String = "Topic Name... "
@@ -50,12 +51,22 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
     val vLineHeight: TextUnit = 20.sp // You can change this value as needed
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
-    Log.d("QQWEERRTT", "${viewModel.temptopicname.value}")
-    var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
-    viewModel.setTempTopicName(inputText)
+
+    val tempTopicName by viewModel.temptopicname.collectAsState()
+    var inputText by remember { mutableStateOf(tempTopicName) }
+
+    val bEditedMode by viewModel.bEditedMode.collectAsState()
+    Log.d("TOPICED", "TOPICNAME: ${inputText}")
+    Log.d("TOPICED", "vmTOPICNAME: ${tempTopicName}")
+    LaunchedEffect(Unit) {
+        inputText = tempTopicName
+    }
+
     val widthSetting = 100
     val heightSetting = 100
 
+    //  Log.d("TOPICED", "TOPICID: ${topicId}")
+    //  Log.d("TOPICED", "bEditMOde: ${bEditMode}")
     val colors = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
     val focusModifier = Modifier
@@ -71,7 +82,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
     ) {
         CustomTextBox(
             inputText = inputText,
-            onValueChange = { newText -> inputText = newText },
+            onValueChange = { newText -> inputText = newText
+                viewModel.setTempTopicName(inputText)
+            },
             vMaxLinesSize = vMaxLinesSize,  // Adjust this as needed
             vFontSize = vFontSize,          // Adjust this as needed
             sPlaceHolder = sPlaceHolder,    // Adjust this as needed
@@ -116,8 +129,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
                             thumbnailOnly = true
                         )
                     }
-                    if (!bEditMode) {
-                        viewModel.addTopic(
+                    if (bEditedMode) {
+                        viewModel.editTopic(
+                            topicId = topicId,
                             topicName = inputText,
                             topicColour = iColor,
 //                        topicCategory = viewModel.tempcategory.value,
@@ -127,8 +141,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
                         )
                     }
                     else{
-                        viewModel.editTopic(
-                            topicId = topicId,
+                        viewModel.addTopic(
                             topicName = inputText,
                             topicColour = iColor,
 //                        topicCategory = viewModel.tempcategory.value,
