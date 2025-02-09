@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,17 +56,14 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.topics.utilities.importDatabaseFromUri
 import com.example.topics2.db.enitities.TopicTbl
-import com.example.topics2.model.TopicSearchHandler
-import com.example.topics2.model.tblTopicIdName
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.TopicViewModel
-import iconFilePicker
+import com.example.topics2.utilities.helper.restartMainActivity
 import kotlinx.coroutines.launch
-import kotlin.system.exitProcess
 
 
 @Composable
@@ -94,6 +90,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 },
                 MenuItem("Import Database") {
                     openFileLauncher.launch(arrayOf("*/*"))
+                    //restartApp(context)
                     //coroutineScope.launch { im(context) }
                 },
                 MenuItem("Close") {
@@ -296,6 +293,7 @@ fun filePickerScreen(
             if (uri != null && uri != Uri.EMPTY) {
                 coroutineScope.launch {
                     importDatabaseFromUri(context, uri)
+                    restartMainActivity(context)
                 }
             }
             onFileSelected(uri) // Pass the selected URI back

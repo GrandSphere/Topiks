@@ -1,10 +1,10 @@
 package com.example.topics2.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+
 data class MenuItem(val label: String, val onClick: () -> Unit)
 // TopBarViewModel.kt
 class TopBarViewModel : ViewModel() {
