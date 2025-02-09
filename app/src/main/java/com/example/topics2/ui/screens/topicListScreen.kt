@@ -288,7 +288,6 @@ fun filePickerScreen(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
             selectedFileUri.value = uri ?: Uri.EMPTY
-            Log.d("QQWWEE Debug_ this is where I set", "$uri")
             // TODO: DO additional checks if valid db
             if (uri != null && uri != Uri.EMPTY) {
                 coroutineScope.launch {

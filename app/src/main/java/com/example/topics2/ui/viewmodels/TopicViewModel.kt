@@ -78,6 +78,11 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
     val bEditMode: StateFlow<Boolean> = _bEditMode
     fun setEditMode(newValue: Boolean) { _bEditMode.value = newValue }
 
+    // States whether you are editing or adding
+    private val _bEditedMode = MutableStateFlow<Boolean>(false)
+    val bEditedMode: StateFlow<Boolean> = _bEditedMode
+    fun setEditedMode(newValue: Boolean) { _bEditedMode.value = newValue }
+
     // Access the full TopicTbl based on search result id
     fun getTopicObjectById(topicId: Int): TopicTbl? {
         return _topicsMap.value[topicId]

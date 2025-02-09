@@ -39,33 +39,27 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
 
     val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
     val topicObj: MutableState<TopicTbl?> = remember { mutableStateOf(null) }
-    var bEditedMode = remember { mutableStateOf(false) }
+    //var bEditedMode = remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
             )
         )
-    }
-    LaunchedEffect (bEditMode) {
+
         if (bEditMode) {
-            bEditedMode.value = true
-            topicObj.value = viewModel.getTopicObjectById(topicId)
-            val topicName = topicObj.value?.name ?: ""
-            val fileUri = topicObj.value?.iconPath ?: ""
-            val colour = topicObj.value?.colour ?: 11111111
-            Log.d("TOPICEDITING", "THIS IS THE name: ${topicName}")
+            viewModel.setEditedMode(true)
+            val topicObj = viewModel.getTopicObjectById(topicId)
 
-            viewModel.setTempTopicName(topicName)
-
-            viewModel.setFileURI(fileUri)
-
-            viewModel.setTempColour(argbToColor(colour))
-            viewModel.setColour(argbToColor(colour))
-
-            //Log.d("TOPICEDITING print", "STILL ${bEditMode}")
+            Log.d("TOPICED", "OBJ: ${topicObj}")
+            viewModel.setTempTopicName(topicObj?.name ?: "")
+            viewModel.setColour(argbToColor(topicObj?.colour ?: 111111))
+            viewModel.setTempColour(argbToColor(topicObj?.colour ?: 111111))
+            viewModel.setFileURI(topicObj?.iconPath ?: "")
             viewModel.setEditMode(false)
         }
+
+        Log.d("TOPICED", "RAN AGAIN")
     }
     Box(
         modifier = Modifier
@@ -101,7 +95,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TopicName(navController, viewModel, bEditedMode.value, topicId)
+                TopicName(navController, viewModel, topicId)
                 //onAddTopic = onAddTopic,
                 //onCancel = onCancel
             }
