@@ -1,5 +1,4 @@
 package com.example.topics2.utilities.helper
-import androidx.compose.runtime.rememberCoroutineScope
 import com.example.topics2.db.dao.MessageDao
 import com.example.topics2.db.dao.TopicDao
 import com.example.topics2.db.enitities.MessageTbl
@@ -7,6 +6,7 @@ import com.example.topics2.db.enitities.TopicTbl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ThreadLocalRandom
+
 class DatabaseSeeder(
     private val topicDao: TopicDao,
     private val messageDao: MessageDao

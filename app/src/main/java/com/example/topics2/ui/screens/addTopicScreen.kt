@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,27 +36,24 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
     val focusManager = LocalFocusManager.current
-    var bEditMode = remember { mutableStateOf(false) }
-    val topicObj: MutableState<TopicTbl?> = remember { mutableStateOf(null) }
-    bEditMode.value = topicId != -1
 
+    val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
             )
         )
-    }
-    if (bEditMode.value){
-        topicObj.value = viewModel.getTopicObjectById(topicId)
-        val topicName = topicObj.value?.name ?: ""
-        val fileUri = topicObj.value?.iconPath ?: ""
-        val colour = topicObj.value?.colour ?: 11111111
-        Log.d("TOPICEDITING", "THIS IS THE COLOR: ${colour}")
-        viewModel.setTempTopicName(topicName)
-        viewModel.setFileURI(fileUri)
-        viewModel.setColour(argbToColor(colour))
-        viewModel.setTempColour(argbToColor(colour))
+
+        if (bEditMode) {
+            viewModel.setEditedMode(true)
+            val topicObj = viewModel.getTopicObjectById(topicId)
+            viewModel.setTempTopicName(topicObj?.name ?: "")
+            viewModel.setColour(argbToColor(topicObj?.colour ?: 111111))
+            viewModel.setTempColour(argbToColor(topicObj?.colour ?: 111111))
+            viewModel.setFileURI(topicObj?.iconPath ?: "")
+            viewModel.setEditMode(false)
+        }
     }
     Box(
         modifier = Modifier
@@ -90,7 +89,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TopicName(navController, viewModel, bEditMode.value, topicId)
+                TopicName(navController, viewModel, topicId)
                 //onAddTopic = onAddTopic,
                 //onCancel = onCancel
             }

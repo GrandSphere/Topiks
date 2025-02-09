@@ -2,7 +2,6 @@ package com.example.topics2.ui.screens
 
 import android.content.ClipboardManager
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +47,6 @@ import com.example.topics2.ui.components.addTopic.hexToColor
 import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
-
 
 
 @Composable

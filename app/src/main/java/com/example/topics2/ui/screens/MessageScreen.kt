@@ -1,7 +1,5 @@
 package com.example.topics2.ui.screens
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
