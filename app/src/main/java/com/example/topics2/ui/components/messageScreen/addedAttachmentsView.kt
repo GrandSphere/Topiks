@@ -3,17 +3,17 @@ package com.example.topics2.ui.components.messageScreen
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import com.example.topics2.unused.old.getFileNameFromString
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.topics2.unused.old.getFileNameFromString
 
 @Composable
 fun addedAttachmentsView(

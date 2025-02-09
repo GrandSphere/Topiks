@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+//import com.example.topics2.model.allSearchHandler
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -26,10 +27,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cSearchTopicFont
-//import com.example.topics2.model.allSearchHandler
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MessageViewModel

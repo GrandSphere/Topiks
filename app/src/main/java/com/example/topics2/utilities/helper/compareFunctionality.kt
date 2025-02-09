@@ -1,7 +1,6 @@
 package com.example.topics2.utilities.helper
 
 import android.net.Uri
-import android.util.Log
 
 fun compareFileLists(
     originalList: List<Uri>?,

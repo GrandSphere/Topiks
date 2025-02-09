@@ -1,6 +1,5 @@
 package com.example.topics2.model
 
-import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
