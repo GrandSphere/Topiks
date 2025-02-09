@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 
+import ExportDatabaseWithPicker
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.TopicViewModel
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 
 @Composable
@@ -68,17 +70,21 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val focusManager = LocalFocusManager.current
     var inputText by remember{ mutableStateOf("")}
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
             listOf(
-                MenuItem("Export") {
-//                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
+                MenuItem("Export Database") {
+                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
                 },
-                MenuItem("Import") {
-                    // Handle import logic
+                MenuItem("Import Database") {
+                    //coroutineScope.launch { im(context) }
                 },
                 MenuItem("Close") {
+                    exitProcess(0)
                     // Handle close logic
                 }
             )
@@ -241,7 +247,9 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Delete Topic Button
                 text = { Text("Edit") },
                 onClick = {
+                    viewModel.setEditMode(true)
                     navController.navigate("navaddtopic/${topic.id}")
+
                     // Edit here
                     showMenu = false
                 }

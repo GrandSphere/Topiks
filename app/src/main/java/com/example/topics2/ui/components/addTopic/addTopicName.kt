@@ -50,11 +50,11 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
     val vLineHeight: TextUnit = 20.sp // You can change this value as needed
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
+    Log.d("QQWEERRTT", "${viewModel.temptopicname.value}")
     var inputText by remember { mutableStateOf(viewModel.temptopicname.value) }
     viewModel.setTempTopicName(inputText)
     val widthSetting = 100
     val heightSetting = 100
-
 
     val colors = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
@@ -140,6 +140,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, bEditMode
 
                     viewModel.setFileURI("")
                     inputText = ""
+                    viewModel.setTempTopicName("")
+                    viewModel.setEditMode(false)
                     navController.popBackStack()
                 }
             },

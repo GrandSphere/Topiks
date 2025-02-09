@@ -76,6 +76,11 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
         }
     }
 
+    // States whether you are editing or adding
+    private val _bEditMode = MutableStateFlow<Boolean>(false)
+    val bEditMode: StateFlow<Boolean> = _bEditMode
+    fun setEditMode(newValue: Boolean) { _bEditMode.value = newValue }
+
     // Access the full TopicTbl based on search result id
     fun getTopicObjectById(topicId: Int): TopicTbl? {
         return _topicsMap.value[topicId]
@@ -128,8 +133,8 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
     // Only used in addTopic, to store values when adding Colour
     private val _temptopicname = MutableStateFlow<String>("")
     val temptopicname: StateFlow<String> = _temptopicname
-    fun setTempTopicName(newCategory: String) {
-        _temptopicname.value = newCategory
+    fun setTempTopicName(newTopicName: String) {
+        _temptopicname.value = newTopicName
     }
 
     private val _recentColoursList = MutableStateFlow<List<Color>>(emptyList())
