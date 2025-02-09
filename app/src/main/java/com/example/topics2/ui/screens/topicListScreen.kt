@@ -2,7 +2,11 @@ package com.example.topics2.ui.screens
 
 
 import ExportDatabaseWithPicker
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -30,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.topics.utilities.importDatabaseFromUri
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.model.TopicSearchHandler
 import com.example.topics2.model.tblTopicIdName
@@ -59,6 +65,7 @@ import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import iconFilePicker
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
@@ -73,6 +80,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    // FilePicker Logic
+    val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
+
+    val openFileLauncher = filePickerScreen { uri -> selectedFileUri.value = uri?: Uri.parse("")}
+
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
@@ -81,11 +93,12 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     coroutineScope.launch { ExportDatabaseWithPicker(context) }
                 },
                 MenuItem("Import Database") {
+                    openFileLauncher.launch(arrayOf("*/*"))
                     //coroutineScope.launch { im(context) }
                 },
                 MenuItem("Close") {
-                    exitProcess(0)
-                    // Handle close logic
+                    // Handle cleanup here
+                    System.exit(0)
                 }
             )
         )
@@ -127,7 +140,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 if (inputText.length > 0) {
                     viewModel.search(inputText)
                     items(searchResults.size){
-                        index: Int ->
+                            index: Int ->
                         val topicID: Int =  searchResults[index].id
                         val topic = viewModel.getTopicObjectById(topicID)
                         if(topic != null) {
@@ -142,28 +155,28 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
             }
         }
-            // Button to add new topic, aligned at the bottom end of the screen
-            FloatingActionButton(
-                onClick = {
-                    viewModel.setTempCategory("Topics")
-                    viewModel.setTempTopicName("")
-                    viewModel.setFileURI("")
-                    navController.navigate("navaddtopic/-1")
-                          },
-                shape = CircleShape, // Change the shape to rounded corners
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Topic",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+        // Button to add new topic, aligned at the bottom end of the screen
+        FloatingActionButton(
+            onClick = {
+                viewModel.setTempCategory("Topics")
+                viewModel.setTempTopicName("")
+                viewModel.setFileURI("")
+                navController.navigate("navaddtopic/-1")
+            },
+            shape = CircleShape, // Change the shape to rounded corners
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Topic",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
+}
 
 @Composable
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
@@ -264,4 +277,30 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             )
         }
     }
+}
+
+@Composable
+fun filePickerScreen(
+    onFileSelected: (Uri?) -> Unit
+): ActivityResultLauncher<Array<String>> {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            selectedFileUri.value = uri ?: Uri.EMPTY
+            Log.d("QQWWEE Debug_ this is where I set", "$uri")
+            // TODO: DO additional checks if valid db
+            if (uri != null && uri != Uri.EMPTY) {
+                coroutineScope.launch {
+                    importDatabaseFromUri(context, uri)
+                }
+            }
+            onFileSelected(uri) // Pass the selected URI back
+        }
+    )
+
+    return filePickerLauncher
 }
