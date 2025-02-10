@@ -26,9 +26,10 @@ class TopBarViewModel : ViewModel() {
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
             "navtopicListScreen" -> "Topics"
-            "navaddtopic" -> "Add Topic"
+            "navaddtopic/{topicId}" -> "Add Topic"
             else -> "Unknown"
         }
+
         _topBarTitle.value = title
     }
 
