@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +44,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
     val dataset by messageViewModel.searchMessages.collectAsState(emptyList())
     val searchResults by searchViewModel.searchResults.observeAsState(emptyList())
 
+    val colours = MaterialTheme.colorScheme
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
