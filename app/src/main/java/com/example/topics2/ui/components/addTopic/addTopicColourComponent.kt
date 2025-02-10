@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -40,7 +42,7 @@ import iconFilePicker
 fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
     val noteColour by viewModel.colour.collectAsState()
 
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
     var imageUrl = viewModel.fileURI.collectAsState().value
 
     val imageMimeTypes = arrayOf(
@@ -72,7 +74,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                     })
                 }
                 .clip(CircleShape)
-                .background(colors.secondary)
+                .background(colours.secondary)
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
@@ -92,7 +94,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Image",
-                    tint = colors.onPrimary,
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(24.dp)
@@ -103,20 +105,22 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
         Spacer(modifier = Modifier.width(16.dp))
         Box(
             modifier = Modifier .size(60.dp),
-            contentAlignment = Alignment.CenterStart
+            contentAlignment = Alignment.CenterStart,
         ) {
             IconButton(
                 onClick = {
                     viewModel.setTempColour(noteColour)
                     navController.navigate("navcolourpicker")
                 },
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+
             ) {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(noteColour)
+                        .semantics { contentDescription =  "Colour Picker" }
                 )
             }
         }

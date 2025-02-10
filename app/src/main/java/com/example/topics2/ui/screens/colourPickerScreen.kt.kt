@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -75,6 +78,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     var tempClip by remember { mutableStateOf("") }
     var bShouldPaste by remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val colours = MaterialTheme.colorScheme
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
@@ -88,7 +92,6 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             tempClip = clip?.getItemAt(0)?.text?.toString() ?: ""  // Fallback to empty string if clipboard is empty
             var tempHsv= colorToHsv(hexToColor(tempClip))
 
-            //var tempHsv = colorToHsv(Color.Black)
             hue = tempHsv[0]
             saturation = tempHsv[1]
             value = tempHsv[2]
@@ -134,8 +137,8 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,
-                    contentDescription = "Attach",
-                    tint = Color.White, // Set the icon color to white
+                    contentDescription = "Back",
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .height(vIconSize)
                 )
@@ -144,6 +147,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             // Color preview Box
             Box( // Colour previewer
                 modifier = Modifier
+                    .semantics { contentDescription= "Recent Colours" }
                     .pointerInput(Unit) { detectTapGestures(
                         onTap = {
                             navController.navigate("navrecentcolours")
@@ -169,7 +173,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
             Spacer(modifier = Modifier.width(vSpacer))
-            IconButton( //
+            IconButton( // Confirm
                 onClick = {
                     viewModel.setColour(newNoteColour)
                     navController.popBackStack()
@@ -177,8 +181,8 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             ) {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = "Attach",
-                    tint = Color.White, // Set the icon color to white
+                    contentDescription = "Confirm",
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .height(vIconSize)
                 )

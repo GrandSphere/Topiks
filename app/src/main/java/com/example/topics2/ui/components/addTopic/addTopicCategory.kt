@@ -29,7 +29,7 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 fun TopicCategory(viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
     // Focus change listener to update isFocused state
     val focusModifier = Modifier
         .focusRequester(focusRequester)
@@ -54,7 +54,7 @@ fun TopicCategory(viewModel: TopicViewModel) {
                 .padding(start = 3.dp, top = 3.dp, end = 8.dp),
             style = TextStyle(
                 fontSize = 18.sp, // Set the font size
-                color = colors.onSecondary,
+                color = colours.onSecondary,
             )
         )
 
@@ -74,16 +74,16 @@ fun TopicCategory(viewModel: TopicViewModel) {
                     .padding(start = 3.dp, top = 3.dp), // Padding inside text field
                 textStyle = TextStyle(
                     fontSize = 18.sp,
-                    color = colors.onPrimary,
+                    color = colours.onBackground,
                     lineHeight = 20.sp,
                 ),
-                cursorBrush = if (isFocused) SolidColor(colors.tertiary) else SolidColor(Color.Transparent), // Show cursor only when focused
+                cursorBrush = if (isFocused) SolidColor(colours.tertiary) else SolidColor(Color.Transparent), // Show cursor only when focused
                 decorationBox = @Composable { innerTextField ->
                     if (inputText.isEmpty()) { // Show "Category..." text only when the input is empty
                         Text(
                             text = "Category...",
                             style = TextStyle(
-                                color = colors.secondary, // Placeholder color
+                                color = colours.secondary, // Placeholder color
                                 fontSize = 18.sp,
                                 lineHeight = 20.sp
                             ),

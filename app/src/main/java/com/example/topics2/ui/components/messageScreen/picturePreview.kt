@@ -103,7 +103,7 @@ fun picturesPreview( // State 1
                             )
                         }
 
-                        .border(cBorder, Color.White.copy(1f), RoundedCornerShape(cPadding))
+                        .border(cBorder, topicFontColor.copy(1f), RoundedCornerShape(cPadding))
 //                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                         .padding(cBorder)
                         .clip(RoundedCornerShape(cCrop))
@@ -119,7 +119,7 @@ fun picturesPreview( // State 1
                     Box(
                         modifier = Modifier
 
-                            .border(cBorder, Color.White.copy(1f), RoundedCornerShape(cPadding))
+                            .border(cBorder, topicFontColor.copy(1f), RoundedCornerShape(cPadding))
 //                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                             .padding(cBorder)
                             .clip(RoundedCornerShape(cCrop))

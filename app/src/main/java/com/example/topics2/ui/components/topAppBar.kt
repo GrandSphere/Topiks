@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -24,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
@@ -38,7 +38,7 @@ fun CustomTopAppBar(
     navController: NavController,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
-
+    val colours = MaterialTheme.colorScheme
     TopAppBar(
 //        CenterAlignedTopAppBar(
          modifier = Modifier.height(45.dp),
@@ -80,6 +80,7 @@ fun CustomTopMenu(
     onDismiss: () -> Unit,
     navController: NavController,
 ) {
+    val colours = MaterialTheme.colorScheme
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val menuItems by topBarViewModel.menuItems.collectAsState()
 
@@ -88,7 +89,7 @@ fun CustomTopMenu(
         onDismissRequest = { onDismiss() },
         properties = PopupProperties(focusable = true),
         modifier = Modifier
-            .background(Color.Black)
+            .background(colours.background)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(), // Ensure it always takes up full height
@@ -97,7 +98,7 @@ fun CustomTopMenu(
             Column {
                 menuItems.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(item.label, color = Color.White) },
+                        text = { Text(item.label, color = colours.onBackground) },
                         onClick = {
                             item.onClick()
                             onDismiss()

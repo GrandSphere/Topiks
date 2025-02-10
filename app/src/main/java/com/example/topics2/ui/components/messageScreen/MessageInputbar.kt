@@ -74,7 +74,7 @@ fun InputBarMessageScreen(
 
     var inputText by remember { mutableStateOf("") }
     val messagePriority = 0
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
 
     var isFocused by remember { mutableStateOf(false) }
 
@@ -420,7 +420,7 @@ fun InputBarMessageScreen(
                     .align(Alignment.Bottom),
                 imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
                 //imageVector = Icons.Filled.Send, // Attach file icon
-                contentDescription = "Attach",
+                contentDescription = "Send",
                 //tint = colors.tertiary,
                 tint = topicColour,
                 iconModifier = Modifier
