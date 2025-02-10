@@ -178,7 +178,7 @@ fun MessageBubble( // New Message Bubble
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(0.4f)
-            .background(Color.Black)
+            .background()
         ,
 
         onDismissRequest = {
