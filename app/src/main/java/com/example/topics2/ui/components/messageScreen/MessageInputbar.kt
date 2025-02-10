@@ -74,7 +74,7 @@ fun InputBarMessageScreen(
 
     var inputText by remember { mutableStateOf("") }
     val messagePriority = 0
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
 
     var isFocused by remember { mutableStateOf(false) }
 

@@ -27,7 +27,10 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = CustomOnSurfaceVariant,
     tertiaryContainer = CustomTertiaryContainer,
     onTertiaryContainer = CustomOnTertiaryContainer,
-    surfaceTint = CustomSurfaceTint
+    surfaceTint = CustomSurfaceTint,
+
+
+
 )
 
 

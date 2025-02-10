@@ -103,7 +103,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                         )
                     Text( // result string
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                            withStyle(style = SpanStyle(color = colours.onSecondary)) {
                                 append(searchResults[item].content.take(8) + " ")
                             }
 
@@ -119,7 +119,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                                         if (matchIndex == -1) break
 
                                         // Append the part before the match
-                                        withStyle(style = SpanStyle(color = Color.White)) {
+                                        withStyle(style = SpanStyle(color = colours.onPrimary)) {
                                             append(word.substring(currentIndex, matchIndex))
                                         }
 
@@ -135,7 +135,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
 
                                 // Append the remaining part of the word
                                 if (currentIndex < word.length) {
-                                    withStyle(style = SpanStyle(color = Color.White)) {
+                                    withStyle(style = SpanStyle(color = colours.onPrimary)) {
                                         append(word.substring(currentIndex))
                                     }
                                 }
