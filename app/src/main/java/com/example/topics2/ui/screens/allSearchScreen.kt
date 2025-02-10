@@ -37,7 +37,7 @@ import com.example.topics2.ui.viewmodels.searchViewModel
 
 @Composable
 fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel, navController: NavController,
-               highlightColor: Color = Color.Yellow) {
+               highlightColor: Color = MaterialTheme.colorScheme.surfaceVariant) {
 
     messageViewModel.collectSearchMessages()
     var inputText by remember { mutableStateOf("") }
@@ -119,7 +119,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                                         if (matchIndex == -1) break
 
                                         // Append the part before the match
-                                        withStyle(style = SpanStyle(color = colours.onPrimary)) {
+                                        withStyle(style = SpanStyle(color = colours.onBackground)) {
                                             append(word.substring(currentIndex, matchIndex))
                                         }
 
@@ -135,7 +135,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
 
                                 // Append the remaining part of the word
                                 if (currentIndex < word.length) {
-                                    withStyle(style = SpanStyle(color = colours.onPrimary)) {
+                                    withStyle(style = SpanStyle(color = colours.onBackground)) {
                                         append(word.substring(currentIndex))
                                     }
                                 }

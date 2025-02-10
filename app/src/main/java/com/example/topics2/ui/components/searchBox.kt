@@ -50,7 +50,7 @@ fun CustomSearchBox(
     iSearchCount: Int = 0,
     iCurrentSearch: Int = 0,
 ) {
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
     var isSearchFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -64,7 +64,7 @@ fun CustomSearchBox(
     ) {
         Surface(
             shape = RoundedCornerShape(50),
-            color = colors.secondary,
+            color = colours.secondary,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 0.dp)
@@ -87,7 +87,7 @@ fun CustomSearchBox(
                         .focusRequester(focusRequester),
                     textStyle = TextStyle(
                         fontSize = 18.sp,
-                        color = colors.onSecondary,
+                        color = colours.onSecondary,
                         lineHeight = 20.sp
                     ),
                     singleLine = true,
@@ -112,7 +112,7 @@ fun CustomSearchBox(
                             innerTextField()
                         }
                     },
-                    cursorBrush = SolidColor(colors.tertiary) // Cursor color
+                    cursorBrush = SolidColor(colours.tertiary) // Cursor color
                 )
 
                 Spacer(modifier = Modifier.width(5.dp))
@@ -127,7 +127,7 @@ fun CustomSearchBox(
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowUp,
                             contentDescription = "Search",
-                            tint = colors.onBackground,
+                            tint = colours.onBackground,
                             modifier = Modifier.height(25.dp)
                         )
                     }
@@ -139,7 +139,7 @@ fun CustomSearchBox(
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
                                 contentDescription = "Search",
-                                tint = colors.onBackground,
+                                tint = colours.onBackground,
                                 modifier = Modifier.height(25.dp)
                             )
                         }

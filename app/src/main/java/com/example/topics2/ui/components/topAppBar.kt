@@ -89,7 +89,7 @@ fun CustomTopMenu(
         onDismissRequest = { onDismiss() },
         properties = PopupProperties(focusable = true),
         modifier = Modifier
-            .background(colours.primary)
+            .background(colours.background)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(), // Ensure it always takes up full height
@@ -98,7 +98,7 @@ fun CustomTopMenu(
             Column {
                 menuItems.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(item.label, color = colours.onPrimary) },
+                        text = { Text(item.label, color = colours.onBackground) },
                         onClick = {
                             item.onClick()
                             onDismiss()
