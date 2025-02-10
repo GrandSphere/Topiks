@@ -107,7 +107,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
         ) {
             Icon(
                 imageVector = Icons.Filled.Close,
-                contentDescription = "Attach",
+                contentDescription = "Cancel",
                 tint = colors.onBackground,
                 modifier = Modifier
                     .height(vIconSize)
@@ -167,7 +167,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
         ) {
             Icon(
                 imageVector = Icons.Filled.Check, // Attach file icon
-                contentDescription = "Attach",
+                contentDescription = "Confirm",
                 tint = colors.onBackground,
                 modifier = Modifier
                     .size(vIconSize)

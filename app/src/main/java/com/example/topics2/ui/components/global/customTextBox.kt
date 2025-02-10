@@ -34,8 +34,6 @@ fun CustomTextBox(
     ) {
         BasicTextField(
             value = inputText,
-
-
             onValueChange = onValueChange,
             modifier = focusModifier
                 .fillMaxWidth() // Ensure textfield takes full width
