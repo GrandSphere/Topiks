@@ -37,6 +37,7 @@ fun CustomButton(
                 )
             },
         contentAlignment = Alignment.Center
+
     ) {
         Icon(
             imageVector = imageVector,

@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -104,20 +106,22 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
         Spacer(modifier = Modifier.width(16.dp))
         Box(
             modifier = Modifier .size(60.dp),
-            contentAlignment = Alignment.CenterStart
+            contentAlignment = Alignment.CenterStart,
         ) {
             IconButton(
                 onClick = {
                     viewModel.setTempColour(noteColour)
                     navController.navigate("navcolourpicker")
                 },
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+
             ) {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(noteColour)
+                        .semantics { contentDescription =  "Colour Picker" }
                 )
             }
         }
