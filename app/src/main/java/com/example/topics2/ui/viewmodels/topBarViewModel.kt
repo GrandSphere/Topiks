@@ -21,12 +21,17 @@ class TopBarViewModel : ViewModel() {
                 val topicName = currentBackStackEntry?.arguments?.getString("topicName") ?: "Chat"
                 topicName
             }
+            "navaddtopic/{topicId}" -> {
+                val topicId = currentBackStackEntry?.arguments?.getInt("topicId")
+                var title = ""
+                title = if (topicId == -1) { "Add Topic" } else { "Edit Topic" }
+                title
+            }
             "newSearch" -> "Search All"
             "navViewMessage" -> "View Message"
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
             "navtopicListScreen" -> "Topics"
-            "navaddtopic/{topicId}" -> "Add Topic"
             else -> "Unknown"
         }
 
