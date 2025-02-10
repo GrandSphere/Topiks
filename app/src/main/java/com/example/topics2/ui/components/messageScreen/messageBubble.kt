@@ -180,7 +180,7 @@ fun MessageBubble( // New Message Bubble
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(0.4f)
-            .background(colours.primary)
+            .background(colours.background)
         ,
 
         onDismissRequest = {
@@ -189,7 +189,7 @@ fun MessageBubble( // New Message Bubble
     ) {
 
         DropdownMenuItem(
-            text = { Text("Copy", color = colours.onPrimary) },
+            text = { Text("Copy", color = colours.onBackground) },
 //colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
             onClick = {
                 showMenu = false
@@ -199,7 +199,7 @@ fun MessageBubble( // New Message Bubble
 
 
         DropdownMenuItem(
-            text = { Text("Edit", color = colours.onPrimary) },
+            text = { Text("Edit", color = colours.onBackground) },
             onClick = {
                 showMenu = false
                 onEditClick()
@@ -207,14 +207,14 @@ fun MessageBubble( // New Message Bubble
         )
 
         DropdownMenuItem(
-            text = { Text("View", color = colours.onPrimary) },
+            text = { Text("View", color = colours.onBackground) },
             onClick = {
                 showMenu = false
                 onViewMessage()
             }
         )
         DropdownMenuItem(
-            text = { Text("Delete Message", color = colours.onPrimary) },
+            text = { Text("Delete Message", color = colours.onBackground) },
             onClick = {
                 showMenu = false
                 onDeleteClick()

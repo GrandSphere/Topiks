@@ -42,7 +42,7 @@ import iconFilePicker
 fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
     val noteColour by viewModel.colour.collectAsState()
 
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
     var imageUrl = viewModel.fileURI.collectAsState().value
 
     val imageMimeTypes = arrayOf(
@@ -74,7 +74,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                     })
                 }
                 .clip(CircleShape)
-                .background(colors.secondary)
+                .background(colours.secondary)
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
@@ -94,7 +94,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Image",
-                    tint = colors.onPrimary,
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(24.dp)

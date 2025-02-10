@@ -1,6 +1,5 @@
 package com.example.topics2.ui.components.addTopic
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -69,7 +68,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val widthSetting = 100
     val heightSetting = 100
 
-    val colors = MaterialTheme.colorScheme
+    val colours = MaterialTheme.colorScheme
 // Focus change listener to update isFocused state
     val focusModifier = Modifier
         .focusRequester(focusRequester)
@@ -108,7 +107,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
             Icon(
                 imageVector = Icons.Filled.Close,
                 contentDescription = "Cancel",
-                tint = colors.onBackground,
+                tint = colours.onBackground,
                 modifier = Modifier
                     .height(vIconSize)
             )
@@ -168,7 +167,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
             Icon(
                 imageVector = Icons.Filled.Check, // Attach file icon
                 contentDescription = "Confirm",
-                tint = colors.onBackground,
+                tint = colours.onBackground,
                 modifier = Modifier
                     .size(vIconSize)
             )
