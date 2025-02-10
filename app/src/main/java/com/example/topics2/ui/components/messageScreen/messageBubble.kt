@@ -190,8 +190,8 @@ fun MessageBubble( // New Message Bubble
             text = { Text("Copy", color = Color.White) },
 //colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
             onClick = {
-                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
                 showMenu = false
+                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
             }
         )
 
@@ -214,10 +214,8 @@ fun MessageBubble( // New Message Bubble
         DropdownMenuItem(
             text = { Text("Delete Message", color = Color.White) },
             onClick = {
+                showMenu = false
                 onDeleteClick()
-//                coroutineScope.launch {
-//                    viewModel.deleteMessage(message.id, topicId,)
-//                    showMenu = false
 //                }
             }
         )

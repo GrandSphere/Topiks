@@ -34,6 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -134,7 +136,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,
-                    contentDescription = "Attach",
+                    contentDescription = "Back",
                     tint = Color.White, // Set the icon color to white
                     modifier = Modifier
                         .height(vIconSize)
@@ -144,6 +146,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             // Color preview Box
             Box( // Colour previewer
                 modifier = Modifier
+                    .semantics { contentDescription= "Recent Colours" }
                     .pointerInput(Unit) { detectTapGestures(
                         onTap = {
                             navController.navigate("navrecentcolours")
@@ -169,7 +172,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
             Spacer(modifier = Modifier.width(vSpacer))
-            IconButton( //
+            IconButton( // Confirm
                 onClick = {
                     viewModel.setColour(newNoteColour)
                     navController.popBackStack()
@@ -177,7 +180,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             ) {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = "Attach",
+                    contentDescription = "Confirm",
                     tint = Color.White, // Set the icon color to white
                     modifier = Modifier
                         .height(vIconSize)
