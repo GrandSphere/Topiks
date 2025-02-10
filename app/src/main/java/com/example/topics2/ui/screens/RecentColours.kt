@@ -6,12 +6,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ColorScheme
@@ -46,8 +49,12 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
             )
         )
     }
+    //val scrollState = rememberScrollState()
+
     Column(
-        //modifier = Modifier
+   //     modifier = Modifier
+   //         .fillMaxHeight()
+   //         .verticalScroll(scrollState),
         //.fillMaxSize() // Make sure the Box fills the screen,,
         verticalArrangement = Arrangement.Top, // Align items to the top
         horizontalAlignment = Alignment.CenterHorizontally,
