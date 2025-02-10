@@ -1,6 +1,7 @@
 package com.example.topics2.ui.components.addTopic
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +60,12 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
         inputText = tempTopicName
     }
 
+    fun clearViewModelState() {
+        viewModel.setFileURI("")
+        viewModel.setTempTopicName("")
+        viewModel.setEditMode(false)
+        viewModel.setEditedMode(false)
+    }
     val widthSetting = 100
     val heightSetting = 100
 
@@ -115,6 +122,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
                 if (inputText.isNotBlank()) {
                     var tempPath = Pair("","")
                     if (viewModel.fileURI.value.length > 4) {
+
                         tempPath = copyFileToUserFolder(
                             context = context,
                             currentUri = viewModel.fileURI.value.toUri(),
@@ -146,10 +154,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
                         )
                     }
 
-                    viewModel.setFileURI("")
+                    clearViewModelState()
                     inputText = ""
-                    viewModel.setTempTopicName("")
-                    viewModel.setEditMode(false)
                     navController.popBackStack()
                 }
             },
@@ -174,4 +180,9 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+    BackHandler {
+            clearViewModelState()
+            navController.popBackStack()
+    }
+
 }
