@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +78,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     var tempClip by remember { mutableStateOf("") }
     var bShouldPaste by remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val colours = MaterialTheme.colorScheme
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
@@ -90,7 +92,6 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             tempClip = clip?.getItemAt(0)?.text?.toString() ?: ""  // Fallback to empty string if clipboard is empty
             var tempHsv= colorToHsv(hexToColor(tempClip))
 
-            //var tempHsv = colorToHsv(Color.Black)
             hue = tempHsv[0]
             saturation = tempHsv[1]
             value = tempHsv[2]
@@ -137,7 +138,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 Icon(
                     imageVector = Icons.Filled.Clear,
                     contentDescription = "Back",
-                    tint = Color.White, // Set the icon color to white
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .height(vIconSize)
                 )
@@ -181,7 +182,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 Icon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = "Confirm",
-                    tint = Color.White, // Set the icon color to white
+                    tint = colours.onBackground,
                     modifier = Modifier
                         .height(vIconSize)
                 )
