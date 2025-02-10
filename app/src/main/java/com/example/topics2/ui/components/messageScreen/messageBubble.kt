@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,6 +57,7 @@ fun MessageBubble( // New Message Bubble
 ) {
     var messagecontent = messageContent
 
+    val colours = MaterialTheme.colorScheme
     var showMenu by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
     val listOfAttachments: List<String> =  listOfAttachmentsP
@@ -178,7 +180,7 @@ fun MessageBubble( // New Message Bubble
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(0.4f)
-            .background(Color.Black)
+            .background(colours.background)
         ,
 
         onDismissRequest = {
@@ -187,17 +189,17 @@ fun MessageBubble( // New Message Bubble
     ) {
 
         DropdownMenuItem(
-            text = { Text("Copy", color = Color.White) },
+            text = { Text("Copy", color = colours.onBackground) },
 //colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
             onClick = {
-                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
                 showMenu = false
+                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
             }
         )
 
 
         DropdownMenuItem(
-            text = { Text("Edit", color = Color.White) },
+            text = { Text("Edit", color = colours.onBackground) },
             onClick = {
                 showMenu = false
                 onEditClick()
@@ -205,19 +207,17 @@ fun MessageBubble( // New Message Bubble
         )
 
         DropdownMenuItem(
-            text = { Text("View", color = Color.White) },
+            text = { Text("View", color = colours.onBackground) },
             onClick = {
                 showMenu = false
                 onViewMessage()
             }
         )
         DropdownMenuItem(
-            text = { Text("Delete Message", color = Color.White) },
+            text = { Text("Delete Message", color = colours.onBackground) },
             onClick = {
+                showMenu = false
                 onDeleteClick()
-//                coroutineScope.launch {
-//                    viewModel.deleteMessage(message.id, topicId,)
-//                    showMenu = false
 //                }
             }
         )

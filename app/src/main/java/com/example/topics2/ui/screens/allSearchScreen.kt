@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,13 +37,14 @@ import com.example.topics2.ui.viewmodels.searchViewModel
 
 @Composable
 fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel, navController: NavController,
-               highlightColor: Color = Color.Yellow) {
+               highlightColor: Color = MaterialTheme.colorScheme.surfaceVariant) {
 
     messageViewModel.collectSearchMessages()
     var inputText by remember { mutableStateOf("") }
     val dataset by messageViewModel.searchMessages.collectAsState(emptyList())
     val searchResults by searchViewModel.searchResults.observeAsState(emptyList())
 
+    val colours = MaterialTheme.colorScheme
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
@@ -101,7 +103,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                         )
                     Text( // result string
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                            withStyle(style = SpanStyle(color = colours.onSecondary)) {
                                 append(searchResults[item].content.take(8) + " ")
                             }
 
@@ -117,7 +119,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                                         if (matchIndex == -1) break
 
                                         // Append the part before the match
-                                        withStyle(style = SpanStyle(color = Color.White)) {
+                                        withStyle(style = SpanStyle(color = colours.onBackground)) {
                                             append(word.substring(currentIndex, matchIndex))
                                         }
 
@@ -133,7 +135,7 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
 
                                 // Append the remaining part of the word
                                 if (currentIndex < word.length) {
-                                    withStyle(style = SpanStyle(color = Color.White)) {
+                                    withStyle(style = SpanStyle(color = colours.onBackground)) {
                                         append(word.substring(currentIndex))
                                     }
                                 }

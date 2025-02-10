@@ -34,8 +34,6 @@ fun CustomTextBox(
     ) {
         BasicTextField(
             value = inputText,
-
-
             onValueChange = onValueChange,
             modifier = focusModifier
                 .fillMaxWidth() // Ensure textfield takes full width
@@ -52,7 +50,7 @@ fun CustomTextBox(
             ),
 //                            maxLines = 6,
 
-            cursorBrush = if (isFocused) SolidColor(Color.White) else SolidColor(Color.Transparent), // Hide cursor if not focused
+            cursorBrush = if (isFocused) SolidColor(colors.onPrimary) else SolidColor(Color.Transparent), // Hide cursor if not focused
             decorationBox = @Composable { innerTextField ->
                 if (inputText.isEmpty()) {
                     Text(

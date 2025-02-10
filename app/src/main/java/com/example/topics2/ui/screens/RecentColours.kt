@@ -66,7 +66,7 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
                 .fillMaxWidth() // Make sure it spans the full width
                 .padding(12.dp)
                 .size(3.dp)
-                .background(MaterialTheme.colorScheme.onPrimary) // Set the line color
+                .background(MaterialTheme.colorScheme.onBackground) // Set the line color
         )
         colourPopulator(
             colours = myNonsenseColours,
@@ -86,7 +86,7 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
                 modifier = Modifier.size(30.dp),
                 imageVector = Icons.Filled.Close,
                 contentDescription = "Cancel",
-                tint = MaterialTheme.colorScheme.onPrimary
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
