@@ -42,8 +42,6 @@ fun copyFileToUserFolder(
         if (destinationFile.exists()) {
             val fileExtension = destinationFile.extension
             val baseName = destinationFile.nameWithoutExtension
-
-            // Get the current date and time
             val now = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
             val timestamp = now.format(formatter)
@@ -52,10 +50,7 @@ fun copyFileToUserFolder(
             destinationFile = File(externalDir, fileName)
         }
 
-        // Prepare the variables for the file paths
         var thumbnailPath = ""
-
-        // Check if we need to compress the image and handle thumbnail-only logic
         val fileType = determineFileType(context, currentUri)
 
         if (fileType == "Image") {
@@ -79,11 +74,11 @@ fun copyFileToUserFolder(
         val inputStream = context.contentResolver.openInputStream(currentUri)
             ?: throw IOException("Unable to open input stream for URI: $currentUri")
         val outputStream = destinationFile.outputStream()
-        copyStream(inputStream, outputStream) // Use existing function to copy file contents
+        copyStream(inputStream, outputStream)
         inputStream.close()
         outputStream.close()
 
-        Toast.makeText(context, "File imported successfully! You can find it in Documents/topics/files.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "File imported successfully! You can find it in ${destinationFile.parent}.", Toast.LENGTH_SHORT).show()
         return Pair(destinationFile.toString(), thumbnailPath)
 
     } catch (e: IOException) {
@@ -140,73 +135,3 @@ fun compressImage(
         resizedBitmap.recycle() // Recycle the bitmap to free up memory
     }
 }
-
-
-
-
-//// Compress the image and save it to the thumbnails folder
-//fun compressImage(
-//    uri: Uri,
-//    context: Context,
-//    compressedFile: File,
-//    compressionPercentage: Int
-//) {
-//    // Ensure that the compression percentage is within the valid range (0-100)
-//    val validCompressionPercentage = compressionPercentage.coerceIn(0, 100)
-//    val inputStream = context.contentResolver.openInputStream(uri)
-//        ?: throw IOException("Unable to open input stream for URI: $uri")
-//
-//    val originalBitmap = BitmapFactory.decodeStream(inputStream)
-//    inputStream.close()
-//
-//    val outputStream = FileOutputStream(compressedFile)
-//    originalBitmap.compress(Bitmap.CompressFormat.JPEG, validCompressionPercentage, outputStream)
-//    outputStream.close()
-//}
-//
-//
-//fun compressImageToUri(
-//    context: Context,
-//    originalUri: Uri,
-//    compressedUri: Uri,
-//    maxWidth: Int = 100,
-//    maxHeight: Int = 100,
-//): Boolean {
-//    val originalBitmap = BitmapFactory.decodeStream(
-//        context.contentResolver.openInputStream(originalUri)
-//    )
-//
-//    if (originalBitmap == null) return false
-//
-//    // Calculate aspect ratio
-//    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
-//    val newWidth: Int
-//    val newHeight: Int
-//
-//    if (originalBitmap.width > originalBitmap.height) {
-//        newWidth = maxWidth
-//        newHeight = (maxWidth / aspectRatio).toInt()
-//    } else {
-//        newHeight = maxHeight
-//        newWidth = (maxHeight * aspectRatio).toInt()
-//    }
-//    // Resize the bitmap while keeping the aspect ratio
-//    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
-//    var outputStream: FileOutputStream? = null
-//    try {
-//        val outputFile = File(compressedUri.path) // Assuming compressedUri is a file path URI
-//        outputStream = FileOutputStream(outputFile)
-//        // Compress the resized image
-//        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-//        outputStream.flush()
-//
-//        return true // Successful compression and save
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//        return false // In case of an error
-//    } finally {
-//        outputStream?.close()
-//        resizedBitmap.recycle() // Recycle the bitmap to free up memory
-//    }
-//}
-//
