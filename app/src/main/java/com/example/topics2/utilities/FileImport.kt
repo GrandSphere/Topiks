@@ -23,7 +23,6 @@ fun copyFileToUserFolder(
     height: Int = 100,
     thumbnailOnly: Boolean = false
 ): Pair<String, String> {
-
     if (currentUri.path.isNullOrBlank()) {
         Toast.makeText(context, "No file selected to import.", Toast.LENGTH_SHORT).show()
         return Pair("E", "")
@@ -61,22 +60,34 @@ fun copyFileToUserFolder(
                 throw IOException("Failed to create $folderName directory: $folderDir")
             }
 
-            val compressedImageFile = File(folderDir, fileName)
-            compressImage(context, currentUri, compressedImageFile, width, height)
+            var compressedImageFile = File(folderDir, fileName)
 
+            // Ensure unique naming for the thumbnail/icon file as well
+            if (compressedImageFile.exists()) {
+                val fileExtension = compressedImageFile.extension
+                val baseName = compressedImageFile.nameWithoutExtension
+                val now = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                val timestamp = now.format(formatter)
+
+                fileName = "$baseName-$timestamp.$fileExtension"
+                compressedImageFile = File(folderDir, fileName)
+            }
+
+            compressImage(context, currentUri, compressedImageFile, width, height)
             thumbnailPath = compressedImageFile.toString()
+
             if (thumbnailOnly) {
                 return Pair(thumbnailPath, "") // Only return the thumbnail file path
             }
         }
 
-        // If not in "thumbnailOnly" mode, copy the original file as well
-        val inputStream = context.contentResolver.openInputStream(currentUri)
-            ?: throw IOException("Unable to open input stream for URI: $currentUri")
-        val outputStream = destinationFile.outputStream()
-        copyStream(inputStream, outputStream)
-        inputStream.close()
-        outputStream.close()
+        // Copy the original file only if not in "thumbnailOnly" mode
+        context.contentResolver.openInputStream(currentUri)?.use { inputStream ->
+            destinationFile.outputStream().use { outputStream ->
+                copyStream(inputStream, outputStream)
+            }
+        } ?: throw IOException("Unable to open input stream for URI: $currentUri")
 
         Toast.makeText(context, "File imported successfully! You can find it in ${destinationFile.parent}.", Toast.LENGTH_SHORT).show()
         return Pair(destinationFile.toString(), thumbnailPath)
@@ -90,7 +101,6 @@ fun copyFileToUserFolder(
     }
     return Pair("E", "")
 }
-
 fun compressImage(
     context: Context,
     originalUri: Uri,
