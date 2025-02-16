@@ -8,7 +8,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-
 /**
  * Utility function to copy data from InputStream to OutputStream.
  * This function is reusable for various file operations.
@@ -62,4 +61,3 @@ fun determineFileType(context: Context, uri: Uri): String {
         }
     }
 }
-
