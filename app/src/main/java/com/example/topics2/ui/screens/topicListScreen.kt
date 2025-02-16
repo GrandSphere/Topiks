@@ -279,6 +279,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
     }
 }
 
+// File picker for DB import
 @Composable
 fun filePickerScreen(
     onFileSelected: (Uri?) -> Unit

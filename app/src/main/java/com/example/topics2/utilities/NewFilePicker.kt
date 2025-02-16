@@ -36,8 +36,7 @@ fun iconFilePicker(
 
 @Composable
 fun multipleFilePicker(
-    onUserFilesSelected: (List<Uri>?) -> Unit,
-    fileTypes: Array<String> = arrayOf("*/*") // Default file types
+    onUserFilesSelected: (List<Uri>?) -> Unit
 ): ActivityResultLauncher<Array<String>> {
     val context = LocalContext.current
     val openFilesLauncher = rememberLauncherForActivityResult(
