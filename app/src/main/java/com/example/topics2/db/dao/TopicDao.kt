@@ -43,6 +43,10 @@ interface TopicDao {
  @Query("SELECT createTime FROM topic_tbl WHERE id = :topicId")
 suspend fun getCreatedTimeByID(topicId: Int): Long
 
+
+ @Query("SELECT iconPath FROM topic_tbl WHERE id = :topicId")
+ suspend fun getIconPathById(topicId: Int): String
+
  @RawQuery
  fun checkpoint(query: SupportSQLiteQuery): Int
 

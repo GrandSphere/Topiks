@@ -165,6 +165,10 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
         }
     }
 
+    suspend fun getIconPathByID(topicId: Int):String{
+        return topicDao.getIconPathById(topicId)
+    }
+
     suspend fun loadDistinctColours() {
         try {
             topicDao.getDistinctColorsOrdered()
