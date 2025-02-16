@@ -92,7 +92,6 @@ fun InputBarMessageScreen(
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val selectedFileUrisBeforeEdit: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
-        fileTypes = arrayOf("*/*"),
         onUserFilesSelected = { uris ->
             selectedFileUris.value = (selectedFileUris.value ?: emptyList()) + (uris ?: emptyList())
         }

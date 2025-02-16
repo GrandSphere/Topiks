@@ -36,7 +36,6 @@ import com.example.topics2.ui.viewmodels.TopicViewModel
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
     val focusManager = LocalFocusManager.current
-
     val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
@@ -96,4 +95,3 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
         }
     }
 }
-

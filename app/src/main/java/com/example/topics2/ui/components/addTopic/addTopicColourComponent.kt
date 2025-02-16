@@ -70,7 +70,7 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         // Clear focus when tapping outside
-                        openFileLauncher.launch(arrayOf("*/*"))
+                        openFileLauncher.launch(imageMimeTypes)
                     })
                 }
                 .clip(CircleShape)
@@ -78,8 +78,6 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                 .size(60.dp),
                  contentAlignment = Alignment.Center
         ) {
-
-
 
             if (imageUrl.length > 4) { // Load and display the image
                 Image(
