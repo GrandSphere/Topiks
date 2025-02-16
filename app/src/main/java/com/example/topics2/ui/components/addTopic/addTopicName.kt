@@ -67,8 +67,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val selectedFileStringBeforeEdit= remember { mutableStateOf("") }
     val selectedFileChanged= remember { mutableStateOf(false) }
     LaunchedEffect(bEditedMode){
-        val topic = viewModel.getTopicObjectById(topicId)
-        selectedFileStringBeforeEdit.value = topic?.iconPath ?: ""
+        val topicIconPath = viewModel.getIconPathByID(topicId)
+        selectedFileStringBeforeEdit.value = topicIconPath ?: ""
     }
 
     LaunchedEffect(Unit) {
