@@ -1,5 +1,8 @@
 package com.example.topics2.ui.components.addTopic
 
+import android.net.Uri
+import android.os.Environment
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +19,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.copyFileToUserFolder
+import com.example.topics.utilities.getFileNameFromUri
 //import com.example.topics.utilities.copyIconToAppFolder
 import com.example.topics2.ui.components.global.CustomTextBox
 import com.example.topics2.ui.viewmodels.TopicViewModel
+import com.example.topics2.utilities.helper.isSameFile
+import java.io.File
 
 @Composable
 fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
@@ -54,6 +62,14 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val tempTopicName by viewModel.temptopicname.collectAsState()
     var inputText by remember { mutableStateOf(tempTopicName) }
     val bEditedMode by viewModel.bEditedMode.collectAsState()
+
+    val context = LocalContext.current
+    val selectedFileStringBeforeEdit= remember { mutableStateOf("") }
+    val selectedFileChanged= remember { mutableStateOf(false) }
+    LaunchedEffect(bEditedMode){
+        val topic = viewModel.getTopicObjectById(topicId)
+        selectedFileStringBeforeEdit.value = topic?.iconPath ?: ""
+    }
 
     LaunchedEffect(Unit) {
         inputText = tempTopicName
@@ -120,16 +136,20 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
                 val iColor : Int = colorToArgb(nColor)
                 if (inputText.isNotBlank()) {
                     var tempPath = Pair("","")
-                    if (viewModel.fileURI.value.length > 4) {
+                    val selectedFileUri: String = viewModel.fileURI.value
+                    if (selectedFileUri.length > 4) {
+                        if (selectedFileStringBeforeEdit.value != selectedFileUri){
+                            selectedFileChanged.value = true
 
-                        tempPath = copyFileToUserFolder(
-                            context = context,
-                            currentUri = viewModel.fileURI.value.toUri(),
-                            directoryName = "",
-                            width = widthSetting,
-                            height = heightSetting,
-                            thumbnailOnly = true
-                        )
+                            tempPath = copyFileToUserFolder(
+                                context = context,
+                                currentUri = viewModel.fileURI.value.toUri(),
+                                directoryName = "",
+                                width = widthSetting,
+                                height = heightSetting,
+                                thumbnailOnly = true
+                            )
+                        }
                     }
                     if (bEditedMode) {
                         viewModel.editTopic(
@@ -138,7 +158,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
                             topicColour = iColor,
 //                        topicCategory = viewModel.tempcategory.value,
                             topicCategory = 1,
-                            topicIconPath = tempPath.first,
+                            topicIconPath = if (selectedFileChanged.value) tempPath.first else selectedFileStringBeforeEdit.value,
                             topicPriority = 0,
                         )
                     }
@@ -154,6 +174,7 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
                     }
 
                     clearViewModelState()
+                    selectedFileChanged.value = false
                     inputText = ""
                     navController.popBackStack()
                 }
@@ -180,8 +201,8 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
         focusRequester.requestFocus()
     }
     BackHandler {
-            clearViewModelState()
-            navController.popBackStack()
+        clearViewModelState()
+        navController.popBackStack()
     }
 
 }
