@@ -103,9 +103,9 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
                         )
                     Text( // result string
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = colours.onSecondary)) {
-                                append(searchResults[item].content.take(8) + " ")
-                            }
+                           // withStyle(style = SpanStyle(color = colours.onSecondary)) {
+                           //     append(searchResults[item].content.take(8) + " ")
+                           // }
 
                             val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = searchResults[item].content.split(" ")

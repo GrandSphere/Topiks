@@ -92,8 +92,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 },
                 MenuItem("Import Database") {
                     openFileLauncher.launch(arrayOf("*/*"))
-                    //restartApp(context)
-                    //coroutineScope.launch { im(context) }
                 },
                 MenuItem("Close") {
                     // Handle cleanup here
@@ -266,8 +264,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 onClick = {
                     viewModel.setEditMode(true)
                     navController.navigate("navaddtopic/${topic.id}")
-
-                    // Edit here
                     showMenu = false
                 }
             )

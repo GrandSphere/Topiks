@@ -157,7 +157,6 @@ fun InputBarMessageScreen(
     val iNumToTake: Int = 10
 
     LaunchedEffect(bEditMode) {
-        Log.d("arst","bedit changed")
         if (bEditMode) {
             bEditedMode = true
             inputText = viewModel.getMessageContentById(tempMessageID) ?: ""
@@ -172,14 +171,13 @@ fun InputBarMessageScreen(
     }
 
     Column() {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = 200.dp) // Set your maximum height here
                 .verticalScroll(rememberScrollState()) // Makes the content scrollable
         ) {
-            selectedFileUris?.value?.forEachIndexed() { index, attachment ->
+            selectedFileUris.value?.forEachIndexed() { index, attachment ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -13,7 +13,3 @@ fun getFileNameFromString(uriString: String): String {
     // Get the last path segment which is the file name
     return uri.lastPathSegment ?: ""
 }
-
-//val uriString = "content://com.android.externalstorage.documents/document/primary%3ADocuments%2FtopicsContent%2F20.png"
-//val fileName = getFileNameFromUri(uriString)
-//println(fileName) // This will print "20.png"

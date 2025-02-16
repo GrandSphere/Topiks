@@ -37,31 +37,25 @@ fun getFileNameFromUri(context: Context, uri: Uri): String {
 }
 
 fun determineFileType(context: Context, uri: Uri): String {
-    // Attempt to get MIME type
-    val contentResolver = context.contentResolver
-    val mimeType = contentResolver.getType(uri)
+    // Attempt to get file extension first
+    val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString()) ?: ""
 
-    return when {
-        mimeType != null -> {
-            // Map MIME type to a custom file type string if needed
+    return when (extension.lowercase()) {
+        "jpg", "jpeg", "png", "gif", "heic" -> "Image"
+        "mp4", "mkv", "avi" -> "Video"
+        "mp3", "wav", "aac" -> "Audio"
+        "pdf" -> "PDF"
+        "doc", "docx", "txt" -> "Document"
+        else -> {
+            // Fallback to MIME type if the extension is unknown
+            val mimeType = context.contentResolver.getType(uri)
             when {
+                mimeType == null -> "Unknown"
                 mimeType.startsWith("image/") -> "Image"
                 mimeType.startsWith("video/") -> "Video"
                 mimeType.startsWith("audio/") -> "Audio"
                 mimeType == "application/pdf" -> "PDF"
                 mimeType.startsWith("application/") -> "Document"
-                else -> "Unknown"
-            }
-        }
-        else -> {
-            // Fallback to file extension if MIME type is not available
-            val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-            when (extension.lowercase()) {
-                "jpg", "jpeg", "png", "gif", "heic" -> "Image"
-                "mp4", "mkv", "avi" -> "Video"
-                "mp3", "wav", "aac" -> "Audio"
-                "pdf" -> "PDF"
-                "doc", "docx", "txt" -> "Document"
                 else -> "Unknown"
             }
         }
