@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun iconFilePicker(
     onFileSelected: (Uri?) -> Unit,
-    fileTypes: Array<String> = arrayOf("*/*") // Default file types (all files)
 ): ActivityResultLauncher<Array<String>> {
     val context = LocalContext.current
     val openFileLauncher = rememberLauncherForActivityResult(
