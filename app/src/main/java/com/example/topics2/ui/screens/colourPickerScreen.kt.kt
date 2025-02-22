@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics2.ui.components.addTopic.CustomSlider
+import com.example.topics2.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.addTopic.colorToHex
 import com.example.topics2.ui.components.addTopic.colorToHsv
 import com.example.topics2.ui.components.addTopic.hexToColor
-import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.TopicViewModel
 
