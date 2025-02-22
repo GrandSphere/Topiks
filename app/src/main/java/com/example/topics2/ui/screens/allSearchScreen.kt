@@ -53,14 +53,23 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
 
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
+
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
-//        .onFocusChanged { focusState ->
-//            isFocused = focusState.isFocused
-//        }
+       // .onFocusChanged { focusState ->
+       //     isFocused = focusState.isFocused
+       // }
+
+    var toFocusSearchBox by  remember { mutableStateOf(false) }
+    LaunchedEffect(toFocusSearchBox) {
+        if (toFocusSearchBox) {
+            focusManager.clearFocus()
+            focusRequester.requestFocus()
+            toFocusSearchBox = false
+        }
+    }
     LaunchedEffect(Unit) {
-        focusManager.clearFocus()
-        focusRequester.requestFocus()
+        toFocusSearchBox = true
         topBarViewModel.setMenuItems(
             listOf(
             )
@@ -87,9 +96,8 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
             },
             sPlaceHolder = "Search...",
             isFocused = true,
-
             focusModifier = focusModifier.focusRequester(focusRequester),
-//            focusModifier = Modifier,
+            onClick = { toFocusSearchBox = true},
             boxModifier = Modifier,
         )
 

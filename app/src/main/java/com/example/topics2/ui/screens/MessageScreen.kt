@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +39,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -56,7 +53,6 @@ import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -102,14 +98,12 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //            isFocused = focusState.isFocused
         }
 
-
-    var toFocusTextbox by  remember { mutableStateOf(false) }
-    LaunchedEffect(toFocusTextbox) {
-        if (toFocusTextbox) {
+    var toFocusSearchBox by  remember { mutableStateOf(false) }
+    LaunchedEffect(toFocusSearchBox) {
+        if (toFocusSearchBox) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
-            toFocusTextbox = false
-        } else {
+            toFocusSearchBox = false
         }
     }
     //var deleteName:String by remember { mutableStateOf("Enable Delete")}
@@ -128,7 +122,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 MenuItem("Search") {
                     bSearch = !bSearch
                     iTempMessage=-1
-                    toFocusTextbox = true
+                    toFocusSearchBox = true
                 //    focusManager.clearFocus()
                 //    focusRequester.requestFocus()
 //                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
@@ -237,6 +231,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         scrollMessage()
                     }
                 },
+                onClick = { toFocusSearchBox = true},
                 iSearchCount = searchResults.size,
                 iCurrentSearch = searchResultCount,
             )

@@ -47,6 +47,7 @@ fun CustomSearchBox(
     boxModifier: Modifier = Modifier, // Modifier for the Box
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onClick: () -> Unit = {},
     iSearchCount: Int = 0,
     iCurrentSearch: Int = 0,
 ) {
@@ -97,7 +98,8 @@ fun CustomSearchBox(
                                 detectTapGestures(
                                     onLongPress = { oncHold() },
                                     onTap = {
-                                        focusRequester.requestFocus()
+                                        //focusRequester.requestFocus()
+                                        onClick()
                                     }
                                 )
                             },
