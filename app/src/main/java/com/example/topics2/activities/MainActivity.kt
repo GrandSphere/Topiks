@@ -1,6 +1,7 @@
 package com.example.topics2.activities
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -47,8 +48,13 @@ class MainActivity : ComponentActivity() {
 
         setContent{
             val settingsViewModel: SettingsViewModel = viewModel()
-            val iTheme = settingsViewModel.getTheme()
-            Log.d("QQWWEERR", "${iTheme}")
+            var iTheme = settingsViewModel.getTheme()
+
+           if (iTheme == 2){
+               val uiMode = applicationContext.resources.configuration.uiMode
+               val bDarkMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+               iTheme = if (bDarkMode) 0 else 1
+           }
             TopicsTheme(iTheme) { TopicsApp(applicationContext) }
         }
 
