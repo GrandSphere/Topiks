@@ -80,7 +80,7 @@ fun CustomSearchBox(
                         onValueChange(it)
                         isSearchFocused = it.isNotEmpty()
                     },
-                    modifier = Modifier
+                    modifier = focusModifier
                         .weight(1f)
                         .height(40.dp)
                         .padding(horizontal = 20.dp, vertical = 0.dp)
