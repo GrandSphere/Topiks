@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -81,6 +83,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
     var searchResultCount: Int by remember { mutableStateOf(0 ) }
 
+    var iTempMessage by remember { mutableStateOf(-1) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
 
@@ -111,6 +114,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         val messageId = searchResults[searchResultCount -1].id
         val messageIndex = viewModel.getMessageIndexFromID(messageId)
         if (messageIndex >= 0) {
+            iTempMessage=messageIndex
             coroutineScope.launch {
                 scrollState.scrollToItem(messageIndex)
             }
@@ -246,57 +250,73 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             )
                         )
                     }
-                     var highligtedSearchText by remember { mutableStateOf<AnnotatedString>(AnnotatedString("")) }
+                    var highlightedSearchText by remember { mutableStateOf<AnnotatedString?>(null) }
+//                     var highligtedSearchText by remember { mutableStateOf<AnnotatedString>(AnnotatedString("")) }
 //                    val highligtedSearchText by remember { mutableStateOf("") }
-                    if (bSearch) {
-                            highligtedSearchText = buildAnnotatedString {
-                                // withStyle(style = SpanStyle(color = colours.onSecondary)) {
-                                //     append(searchResults[item].content.take(8) + " ")
-                                // }
+//                    if (bSearch) {
+//                            highligtedSearchText = buildAnnotatedString {
+//                                // withStyle(style = SpanStyle(color = colours.onSecondary)) {
+//                                //     append(searchResults[item].content.take(8) + " ")
+//                                // }
+//
+//                                val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
+//                                val contentWords = searchResults[item].content.split(" ")
+//
+//                                contentWords.forEach { word ->
+//                                    var currentIndex = 0 // Track the current position in the word
+//
+//                                    normalizedQuery.forEach { substring ->
+//                                        while (true) {
+//                                            val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
+//                                            if (matchIndex == -1) break
+//
+//                                            // Append the part before the match
+//                                            withStyle(style = SpanStyle(color = colors.onBackground)) {
+//                                                append(word.substring(currentIndex, matchIndex))
+//                                            }
+//
+//                                            // Append the matched part
+//                                            withStyle(style = SpanStyle(color = Color.Red)) {
+//                                                append(word.substring(matchIndex, matchIndex + substring.length))
+//                                            }
+//
+//                                            // Move the index forward
+//                                            currentIndex = matchIndex + substring.length
+//                                        }
+//                                    }
+//
+//                                    // Append the remaining part of the word
+//                                    if (currentIndex < word.length) {
+//                                        withStyle(style = SpanStyle(color = colors.onBackground)) {
+//                                            append(word.substring(currentIndex))
+//                                        }
+//                                    }
+//                                    append(" ") // Add space between words
+//                                }
+//                            }
+//
+//                    }
 
-                                val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
-                                val contentWords = searchResults[item].content.split(" ")
-
-                                contentWords.forEach { word ->
-                                    var currentIndex = 0 // Track the current position in the word
-
-                                    normalizedQuery.forEach { substring ->
-                                        while (true) {
-                                            val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
-                                            if (matchIndex == -1) break
-
-                                            // Append the part before the match
-                                            withStyle(style = SpanStyle(color = colors.onBackground)) {
-                                                append(word.substring(currentIndex, matchIndex))
-                                            }
-
-                                            // Append the matched part
-                                            withStyle(style = SpanStyle(color = Color.Red)) {
-                                                append(word.substring(matchIndex, matchIndex + substring.length))
-                                            }
-
-                                            // Move the index forward
-                                            currentIndex = matchIndex + substring.length
-                                        }
-                                    }
-
-                                    // Append the remaining part of the word
-                                    if (currentIndex < word.length) {
-                                        withStyle(style = SpanStyle(color = colors.onBackground)) {
-                                            append(word.substring(currentIndex))
-                                        }
-                                    }
-                                    append(" ") // Add space between words
-                                }
+                    highlightedSearchText=null
+                    if (index==iTempMessage)
+                    { // Put Search highlihting here
+                        highlightedSearchText = buildAnnotatedString {
+                            append("This is a simple ")
+                            withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+                                append("highlighted")
                             }
-
+                            append(" text.")
+                        }
                     }
+
+                    val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
                     MessageBubble(
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
+                                annotatedMessageContent = contentToDisplay,
 //                        messageContent = if (bSearch) "a"  else  message.content,
-                        messageContent = if (bSearch) highligtedSearchText.toString()  else  message.content,
+//                        messageContent = message.content,
                         containsPictures = hasPictures,
                         containsAttachments = hasAttachments,
                         listOfPictures = pictureList,
