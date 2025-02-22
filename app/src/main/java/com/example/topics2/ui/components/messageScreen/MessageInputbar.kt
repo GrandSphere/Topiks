@@ -106,18 +106,6 @@ fun InputBarMessageScreen(
         }
     }
 
-    // LaunchedEffect(toUnFocusTextbox) {
-    //     if (toUnFocusTextbox) {
-    //         focusRequester.requestFocus()
-    //         viewModel.setToUnFocusTextbox(false)
-    //     }
-    //kotlinx.coroutines.delay(100)
-
-    //viewModel.setToFocusTextbox(false)
-    // else {
-    //         focusManager.clearFocus()
-    // }
-
     LaunchedEffect(Unit) {
         // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
         viewModel.setEditMode(false)
