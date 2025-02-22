@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +49,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -78,16 +83,35 @@ import kotlinx.coroutines.launch
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
-    val focusManager = LocalFocusManager.current
     var inputText by remember{ mutableStateOf("")}
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    val focusManager = LocalFocusManager.current // For clearing focus
+    val focusRequester = remember { FocusRequester() }
+
     // FilePicker Logic
     val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
 
     val openFileLauncher = filePickerScreen { uri -> selectedFileUri.value = uri?: Uri.parse("")}
+
+
+    val focusModifier = Modifier // Used to set edit cursor
+        .focusRequester(focusRequester)
+        .onFocusChanged { focusState ->
+            //isFocused = focusState.isFocused
+        }
+
+    var toFocusSearchBox by  remember { mutableStateOf(false) }
+    LaunchedEffect(toFocusSearchBox) {
+        if (toFocusSearchBox) {
+            focusManager.clearFocus()
+            focusRequester.requestFocus()
+            toFocusSearchBox = false
+        }
+    }
+
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
@@ -110,6 +134,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     }
     Box(
         modifier = Modifier
+            .clickable(onClick = {focusManager.clearFocus()})
             .fillMaxSize()
 
     ) {
@@ -127,6 +152,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             // TODO:: Search Box focus
 
             CustomSearchBox(
+                focusModifier = focusModifier.focusRequester(focusRequester),
                 inputText = inputText,
                 sPlaceHolder = "Search Topics...",
                 onValueChange = { newText ->
@@ -134,6 +160,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     viewModel.search(newText)
                 },
                 oncHold = { navController.navigate("newSearch") },
+                onClick = { toFocusSearchBox = true},
             )
             //TextButton() { }
 //            Spacer(modifier = Modifier.height(10.dp))
