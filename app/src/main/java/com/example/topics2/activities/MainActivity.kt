@@ -2,6 +2,7 @@ package com.example.topics2.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.topics2.db.AppDatabase
+import com.example.topics2.model.SettingsManager
 import com.example.topics2.ui.components.CustomTopAppBar
 import com.example.topics2.ui.screens.AddTopicScreen
 import com.example.topics2.ui.screens.ColorGridScreen
@@ -43,40 +45,45 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent { TopicsTheme { TopicsApp(applicationContext) } }
+        setContent{
+            val settingsViewModel: SettingsViewModel = viewModel()
+            val iTheme = settingsViewModel.getTheme()
+            Log.d("QQWWEERR", "${iTheme}")
+            TopicsTheme(iTheme) { TopicsApp(applicationContext) }
+        }
 
     }
 
     //val Purple200 = Color(0xFFBB86FC) FIX THIS
     @Composable
     fun TopicsApp(context: Context) {
-            val database = AppDatabase.getDatabase(context)
-            val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
+        val database = AppDatabase.getDatabase(context)
+        val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
 
-            val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
-            val categoryViewModel: CategoryViewModel =
-                viewModel(factory = CategoryViewModel.Factory)
-            val settingsViewModel: SettingsViewModel = viewModel()
-            val searchViewModel: searchViewModel = viewModel()
+        val messageViewModel: MessageViewModel = viewModel(factory = MessageViewModel.Factory)
+        val categoryViewModel: CategoryViewModel =
+            viewModel(factory = CategoryViewModel.Factory)
+        val settingsViewModel: SettingsViewModel = viewModel()
+        val searchViewModel: searchViewModel = viewModel()
 //            val topBarViewModel: TopBarViewModel = viewModel()
 
         val topBarViewModel = viewModel<TopBarViewModel>()
-         GlobalViewModelHolder.setTopBarViewModel(topBarViewModel)
-            val navController = rememberNavController()
-            val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
-            val backStackEntry = navController.currentBackStackEntryAsState()
+        GlobalViewModelHolder.setTopBarViewModel(topBarViewModel)
+        val navController = rememberNavController()
+        val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
+        val backStackEntry = navController.currentBackStackEntryAsState()
 
         //Add test category
         LaunchedEffect(true)
         {
-             categoryViewModel.addtestcat()
+            categoryViewModel.addtestcat()
             //databaseSeeder.generateSampleData(categoryId = 1)
         }
-    // Listen for changes in the navController's back stack and update the title accordingly
-    LaunchedEffect(backStackEntry.value) {
-        val currentRoute = navController.currentBackStackEntry?.destination?.route
-        topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
-    }
+        // Listen for changes in the navController's back stack and update the title accordingly
+        LaunchedEffect(backStackEntry.value) {
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {

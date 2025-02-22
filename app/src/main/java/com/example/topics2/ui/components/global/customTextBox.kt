@@ -69,23 +69,6 @@ fun CustomTextBox(
     }
 }
 
-fun chooseColorBasedOnLuminance(inputColor: Color): Color {
-    // Extract normalized RGB values
-    val red = inputColor.red
-    val green = inputColor.green
-    val blue = inputColor.blue
-    // Compute luminance using the standard formula
-    var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-    return when { // Determine the output color based on luminance
-//        luminance < 0.5 -> Color.White
-        luminance < 0.5 -> Color(0xf0f0f0FF)
-//        luminance < 0.5 -> Color(0xFFFFF0FF)
-        //luminance < 0.25 -> Color.White
-        //luminance < 0.5 -> Color.Gray
-        //luminance < 0.75 -> Color.DarkGray
-        else -> Color.Black
-    }
-}
 
 //fun hsvToHex(hsv: FloatArray): String {
 //    // Convert HSV to RGB

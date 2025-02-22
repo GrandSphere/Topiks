@@ -40,6 +40,7 @@ object SettingsManager {
     // Get the current settings
     fun getSettings(): Map<String, Any> = settings
 
+
     // Update a specific setting dynamically
     fun updateSetting(key: String, value: Any) {
         settings[key] = value

@@ -2,6 +2,7 @@
 package com.example.topics2.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.topics2.model.SettingsManager
@@ -24,21 +25,19 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         saveSettings()
     }
 
+    fun getTheme(): Int {
+        val theme = settingsLiveData.value?.get("theme") as? String
+        Log.d("QQWWEE","${theme}")
+        return when { // Determine the output color based on luminance
+            theme == "light" -> 1
+            theme == "custom" -> 2
+            else -> 0
+        }
+    }
+
     // Method to save the settings to XML
     fun saveSettings() {
         SettingsManager.saveSettings(getApplication())
     }
 
-  /*  companion object {
-        // Factory to create the ViewModel
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                // Get the Application object from extras
-                val application = checkNotNull(extras[APPLICATION_KEY])
-
-                return SettingsViewModel(application as Application) as T
-            }
-        }
-    }*/
 }

@@ -54,7 +54,7 @@ fun MessageBubble( // New Message Bubble
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onViewMessage: () -> Unit = {},
-
+    bDeleteEnabled: Boolean = false,
     timestamp: String
 ) {
 //    var messagecontent = messageContent
@@ -207,14 +207,14 @@ fun MessageBubble( // New Message Bubble
         )
 
 
-        DropdownMenuItem(
-            text = { Text("Edit", color = colours.onBackground) },
-            onClick = {
-                showMenu = false
-                onEditClick()
-            }
-        )
+            DropdownMenuItem(
 
+                text = { Text("Edit", color = colours.onBackground) },
+                onClick = {
+                    showMenu = false
+                    onEditClick()
+                }
+            )
         DropdownMenuItem(
             text = { Text("View", color = colours.onBackground) },
             onClick = {
@@ -222,13 +222,14 @@ fun MessageBubble( // New Message Bubble
                 onViewMessage()
             }
         )
-        DropdownMenuItem(
-            text = { Text("Delete Message", color = colours.onBackground) },
-            onClick = {
-                showMenu = false
-                onDeleteClick()
-//                }
-            }
-        )
+        if (bDeleteEnabled) {
+            DropdownMenuItem(
+                text = { Text("Delete Message", color = colours.onBackground) },
+                onClick = {
+                    showMenu = false
+                    onDeleteClick()
+                }
+            )
+        }
     }
 }

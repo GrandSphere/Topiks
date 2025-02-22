@@ -1,6 +1,7 @@
 package com.example.topics2.ui.themes
 
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -8,48 +9,61 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    background = CustomBackground,
-    onBackground = CustomOnBackground,
-    primary = CustomPrimary,
-    onPrimary = CustomOnPrimary,
-    secondary = CustomSecondary,
-    tertiary = CustomTertiary,
-    onTertiary = CustomOnTertiary,
-    onSecondary = CustomOnSecondary,
-    surface = CustomSurface,
-    onSurface = CustomOnSurface,
-    error = CustomError,
-    onError = CustomOnError,
-    outline = CustomOutline,
-    inversePrimary = CustomInversePrimary,
-    scrim = CustomScrim,
-    surfaceVariant = CustomSurfaceVariant, // used for highlighting
-    onSurfaceVariant = CustomOnSurfaceVariant, //used for highlighting
-    tertiaryContainer = CustomTertiaryContainer,
-    onTertiaryContainer = CustomOnTertiaryContainer,
-    surfaceTint = CustomSurfaceTint,
-
-
-
+    background = DarkCustomBackground,
+    onBackground = DarkCustomOnBackground,
+    primary = DarkCustomPrimary,
+    onPrimary = DarkCustomOnPrimary,
+    secondary = DarkCustomSecondary,
+    tertiary = DarkCustomTertiary,
+    onTertiary = DarkCustomOnTertiary,
+    onSecondary = DarkCustomOnSecondary,
+    surface = DarkCustomSurface,
+    onSurface = DarkCustomOnSurface,
+    error = DarkCustomError,
+    onError = DarkCustomOnError,
+    outline = DarkCustomOutline,
+    inversePrimary = DarkCustomInversePrimary,
+    scrim = DarkCustomScrim,
+    surfaceVariant = DarkCustomSurfaceVariant, // used for highlighting
+    onSurfaceVariant = DarkCustomOnSurfaceVariant, //used for highlighting
+    tertiaryContainer = DarkCustomTertiaryContainer,
+    onTertiaryContainer = DarkCustomOnTertiaryContainer,
+    surfaceTint = DarkCustomSurfaceTint,
 )
 
 
-private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF6200EE), // Example purple
-    secondary = Color(0xFF03DAC6), // Example teal
-    background = Color.White,
-    surface = Color.LightGray,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+private val LightColorScheme = darkColorScheme(
+    background = LightCustomBackground,
+    onBackground = LightCustomOnBackground,
+    primary = LightCustomPrimary,
+    onPrimary = LightCustomOnPrimary,
+    secondary = LightCustomSecondary,
+    tertiary = LightCustomTertiary,
+    onTertiary = LightCustomOnTertiary,
+    onSecondary = LightCustomOnSecondary,
+    surface = LightCustomSurface,
+    onSurface = LightCustomOnSurface,
+    error = LightCustomError,
+    onError = LightCustomOnError,
+    outline = LightCustomOutline,
+    inversePrimary = LightCustomInversePrimary,
+    scrim = LightCustomScrim,
+    surfaceVariant = LightCustomSurfaceVariant, // used for highlighting
+    onSurfaceVariant = LightCustomOnSurfaceVariant, //used for highlighting
+    tertiaryContainer = LightCustomTertiaryContainer,
+    onTertiaryContainer = LightCustomOnTertiaryContainer,
+    surfaceTint = LightCustomSurfaceTint,
 )
+
 @Composable
 fun TopicsTheme(
-    darkTheme: Boolean = true,
+    theme: Int = 0,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = when{
+        theme == 1 -> LightColorScheme
+        else -> DarkColorScheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,

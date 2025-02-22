@@ -48,7 +48,7 @@ import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.entities.FileInfoWithIcon
 import com.example.topics2.ui.components.CustomSearchBox
-import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
+import com.example.topics2.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
 import com.example.topics2.ui.components.messageScreen.MessageBubble
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
@@ -91,6 +91,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var searchResultCount: Int by remember { mutableStateOf(0 ) }
 
     var iTempMessage by remember { mutableStateOf(-1) }
+    var bDeleteEnabled:Boolean by remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
 
 
@@ -99,6 +100,16 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         .onFocusChanged { focusState ->
 //            isFocused = focusState.isFocused
         }
+
+    //var deleteName:String by remember { mutableStateOf("Enable Delete")}
+    //LaunchedEffect (bDeleteEnabled){
+    //    if(bDeleteEnabled) {
+    //        deleteName = "Disable delete"
+    //    } else
+    //    {
+    //        deleteName = "Enable delete"
+    //    }
+    //}
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
@@ -112,6 +123,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 },
                 MenuItem("Select Messages") {
                     selectMultiple= !selectMultiple
+                },
+                MenuItem( "Toggle Delete") {
+                    bDeleteEnabled= !bDeleteEnabled
                 },
                 MenuItem("Back") {
                     navController.popBackStack()
@@ -326,8 +340,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                     val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
                     MessageBubble(
-
-
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
@@ -353,7 +365,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         onEditClick = {
                             viewModel.setTempMessageId(message.id)
                             viewModel.setEditMode(true)
-                        }
+                        },
+                        bDeleteEnabled = bDeleteEnabled,
                     )
                 }
             }

@@ -66,7 +66,7 @@ import com.example.topics.utilities.importDatabaseFromUri
 import com.example.topics2.db.enitities.TopicTbl
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.argbToColor
-import com.example.topics2.ui.components.global.chooseColorBasedOnLuminance
+import com.example.topics2.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
 import com.example.topics2.ui.viewmodels.MenuItem
 import com.example.topics2.ui.viewmodels.TopicViewModel
