@@ -23,7 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -46,7 +50,17 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
 
     val colours = MaterialTheme.colorScheme
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+
+    val focusManager = LocalFocusManager.current // For clearing focus
+    val focusRequester = remember { FocusRequester() }
+    val focusModifier = Modifier // Used to set edit cursor
+        .focusRequester(focusRequester)
+//        .onFocusChanged { focusState ->
+//            isFocused = focusState.isFocused
+//        }
     LaunchedEffect(Unit) {
+        focusManager.clearFocus()
+        focusRequester.requestFocus()
         topBarViewModel.setMenuItems(
             listOf(
             )
@@ -73,7 +87,9 @@ fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewMo
             },
             sPlaceHolder = "Search...",
             isFocused = true,
-            focusModifier = Modifier,
+
+            focusModifier = focusModifier.focusRequester(focusRequester),
+//            focusModifier = Modifier,
             boxModifier = Modifier,
         )
 

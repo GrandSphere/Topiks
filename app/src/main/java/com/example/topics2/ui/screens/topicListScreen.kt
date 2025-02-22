@@ -98,6 +98,9 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 MenuItem("Import Database") {
                     openFileLauncher.launch(arrayOf("*/*"))
                 },
+                MenuItem("Search All Topics") {
+                    navController.navigate("newSearch")
+                },
                 MenuItem("Close") {
                     // Handle cleanup here
                     System.exit(0)

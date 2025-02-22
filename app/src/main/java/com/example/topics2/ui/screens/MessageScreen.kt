@@ -31,6 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -59,6 +63,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
+
     var selectMultiple: Boolean by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
@@ -69,6 +74,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
     val context = LocalContext.current
     var showMenu: Boolean by remember { mutableStateOf(false ) }
+
     var showSearchNav: Boolean by remember { mutableStateOf(true ) }
     var bSearch: Boolean by remember { mutableStateOf(false ) }
     var inputText by remember{ mutableStateOf("")}
@@ -240,11 +246,57 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             )
                         )
                     }
+                     var highligtedSearchText by remember { mutableStateOf<AnnotatedString>(AnnotatedString("")) }
+//                    val highligtedSearchText by remember { mutableStateOf("") }
+                    if (bSearch) {
+                            highligtedSearchText = buildAnnotatedString {
+                                // withStyle(style = SpanStyle(color = colours.onSecondary)) {
+                                //     append(searchResults[item].content.take(8) + " ")
+                                // }
+
+                                val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
+                                val contentWords = searchResults[item].content.split(" ")
+
+                                contentWords.forEach { word ->
+                                    var currentIndex = 0 // Track the current position in the word
+
+                                    normalizedQuery.forEach { substring ->
+                                        while (true) {
+                                            val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
+                                            if (matchIndex == -1) break
+
+                                            // Append the part before the match
+                                            withStyle(style = SpanStyle(color = colors.onBackground)) {
+                                                append(word.substring(currentIndex, matchIndex))
+                                            }
+
+                                            // Append the matched part
+                                            withStyle(style = SpanStyle(color = Color.Red)) {
+                                                append(word.substring(matchIndex, matchIndex + substring.length))
+                                            }
+
+                                            // Move the index forward
+                                            currentIndex = matchIndex + substring.length
+                                        }
+                                    }
+
+                                    // Append the remaining part of the word
+                                    if (currentIndex < word.length) {
+                                        withStyle(style = SpanStyle(color = colors.onBackground)) {
+                                            append(word.substring(currentIndex))
+                                        }
+                                    }
+                                    append(" ") // Add space between words
+                                }
+                            }
+
+                    }
                     MessageBubble(
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
-                        messageContent = message.content,
+//                        messageContent = if (bSearch) "a"  else  message.content,
+                        messageContent = if (bSearch) highligtedSearchText.toString()  else  message.content,
                         containsPictures = hasPictures,
                         containsAttachments = hasAttachments,
                         listOfPictures = pictureList,
