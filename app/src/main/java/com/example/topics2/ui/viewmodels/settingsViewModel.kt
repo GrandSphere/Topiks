@@ -30,7 +30,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         Log.d("QQWWEE","${theme}")
         return when { // Determine the output color based on luminance
             theme == "light" -> 1
-            theme == "custom" -> 2
+            theme == "device" -> 2
+            theme == "custom" -> 3
             else -> 0
         }
     }
