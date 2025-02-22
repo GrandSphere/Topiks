@@ -1,5 +1,5 @@
 package com.example.topics2.ui.screens
-
+//
 
 import ExportDatabaseWithPicker
 import android.net.Uri
@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
@@ -32,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -50,8 +53,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -82,7 +88,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
 
     val openFileLauncher = filePickerScreen { uri -> selectedFileUri.value = uri?: Uri.parse("")}
-
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
@@ -180,6 +185,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -250,6 +256,48 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             )
         }
 
+        if (showDialog) {
+
+            val styledText = buildAnnotatedString {
+                append("Delete topic: ") // Default text
+//                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
+                withStyle(style = SpanStyle(color = colors.error)) {
+                    append(topic.name) // Styled part (topic.name)
+                }
+                append(" ?") // End of the text
+            }
+            AlertDialog(
+
+                modifier = Modifier
+                    .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
+                containerColor = colors.background,
+//                 containerColor = Color.Red.copy(alpha = 0.7f),
+                tonalElevation = 0.dp,
+                onDismissRequest = { showDialog = false }, // Close on outside tap
+                title = { Text("Confirm Delete", color = colors.onBackground) },
+//                text = { Text("Delete topic: '${topic.name}'?", color = colors.onBackground) },
+                text = {
+                    Text(
+                        styledText,
+                        color = colors.onBackground // Default text color
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showDialog = false
+                        viewModel.deleteTopic(topic.id)
+                        coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
+                    }) {
+                        Text("Delete", color = colors.onBackground)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Cancel", color = colors.onBackground)
+                    }
+                }
+            )
+        }
         DropdownMenu(
             modifier = Modifier
                 .fillMaxHeight()
@@ -259,9 +307,10 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
-            DropdownMenuItem( // Delete Topic Button
+            DropdownMenuItem( // Edit Topic Button
                 text = { Text("Edit") },
                 onClick = {
+
                     viewModel.setEditMode(true)
                     navController.navigate("navaddtopic/${topic.id}")
                     showMenu = false
@@ -270,8 +319,9 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Delete Topic Button
                 text = { Text("Delete") },
                 onClick = {
-                    viewModel.deleteTopic(topic.id)
-                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
+                    showDialog = true
+//                    viewModel.deleteTopic(topic.id)
+//                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
                     showMenu = false
                 }
             )
