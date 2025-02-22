@@ -43,7 +43,9 @@ fun MessageBubble( // New Message Bubble
     navController: NavController,
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
-    messageContent: String,
+//    messageContent: String,
+    bSearch: Boolean = false,
+    annotatedMessageContent: AnnotatedString? = null,
     containsPictures: Boolean= false,
     containsAttachments: Boolean = false,
     containsMessage: Boolean = true,
@@ -55,7 +57,7 @@ fun MessageBubble( // New Message Bubble
 
     timestamp: String
 ) {
-    var messagecontent = messageContent
+//    var messagecontent = messageContent
 
     val colours = MaterialTheme.colorScheme
     var showMenu by remember { mutableStateOf(false) }
@@ -119,9 +121,12 @@ fun MessageBubble( // New Message Bubble
             var bshowMore: Boolean by remember {mutableStateOf(false)}
 //var numberOfLines by remember { mutableStateOf(0) }
             var textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+            val contentToDisplay = annotatedMessageContent ?: AnnotatedString("")
+//            val contentToDisplay = annotatedMessageContent ?: AnnotatedString(messageContent)
             if (containsMessage) {
                 Text( // Show Message Content.
-                    text = messagecontent,
+                    text = contentToDisplay,
+//                    text = messagecontent,
                     color = topicFontColor,
                     style = cMessageFont,
 
@@ -193,7 +198,10 @@ fun MessageBubble( // New Message Bubble
 //colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
             onClick = {
                 showMenu = false
-                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
+                clipboardManager.setText(annotatedString = annotatedMessageContent?:(AnnotatedString("")))
+                // ERROR NOTE TODO WHATEVER BELOW LINE IS NEEDED IF WE USE MESSAGE CONTENT AGAIN
+                // COPY MIGHT NOT WORK RIGHT ANYMORE
+//                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
             }
         )
 
