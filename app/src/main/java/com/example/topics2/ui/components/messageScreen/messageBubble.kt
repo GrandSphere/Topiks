@@ -40,6 +40,7 @@ import picturesPreview
 @Composable
 fun MessageBubble( // New Message Bubble
     //topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    onFocusClear: () -> Unit = {},
     navController: NavController,
     topicColor: Color = Color.Cyan,
     topicFontColor: Color = Color.Black,
@@ -79,6 +80,9 @@ fun MessageBubble( // New Message Bubble
                 detectTapGestures(
                     onLongPress = {
                         showMenu=true
+                    },
+                    onPress = {
+                        onFocusClear()
                     }
                 )
             }
@@ -149,7 +153,8 @@ fun MessageBubble( // New Message Bubble
 //                                Log.d("arst","in messagebuble")
                                 showMenu = true
 //                                onEditClick()
-                            }
+                            },
+                                onPress = {onFocusClear()}
 
 //                                onLongPress = { Log.d("arst","arst")}
                             )

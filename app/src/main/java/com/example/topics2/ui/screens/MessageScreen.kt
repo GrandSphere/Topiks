@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -101,6 +102,16 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //            isFocused = focusState.isFocused
         }
 
+
+    var toFocusTextbox by  remember { mutableStateOf(false) }
+    LaunchedEffect(toFocusTextbox) {
+        if (toFocusTextbox) {
+            focusManager.clearFocus()
+            focusRequester.requestFocus()
+            toFocusTextbox = false
+        } else {
+        }
+    }
     //var deleteName:String by remember { mutableStateOf("Enable Delete")}
     //LaunchedEffect (bDeleteEnabled){
     //    if(bDeleteEnabled) {
@@ -117,8 +128,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 MenuItem("Search") {
                     bSearch = !bSearch
                     iTempMessage=-1
-//                    focusManager.clearFocus()
-//                    focusRequester.requestFocus()
+                    toFocusTextbox = true
+                //    focusManager.clearFocus()
+                //    focusRequester.requestFocus()
 //                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
                 },
                 MenuItem("Select Messages") {
@@ -145,9 +157,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         if (searchResultCount == 0){ searchResultCount = 1}
         val messageId = searchResults[searchResultCount -1].id
         val messageIndex = viewModel.getMessageIndexFromID(messageId)
-        //Log.d("AASSDD: ", "This is the results: ${searchResults}")
-        Log.d("AASSDD: ", "SearchResults: ${searchResults}")
-        Log.d("AASSDD: ", "This is the message Index we go to: ${messageIndex}")
 
         if (messageIndex >= 0) {
             iTempMessage=messageIndex
@@ -158,13 +167,20 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         }
     }
 
+    LaunchedEffect(searchResults) {
+        if(searchResults.isEmpty())
+        {
+            searchResultCount = 0
+        }
+        else {
+            searchResultCount = searchResults.size
+            scrollMessage()
+        }
+    }
     LaunchedEffect(inputText) {
 
         if (inputText.length > 0) {
             viewModel.messageSearch(inputText)
-            searchResultCount = searchResults.size
-            scrollMessage()
-
         }
     }
     LaunchedEffect(messages.size) {
@@ -200,7 +216,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 onValueChange = { newText ->
                     inputText = newText
                     viewModel.messageSearch(newText)
-                    searchResultCount = 0
                 },
                 bShowSearchNav = showSearchNav,
                 onNextClick = {
@@ -230,6 +245,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         LazyColumn(
             state = scrollState,
             modifier = Modifier
+                .clickable(onClick = {focusManager.clearFocus()})
 //                .fillMaxSize()
                 .weight(1f)
                 .fillMaxWidth()
@@ -340,6 +356,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                     val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
                     MessageBubble(
+                        onFocusClear = {focusManager.clearFocus()},
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
@@ -395,4 +412,3 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         }
     }
 }
-
