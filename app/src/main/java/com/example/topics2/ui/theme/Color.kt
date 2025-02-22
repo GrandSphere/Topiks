@@ -17,7 +17,7 @@ val CustomOutline = Color(0xFF3A3A3A)  // Dark gray outline for borders
 val CustomInversePrimary = Color(0xFF00B0FF)  // Cyan for inverse primary buttons or actions
 val CustomScrim = Color.Black.copy(alpha = 0.32f)  // Semi-transparent black for overlays
 val CustomSurfaceVariant = Color.Yellow  // Darker gray for variant surfaces (e.g., cards)
-val CustomOnSurfaceVariant = Color.White  // White text/icons on surface variants
+val CustomOnSurfaceVariant = Color.Black  // White text/icons on surface variants
 val CustomTertiary = Color(0xFF6200EE)  // Vibrant purple for accent or highlights
 val CustomOnTertiary = Color.White  // White text/icons on tertiary elements
 val CustomTertiaryContainer = Color(0xFF3700B3)  // Darker purple for tertiary containers
