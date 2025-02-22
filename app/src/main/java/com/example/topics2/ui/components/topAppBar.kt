@@ -61,6 +61,7 @@ fun CustomTopAppBar(
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Settings",
+                    tint = colours.onBackground
                 )
             }
             CustomTopMenu(
