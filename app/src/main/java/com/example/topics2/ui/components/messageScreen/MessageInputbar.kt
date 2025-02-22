@@ -79,9 +79,9 @@ fun InputBarMessageScreen(
     var isFocused by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current // For clearing focus
+    val focusRequester = remember { FocusRequester() }
     val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
     val toUnFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-    val focusRequester = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     var bEditedMode by remember { mutableStateOf(false) }
 

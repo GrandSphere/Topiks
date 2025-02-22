@@ -28,10 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -66,6 +70,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
 
+    val focusManager = LocalFocusManager.current // For clearing focus
+    val focusRequester = remember { FocusRequester() }
     var selectMultiple: Boolean by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
@@ -85,12 +91,21 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     var iTempMessage by remember { mutableStateOf(-1) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+
+
+    val focusModifier = Modifier // Used to set edit cursor
+        .focusRequester(focusRequester)
+        .onFocusChanged { focusState ->
+//            isFocused = focusState.isFocused
+        }
     LaunchedEffect(Unit) {
 
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Search") {
                     bSearch = !bSearch
+//                    focusManager.clearFocus()
+//                    focusRequester.requestFocus()
 //                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
                 },
                 MenuItem("Select Messages") {
@@ -107,6 +122,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     fun scrollMessage()
     {
+        iTempMessage=-1
         if ((searchResults.isEmpty()) || (searchResultCount >= searchResults.size) || (searchResultCount < 0)) {
             return
         }
@@ -148,6 +164,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //        bSearch= true
         if (bSearch) {
             CustomSearchBox(
+                focusModifier = focusModifier.focusRequester(focusRequester),
                 inputText = inputText,
                 sPlaceHolder = "Search Messages...",
                 onValueChange = { newText ->
@@ -299,7 +316,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                     highlightedSearchText=null
                     if (index==iTempMessage)
-                    { // Put Search highlihting here
+                    { // Put Search highlighting here
                         highlightedSearchText = buildAnnotatedString {
                             append("This is a simple ")
                             withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {

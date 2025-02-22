@@ -45,7 +45,7 @@ fun MessageBubble( // New Message Bubble
     topicFontColor: Color = Color.Black,
 //    messageContent: String,
     bSearch: Boolean = false,
-    annotatedMessageContent: AnnotatedString? = null,
+    annotatedMessageContent: AnnotatedString,
     containsPictures: Boolean= false,
     containsAttachments: Boolean = false,
     containsMessage: Boolean = true,
@@ -121,11 +121,12 @@ fun MessageBubble( // New Message Bubble
             var bshowMore: Boolean by remember {mutableStateOf(false)}
 //var numberOfLines by remember { mutableStateOf(0) }
             var textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-            val contentToDisplay = annotatedMessageContent ?: AnnotatedString("")
+//            val contentToDisplay = annotatedMessageContent
+//            val contentToDisplay = annotatedMessageContent ?: AnnotatedString("")
 //            val contentToDisplay = annotatedMessageContent ?: AnnotatedString(messageContent)
             if (containsMessage) {
                 Text( // Show Message Content.
-                    text = contentToDisplay,
+                    text = annotatedMessageContent,
 //                    text = messagecontent,
                     color = topicFontColor,
                     style = cMessageFont,
@@ -198,7 +199,7 @@ fun MessageBubble( // New Message Bubble
 //colors = androidx.compose.material3.DropdownMenuItemDefaults.colors( contentColor = Color.Blue),
             onClick = {
                 showMenu = false
-                clipboardManager.setText(annotatedString = annotatedMessageContent?:(AnnotatedString("")))
+                clipboardManager.setText(annotatedString = annotatedMessageContent)
                 // ERROR NOTE TODO WHATEVER BELOW LINE IS NEEDED IF WE USE MESSAGE CONTENT AGAIN
                 // COPY MIGHT NOT WORK RIGHT ANYMORE
 //                clipboardManager.setText(annotatedString = (AnnotatedString(messageContent)))
