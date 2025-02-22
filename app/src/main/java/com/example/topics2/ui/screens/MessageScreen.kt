@@ -1,5 +1,6 @@
 package com.example.topics2.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -118,23 +119,37 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 )
         )
-
     }
 
     fun scrollMessage()
     {
         iTempMessage=-1
-        if ((searchResults.isEmpty()) || (searchResultCount >= searchResults.size) || (searchResultCount < 0)) {
+        if ((searchResults.isEmpty()) || (searchResultCount > searchResults.size) || (searchResultCount < 0)) {
             return
         }
+
         if (searchResultCount == 0){ searchResultCount = 1}
         val messageId = searchResults[searchResultCount -1].id
         val messageIndex = viewModel.getMessageIndexFromID(messageId)
+        //Log.d("AASSDD: ", "This is the results: ${searchResults}")
+        Log.d("AASSDD: ", "SearchResults: ${searchResults}")
+        Log.d("AASSDD: ", "This is the message Index we go to: ${messageIndex}")
+
         if (messageIndex >= 0) {
             iTempMessage=messageIndex
             coroutineScope.launch {
                 scrollState.scrollToItem(messageIndex)
             }
+
+        }
+    }
+
+    LaunchedEffect(inputText) {
+
+        if (inputText.length > 0) {
+            viewModel.messageSearch(inputText)
+            searchResultCount = searchResults.size
+            scrollMessage()
 
         }
     }
@@ -176,6 +191,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 bShowSearchNav = showSearchNav,
                 onNextClick = {
                     if ( searchResultCount  < searchResults.size) {
+                        Log.d("AASSDDQQ: ", "This is the counter: ${searchResultCount}")
                         searchResultCount++
                         scrollMessage()
                     } else{
@@ -200,8 +216,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-
-
 //                .fillMaxSize()
                 .weight(1f)
                 .fillMaxWidth()
@@ -209,11 +223,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 .padding(bottom = inputBarHeight)
         ) {
 
-            if (inputText.length > 0) {
-                viewModel.messageSearch(inputText)
-                scrollMessage()
-
-            }
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
@@ -273,16 +282,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     var highlightedSearchText by remember { mutableStateOf<AnnotatedString?>(null) }
                     highlightedSearchText=null
 //                    if (index==iTempMessage)
-                        if (bSearch)
+                    if ((bSearch) && (index == iTempMessage))
                     { // Put Search highlighting here
-//                        highlightedSearchText = buildAnnotatedString {
-//                            append("This is a simple ")
-//                            withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
-//                                append("highlighted")
-//                            }
-//                            append(" text.")
-//                        }
-
                         highlightedSearchText = buildAnnotatedString {
                             val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = message.content.split(" ")
@@ -301,9 +302,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                                         }
 
                                         // Append the matched part
-//                                        withStyle(style = SpanStyle(background = colors.surfaceVariant ,color = colors.onSurfaceVariant)) {
-//                                            withStyle(style = SpanStyle(background = topicFontColor.copy(alpha=0.3f) ,color = topicFontColor)) {
-                                                withStyle(style = SpanStyle(background = topicFontColor ,color = topicColor)) {
+//                                       withStyle(style = SpanStyle(background = colors.surfaceVariant ,color = colors.onSurfaceVariant)) {
+//                                       withStyle(style = SpanStyle(background = topicFontColor.copy(alpha=0.3f) ,color = topicFontColor)) {
+                                        withStyle(style = SpanStyle(background = topicFontColor ,color = topicColor)) {
                                             append(word.substring(matchIndex, matchIndex + substring.length))
                                         }
 
@@ -330,7 +331,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
-                                annotatedMessageContent = contentToDisplay,
+                        annotatedMessageContent = contentToDisplay,
 //                        messageContent = if (bSearch) "a"  else  message.content,
 //                        messageContent = message.content,
                         containsPictures = hasPictures,
