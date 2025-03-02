@@ -482,7 +482,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     if (showDialog) {
         val styledText = buildAnnotatedString {
-            append("Delete: ") // Default text
+            append("Delete ") // Default text
 //                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
             withStyle(style = SpanStyle(color = colors.error)) {
                 append(selectedMessageIds.value.size.toString()) // Styled part (topic.name)
@@ -526,7 +526,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     DisposableEffect(topicId) {
         onDispose {
             topBarViewModel.setCustomIcons(emptyList())
-            topBarViewModel.setMenuItems(emptyList())
+//            topBarViewModel.setMenuItems(emptyList())
             viewModel.resetState()
         }
     }
