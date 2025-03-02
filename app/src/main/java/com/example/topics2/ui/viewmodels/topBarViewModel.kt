@@ -3,6 +3,7 @@ package com.example.topics2.ui.viewmodels
 import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
+import com.example.topics2.model.dataClasses.CustomIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,6 +17,10 @@ class TopBarViewModel : ViewModel() {
     // Add StateFlow for menu items
     private val _menuItems = MutableStateFlow<List<MenuItem>>(emptyList())
     val menuItems: StateFlow<List<MenuItem>> get() = _menuItems
+
+    // StateFlow for custom icons (can be updated dynamically)
+    private val _customIcons = MutableStateFlow<List<CustomIcon>>(emptyList())
+    val customIcons: StateFlow<List<CustomIcon>> get() = _customIcons
 
     fun updateTopBarTitle(currentRoute: String?, currentBackStackEntry: NavBackStackEntry?) {
         val title = when (currentRoute) {
@@ -70,6 +75,28 @@ class TopBarViewModel : ViewModel() {
     fun updateMenuItem(oldLabel: String, newItem: MenuItem) {
         _menuItems.value = _menuItems.value.map {
             if (it.label == oldLabel) newItem else it  // Replace the item with the new one
+        }
+    }
+
+     // Set custom icons (this will replace the current list)
+    fun setCustomIcons(icons: List<CustomIcon>) {
+        _customIcons.value = icons
+    }
+
+    // Add a custom icon
+    fun addCustomIcon(icon: CustomIcon) {
+        _customIcons.value = _customIcons.value + icon
+    }
+
+    // Remove a custom icon
+    fun removeCustomIcon(icon: CustomIcon) {
+        _customIcons.value = _customIcons.value.filterNot { it.contentDescription == icon.contentDescription }
+    }
+
+    // Update an existing custom icon
+    fun updateCustomIcon(oldIcon: CustomIcon, newIcon: CustomIcon) {
+        _customIcons.value = _customIcons.value.map {
+            if (it == oldIcon) newIcon else it
         }
     }
 }
