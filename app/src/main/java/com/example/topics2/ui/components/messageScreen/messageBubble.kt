@@ -36,6 +36,7 @@ import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
 import com.example.topics.ui.themes.cShowMoreFont
 import com.example.topics2.db.entities.FileInfoWithIcon
+import kotlinx.coroutines.selects.select
 import picturesPreview
 
 
@@ -52,6 +53,7 @@ fun MessageBubble( // New Message Bubble
     containsPictures: Boolean= false,
     containsAttachments: Boolean = false,
     containsMessage: Boolean = true,
+    selectMultile: Boolean = false,
     listOfPictures: List<FileInfoWithIcon> = emptyList<FileInfoWithIcon>(),
     listOfAttachmentsP: List<String> = emptyList<String>(),
     onEditClick: () -> Unit = {},
@@ -146,21 +148,14 @@ fun MessageBubble( // New Message Bubble
                         .pointerInput(Unit) {
                             detectTapGestures(
                             onLongPress = {
-
-//                                viewModel.setToUnFocusTextbox(true)
-//                                //viewModel.setTempMessage(message.content)
-//                                //viewModel.setAmEditing(true)
-//                                viewModel.setTempMessageId(message.id)
-//                                showMenu = false
-//                                viewModel.setToFocusTextbox(true)
-
-//                                Log.d("arst","in messagebuble")
                                 showMenu = true
-//                                onEditClick()
                             },
-                                onPress = {onFocusClear()}
-
-//                                onLongPress = { Log.d("arst","arst")}
+                                onPress = {
+//                                    if (selectMultile) {
+//                                        onSelectedClick()
+//                                    }
+                                    onFocusClear()
+                                }
                             )
                         }
                         .padding(vertical = 4.dp)
@@ -217,14 +212,14 @@ fun MessageBubble( // New Message Bubble
         )
 
 
-            DropdownMenuItem(
+        DropdownMenuItem(
 
-                text = { Text("Edit", color = textColour) },
-                onClick = {
-                    showMenu = false
-                    onEditClick()
-                }
-            )
+            text = { Text("Edit", color = textColour) },
+            onClick = {
+                showMenu = false
+                onEditClick()
+            }
+        )
         DropdownMenuItem(
             text = { Text("View", color = textColour) },
             onClick = {

@@ -426,6 +426,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //                        messageContent = if (bSearch) "a"  else  message.content,
 //                        messageContent = message.content,
                         containsPictures = hasPictures,
+                        selectMultile = selectMultiple,
                         containsAttachments = hasAttachments,
                         listOfPictures = pictureList,
                         listOfAttachmentsP = attachmentList,
