@@ -48,8 +48,8 @@ Column(modifier = Modifier
         onValueChange = { newtext -> inputText = newtext },
         inputText = inputText ?: "",
         sPlaceHolder = "",
-        boxModifier = Modifier.weight(1f),
-        focusModifier = Modifier.weight(1f)
+        boxModifier = Modifier.fillMaxSize(),
+        focusModifier = Modifier.fillMaxSize()
     )
 
 }
