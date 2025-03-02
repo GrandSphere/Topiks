@@ -285,7 +285,6 @@ class MessageViewModel (
 
     val toPdf = ToPDF()
 
-
     suspend fun exportMessagesToPDF(messageIDs: Set<Int>) {
         Log.d("QQWWEE THIS IS THE MESSAGE TO EXPORT", "${messageIDs}")
         val contentById = _messagesContentById.value
@@ -294,7 +293,8 @@ class MessageViewModel (
         val contentList = messageIDs.mapNotNull { id ->
             contentById[id]
         }
-
+        val fileName:String = if(messageIDs.size > 1) topicId.value.toString() + "_multiple" else
+            topicId.value.toString() + "_" + messageIDs.first().toString()
         Log.d("ViewModel", "Exporting ${contentList.size} messages to PDF using map lookup for IDs: $messageIDs")
 
         if (contentList.isEmpty()) {
@@ -305,7 +305,7 @@ class MessageViewModel (
         // Create the PDF using the ToPDF function
         toPdf.createPdfInDirectory(
             relativeDirectoryName = "Exports",
-            fileName = "testFileName",
+            fileName = fileName,
             contentList = contentList
         )
     }
