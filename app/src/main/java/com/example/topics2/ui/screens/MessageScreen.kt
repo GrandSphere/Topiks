@@ -118,20 +118,22 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     }
 
     LaunchedEffect(Unit) {
-
         topBarViewModel.setCustomIcons(listOf(
             CustomIcon(icon = Icons.Default.Search,
-                {selectedMessageIds.value = viewModel._messageIndexMap.value.keys},
-                ""
+                {
+                    bSearch = !bSearch
+                    iTempMessage=-1
+                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
+                },
+                "Search"
             )
         ))
-
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Search") {
                     bSearch = !bSearch
                     iTempMessage=-1
-                    toFocusSearchBox = true
+                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
                 },
                 MenuItem("Select Messages") {
                     viewModel.setMultipleMessageSelected(!selectMultiple)
@@ -179,7 +181,17 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 )
             )
         } else{
-            topBarViewModel.setCustomIcons(emptyList())
+//            topBarViewModel.setCustomIcons(emptyList())
+            topBarViewModel.setCustomIcons(listOf(
+                CustomIcon(icon = Icons.Default.Search,
+                    {
+                        bSearch = !bSearch
+                        iTempMessage=-1
+                        if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
+                    },
+                    "Search"
+                )
+            ))
             selectedMessageIds.value = emptySet()
         }
 
