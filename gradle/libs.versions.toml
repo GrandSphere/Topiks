@@ -22,6 +22,7 @@ luceneAnalyzersCommon = "9.5.0"
 luceneCore = "9.5.0"
 material = "1.4.0"
 material3 = "1.0.0"
+materialIconsExtended = "1.7.8"
 materialVersion = "<1.5>"
 navigationCompose = "2.8.5"
 navigationComposeVersion = "2.5.0"
@@ -51,6 +52,7 @@ androidx-lifecycle-viewmodel-compose-v260alpha03 = { module = "androidx.lifecycl
 androidx-lifecycle-viewmodel-compose-v262 = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material-v15 = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-navigation-compose-v250 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-room-ktx-v260 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }

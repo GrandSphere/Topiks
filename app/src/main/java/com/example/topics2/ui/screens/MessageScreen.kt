@@ -1,6 +1,8 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +14,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -45,6 +56,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.entities.FileInfoWithIcon
+import com.example.topics2.model.dataClasses.CustomIcon
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
@@ -63,14 +75,13 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
 
-
+    var showDialog by remember { mutableStateOf(false) }
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
-
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
-    var selectMultiple: Boolean by remember { mutableStateOf(false) }
+    val selectMultiple by viewModel.multipleMessageSelected.collectAsState()
     val colors = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
     val scrollState = rememberLazyListState()
@@ -91,12 +102,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var bDeleteEnabled:Boolean by remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
 
+    val selectedMessageIds = remember { mutableStateOf<Set<Int>>(emptySet()) }
+
 
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
-        .onFocusChanged { focusState ->
-//            isFocused = focusState.isFocused
-        }
 
     var toFocusSearchBox by  remember { mutableStateOf(false) }
     LaunchedEffect(toFocusSearchBox) {
@@ -106,31 +116,29 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             toFocusSearchBox = false
         }
     }
-    //var deleteName:String by remember { mutableStateOf("Enable Delete")}
-    //LaunchedEffect (bDeleteEnabled){
-    //    if(bDeleteEnabled) {
-    //        deleteName = "Disable delete"
-    //    } else
-    //    {
-    //        deleteName = "Enable delete"
-    //    }
-    //}
-    LaunchedEffect(Unit) {
 
+    LaunchedEffect(Unit) {
+        topBarViewModel.setCustomIcons(listOf(
+            CustomIcon(icon = Icons.Default.Search,
+                {
+                    bSearch = !bSearch
+                    iTempMessage=-1
+                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
+                },
+                "Search"
+            )
+        ))
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Search") {
                     bSearch = !bSearch
                     iTempMessage=-1
-                    toFocusSearchBox = true
-                //    focusManager.clearFocus()
-                //    focusRequester.requestFocus()
-//                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
+                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
                 },
                 MenuItem("Select Messages") {
-                    selectMultiple= !selectMultiple
+                    viewModel.setMultipleMessageSelected(!selectMultiple)
                 },
-                MenuItem( "Toggle Delete") {
+                MenuItem( "Enable Delete") {
                     bDeleteEnabled= !bDeleteEnabled
                 },
                 MenuItem("Back") {
@@ -139,6 +147,54 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 )
         )
+    }
+    LaunchedEffect(bDeleteEnabled){
+        if (bDeleteEnabled)
+        {
+            topBarViewModel.updateMenuItem("Enable Delete",
+                MenuItem("Disable Delete", {bDeleteEnabled = false}) )
+        }
+        else {
+            topBarViewModel.updateMenuItem("Disable Delete",
+                MenuItem("Enable Delete", {bDeleteEnabled= true}) )
+        }
+    }
+    LaunchedEffect(selectMultiple){
+        if (selectMultiple){
+            topBarViewModel.setCustomIcons(
+                listOf(
+                    CustomIcon(Icons.Default.SelectAll, {
+                        if (selectedMessageIds.value.size < messages.size) {
+                            selectedMessageIds.value = viewModel._messageIndexMap.value.keys
+                        }
+                        else {
+                            selectedMessageIds.value = emptySet()
+                        }
+                    }, "Select All"),
+                    CustomIcon(Icons.Default.Delete, {
+                        showDialog = true
+//                        coroutineScope.launch {
+//                            viewModel.deleteMultipleMessages(selectedMessageIds.value)
+//                            selectedMessageIds.value = emptySet()
+//                        }
+                    }, "Delete Selected Messages")
+                )
+            )
+        } else{
+//            topBarViewModel.setCustomIcons(emptyList())
+            topBarViewModel.setCustomIcons(listOf(
+                CustomIcon(icon = Icons.Default.Search,
+                    {
+                        bSearch = !bSearch
+                        iTempMessage=-1
+                        if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
+                    },
+                    "Search"
+                )
+            ))
+            selectedMessageIds.value = emptySet()
+        }
+
     }
 
     fun scrollMessage()
@@ -214,7 +270,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 bShowSearchNav = showSearchNav,
                 onNextClick = {
                     if ( searchResultCount  < searchResults.size) {
-                        Log.d("AASSDDQQ: ", "This is the counter: ${searchResultCount}")
                         searchResultCount++
                         scrollMessage()
                     } else{
@@ -240,7 +295,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .clickable(onClick = {focusManager.clearFocus()})
+                .pointerInput(Unit) {
+                    detectTapGestures(onPress = {
+                        focusManager.clearFocus()
+                    })
+                }
 //                .fillMaxSize()
                 .weight(1f)
                 .fillMaxWidth()
@@ -251,7 +310,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
-                //val pictureList = mutableListOf<String>()
                 val pictureList = mutableListOf<FileInfoWithIcon>()
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
@@ -289,21 +347,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    if (selectMultiple) {
-                        Checkbox(
-                            checked = messageChecked,
-                            onCheckedChange = { messageChecked = it },
-                            modifier = Modifier
-                                .scale(0.75f)
-                                .padding(start = 10.dp, end = 4.dp, bottom = 0.dp, top = 0.dp)
-                                .size(1.dp),
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = topicColor,
-                                uncheckedColor = colors.onBackground,
-                                checkmarkColor = topicFontColor,
-                            )
-                        )
-                    }
                     var highlightedSearchText by remember { mutableStateOf<AnnotatedString?>(null) }
                     highlightedSearchText=null
 //                    if (index==iTempMessage)
@@ -350,6 +393,30 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     }
 
                     val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
+                    if (selectMultiple) {
+                        Checkbox(
+                            checked =  (message.id in selectedMessageIds.value),
+                            onCheckedChange = {
+                                messageChecked = it
+                                if ( messageChecked ) {
+                                    selectedMessageIds.value += message.id
+                                } else
+                                {
+                                    selectedMessageIds.value -= message.id
+                                }
+                            },
+                            modifier = Modifier
+                                .scale(0.75f)
+                                .padding(start = 10.dp, end = 4.dp, bottom = 0.dp, top = 0.dp)
+                                .size(1.dp),
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = topicColor,
+                                uncheckedColor = colors.onBackground,
+                                checkmarkColor = topicFontColor,
+                            )
+                        )
+                    }
+
                     MessageBubble(
                         onFocusClear = {focusManager.clearFocus()},
                         navController = navController,
@@ -359,6 +426,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 //                        messageContent = if (bSearch) "a"  else  message.content,
 //                        messageContent = message.content,
                         containsPictures = hasPictures,
+                        selectMultile = selectMultiple,
                         containsAttachments = hasAttachments,
                         listOfPictures = pictureList,
                         listOfAttachmentsP = attachmentList,
@@ -368,9 +436,18 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                                 viewModel.deleteMessage(message.id)
                             }
                         },
+                        onSelectedClick = {
+                            viewModel.setMultipleMessageSelected(true)
+                            if(message.id in selectedMessageIds.value) {
+                                selectedMessageIds.value -= message.id
+                                messageChecked = false
+                            } else{
+                                messageChecked = true
+                                selectedMessageIds.value += message.id
+                            }
+                        } ,
                         onViewMessage = {
                             //TemporaryDataHolder.setMessage(message.content)
-
                             viewModel.setTempMessageId(message.id)
                             navController.navigate("navViewMessage")
                         },
@@ -379,6 +456,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             viewModel.setEditMode(true)
                         },
                         bDeleteEnabled = bDeleteEnabled,
+                        messageSelected = messageChecked,
                     )
                 }
             }
@@ -401,8 +479,54 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     }
 
+
+    if (showDialog) {
+        val styledText = buildAnnotatedString {
+            append("Delete ") // Default text
+//                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
+            withStyle(style = SpanStyle(color = colors.error)) {
+                append(selectedMessageIds.value.size.toString()) // Styled part (topic.name)
+            }
+            append(" selected messages ?") // End of the text
+        }
+        AlertDialog(
+
+            modifier = Modifier
+                .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
+//                containerColor = colors.background,
+            containerColor = colors.surface,
+//                 containerColor = Color.Red.copy(alpha = 0.7f),
+            tonalElevation = 0.dp,
+            onDismissRequest = { showDialog = false }, // Close on outside tap
+            title = { Text("Confirm Delete", color = colors.onSurface) },
+            text = {
+                Text(
+                    styledText,
+                    color = colors.onSurface
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    coroutineScope.launch {
+                        viewModel.deleteMultipleMessages(selectedMessageIds.value)
+                        selectedMessageIds.value = emptySet()
+                    }
+                }) {
+                    Text("Delete", color = colors.onSurface)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancel", color = colors.onSurface)
+                }
+            }
+        )
+    }
     DisposableEffect(topicId) {
         onDispose {
+            topBarViewModel.setCustomIcons(emptyList())
+//            topBarViewModel.setMenuItems(emptyList())
             viewModel.resetState()
         }
     }

@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.messageScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,11 +30,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
 import com.example.topics.ui.themes.cShowMoreFont
 import com.example.topics2.db.entities.FileInfoWithIcon
+import kotlinx.coroutines.selects.select
 import picturesPreview
 
 
@@ -50,12 +53,15 @@ fun MessageBubble( // New Message Bubble
     containsPictures: Boolean= false,
     containsAttachments: Boolean = false,
     containsMessage: Boolean = true,
+    selectMultile: Boolean = false,
     listOfPictures: List<FileInfoWithIcon> = emptyList<FileInfoWithIcon>(),
     listOfAttachmentsP: List<String> = emptyList<String>(),
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onViewMessage: () -> Unit = {},
+    onSelectedClick: () -> Unit = {},
     bDeleteEnabled: Boolean = false,
+    messageSelected: Boolean = false,
     timestamp: String
 ) {
 //    var messagecontent = messageContent
@@ -142,21 +148,14 @@ fun MessageBubble( // New Message Bubble
                         .pointerInput(Unit) {
                             detectTapGestures(
                             onLongPress = {
-
-//                                viewModel.setToUnFocusTextbox(true)
-//                                //viewModel.setTempMessage(message.content)
-//                                //viewModel.setAmEditing(true)
-//                                viewModel.setTempMessageId(message.id)
-//                                showMenu = false
-//                                viewModel.setToFocusTextbox(true)
-
-//                                Log.d("arst","in messagebuble")
                                 showMenu = true
-//                                onEditClick()
                             },
-                                onPress = {onFocusClear()}
-
-//                                onLongPress = { Log.d("arst","arst")}
+                                onPress = {
+//                                    if (selectMultile) {
+//                                        onSelectedClick()
+//                                    }
+                                    onFocusClear()
+                                }
                             )
                         }
                         .padding(vertical = 4.dp)
@@ -213,19 +212,28 @@ fun MessageBubble( // New Message Bubble
         )
 
 
-            DropdownMenuItem(
+        DropdownMenuItem(
 
-                text = { Text("Edit", color = textColour) },
-                onClick = {
-                    showMenu = false
-                    onEditClick()
-                }
-            )
+            text = { Text("Edit", color = textColour) },
+            onClick = {
+                showMenu = false
+                onEditClick()
+            }
+        )
         DropdownMenuItem(
             text = { Text("View", color = textColour) },
             onClick = {
                 showMenu = false
                 onViewMessage()
+            }
+        )
+        DropdownMenuItem(
+            // :TODO FIX THIS IF
+            text = { Text(if(messageSelected) "Deselect" else "Select" ,color = textColour)},
+            onClick = {
+                Log.d("qqwwee", "${messageSelected}")
+                showMenu = false
+                onSelectedClick()
             }
         )
         if (bDeleteEnabled) {

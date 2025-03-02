@@ -125,6 +125,9 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 MenuItem("Search All Topics") {
                     navController.navigate("newSearch")
                 },
+                MenuItem("About") {
+                    navController.navigate("navAboutScreen")
+                },
                 MenuItem("Close") {
                     // Handle cleanup here
                     System.exit(0)
