@@ -43,6 +43,34 @@ class TopBarViewModel : ViewModel() {
      // Update the current menu items
     fun setMenuItems(items: List<MenuItem>) {
         _menuItems.value = items
+     }
+
+    fun clearMenuItems(items: List<MenuItem>) {
+        _menuItems.value = emptyList()
+    }
+
+    // Add a new menu item
+    fun addMenuItem(item: MenuItem, position: Int? = null) {
+        //_menuItems.value = _menuItems.value + item  // Add new item to list
+        val currentItems = _menuItems.value.toMutableList()
+        if (position != null && position in 0..currentItems.size) {
+            currentItems.add(position, item)  // Insert at the specified position
+        } else {
+            currentItems.add(item)  // Add at the end if no position is specified or invalid
+        }
+        _menuItems.value = currentItems
+    }
+
+    // Remove a menu item by label (or any unique identifier)
+    fun removeMenuItem(label: String) {
+        _menuItems.value = _menuItems.value.filterNot { it.label == label }  // Remove by label
+    }
+
+    // Update a menu item
+    fun updateMenuItem(oldLabel: String, newItem: MenuItem) {
+        _menuItems.value = _menuItems.value.map {
+            if (it.label == oldLabel) newItem else it  // Replace the item with the new one
+        }
     }
 }
 
