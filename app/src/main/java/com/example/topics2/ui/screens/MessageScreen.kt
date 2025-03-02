@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.topics.utilities.determineFileType
 import com.example.topics2.db.entities.FileInfoWithIcon
+import com.example.topics2.model.dataClasses.CustomIcon
 import com.example.topics2.ui.components.CustomSearchBox
 import com.example.topics2.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.example.topics2.ui.components.messageScreen.InputBarMessageScreen
@@ -106,6 +109,14 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     }
 
     LaunchedEffect(Unit) {
+
+        topBarViewModel.setCustomIcons(listOf(
+            CustomIcon(icon = Icons.Default.Search,
+                {selectedMessageIds.value = viewModel._messageIndexMap.value.keys},
+                ""
+            )
+        ))
+
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Search") {
@@ -134,7 +145,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         }
         else {
             topBarViewModel.updateMenuItem("Disable Delete",
-            MenuItem("Enable Delete", {bDeleteEnabled= true}) )
+                MenuItem("Enable Delete", {bDeleteEnabled= true}) )
         }
     }
     LaunchedEffect(selectMultiple){
