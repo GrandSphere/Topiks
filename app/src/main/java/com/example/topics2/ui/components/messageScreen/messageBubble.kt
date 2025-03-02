@@ -1,5 +1,6 @@
 package com.example.topics2.ui.components.messageScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -233,8 +234,9 @@ fun MessageBubble( // New Message Bubble
         )
         DropdownMenuItem(
             // :TODO FIX THIS IF
-            text = { Text(if(messageSelected) "Unselect" else "Select" ,color = textColour)},
+            text = { Text(if(messageSelected) "Deselect" else "Select" ,color = textColour)},
             onClick = {
+                Log.d("qqwwee", "${messageSelected}")
                 showMenu = false
                 onSelectedClick()
             }
