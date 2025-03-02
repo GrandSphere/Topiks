@@ -60,12 +60,11 @@ fun MessageBubble( // New Message Bubble
     onDeleteClick: () -> Unit = {},
     onViewMessage: () -> Unit = {},
     onSelectedClick: () -> Unit = {},
+    onExportClick: () -> Unit = {},
     bDeleteEnabled: Boolean = false,
     messageSelected: Boolean = false,
     timestamp: String
 ) {
-//    var messagecontent = messageContent
-
     val colours = MaterialTheme.colorScheme
     var showMenu by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
@@ -234,6 +233,13 @@ fun MessageBubble( // New Message Bubble
                 Log.d("qqwwee", "${messageSelected}")
                 showMenu = false
                 onSelectedClick()
+            }
+        )
+        DropdownMenuItem(
+            text = { Text("Export Message", color = textColour) },
+            onClick = {
+                showMenu = false
+                onExportClick()
             }
         )
         if (bDeleteEnabled) {
