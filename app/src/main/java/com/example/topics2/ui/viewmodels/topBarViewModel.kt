@@ -34,6 +34,7 @@ class TopBarViewModel : ViewModel() {
                 title = if (topicId == -1) { "Add Topic" } else { "Edit Topic" }
                 title
             }
+            "navAboutScreen" -> "About"
             "newSearch" -> "Search All"
             "navViewMessage" -> "View Message"
             "navcolourpicker" -> "Pick a colour"
