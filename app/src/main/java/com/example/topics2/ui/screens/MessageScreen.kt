@@ -2,6 +2,7 @@ package com.example.topics2.ui.screens
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -13,13 +14,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -70,6 +75,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
 
+    var showDialog by remember { mutableStateOf(false) }
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
 
@@ -164,10 +170,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         }
                     }, "Select All"),
                     CustomIcon(Icons.Default.Delete, {
-                        coroutineScope.launch {
-                            viewModel.deleteMultipleMessages(selectedMessageIds.value)
-                            selectedMessageIds.value = emptySet()
-                        }
+                        showDialog = true
+//                        coroutineScope.launch {
+//                            viewModel.deleteMultipleMessages(selectedMessageIds.value)
+//                            selectedMessageIds.value = emptySet()
+//                        }
                     }, "Delete Selected Messages")
                 )
             )
@@ -276,7 +283,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .clickable(onClick = {focusManager.clearFocus()})
+                .pointerInput(Unit) {
+                    detectTapGestures(onPress = {
+                        focusManager.clearFocus()
+                    })
+                }
 //                .fillMaxSize()
                 .weight(1f)
                 .fillMaxWidth()
@@ -416,7 +427,9 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             viewModel.setMultipleMessageSelected(true)
                             if(message.id in selectedMessageIds.value) {
                                 selectedMessageIds.value -= message.id
+                                messageChecked = false
                             } else{
+                                messageChecked = true
                                 selectedMessageIds.value += message.id
                             }
                         } ,
@@ -453,6 +466,50 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     }
 
+
+    if (showDialog) {
+        val styledText = buildAnnotatedString {
+            append("Delete: ") // Default text
+//                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
+            withStyle(style = SpanStyle(color = colors.error)) {
+                append(selectedMessageIds.value.size.toString()) // Styled part (topic.name)
+            }
+            append(" selected messages ?") // End of the text
+        }
+        AlertDialog(
+
+            modifier = Modifier
+                .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
+//                containerColor = colors.background,
+            containerColor = colors.surface,
+//                 containerColor = Color.Red.copy(alpha = 0.7f),
+            tonalElevation = 0.dp,
+            onDismissRequest = { showDialog = false }, // Close on outside tap
+            title = { Text("Confirm Delete", color = colors.onSurface) },
+            text = {
+                Text(
+                    styledText,
+                    color = colors.onSurface
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    coroutineScope.launch {
+                        viewModel.deleteMultipleMessages(selectedMessageIds.value)
+                        selectedMessageIds.value = emptySet()
+                    }
+                }) {
+                    Text("Delete", color = colors.onSurface)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancel", color = colors.onSurface)
+                }
+            }
+        )
+    }
     DisposableEffect(topicId) {
         onDispose {
             topBarViewModel.setCustomIcons(emptyList())
