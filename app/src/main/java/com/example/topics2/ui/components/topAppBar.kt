@@ -17,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
@@ -50,10 +52,7 @@ fun CustomTopAppBar(
                     .padding(vertical = 0.dp), // Remove extra vertical padding
                 contentAlignment = Alignment.CenterStart // Center only vertically and align to start (left)
             ) {
-                Text(
-                    text = title,
-                    color = colours.onBackground
-                )
+                Text( text = title)
             }
         },
         actions = {
@@ -64,7 +63,6 @@ fun CustomTopAppBar(
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Settings",
-                    tint = colours.onBackground
                 )
             }
             CustomTopMenu(
@@ -73,6 +71,11 @@ fun CustomTopAppBar(
                 navController = navController
             )
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+             titleContentColor = colours.onBackground,
+             actionIconContentColor = colours.onBackground,
+        containerColor = colours.background // Change this to any color
+    )
     )
 }
 
@@ -93,7 +96,7 @@ fun CustomTopMenu(
         onDismissRequest = { onDismiss() },
         properties = PopupProperties(focusable = true),
         modifier = Modifier
-            .background(colours.background)
+            .background(colours.surface)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(), // Ensure it always takes up full height
@@ -102,7 +105,7 @@ fun CustomTopMenu(
             Column {
                 menuItems.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(item.label, color = colours.onBackground) },
+                        text = { Text(item.label, color = colours.onSurface) },
                         onClick = {
                             item.onClick()
                             onDismiss()

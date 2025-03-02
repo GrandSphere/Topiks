@@ -2,6 +2,7 @@ package com.example.topics2.ui.components.messageScreen
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -169,6 +170,7 @@ fun InputBarMessageScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
+                        .background(colours.background)
                 ) {
                     Text( // get text name from path
                         text = "\u2022 " + getFileNameFromString(attachment.toString()), // TODO do this somewhere it might be more effecient. Maybe even in database
