@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -72,7 +75,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
-    var selectMultiple: Boolean by remember { mutableStateOf(false) }
+    val selectMultiple by viewModel.multipleMessageSelected.collectAsState()
     val colors = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
     val scrollState = rememberLazyListState()
@@ -125,7 +128,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     toFocusSearchBox = true
                 },
                 MenuItem("Select Messages") {
-                    selectMultiple= !selectMultiple
+                    viewModel.setMultipleMessageSelected(!selectMultiple)
                 },
                 MenuItem( "Enable Delete") {
                     bDeleteEnabled= !bDeleteEnabled
@@ -150,26 +153,29 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     }
     LaunchedEffect(selectMultiple){
         if (selectMultiple){
-            topBarViewModel.addMenuItem(MenuItem("Select All Messages", {
-                if (selectedMessageIds.value.size < messages.size) {
-                    selectedMessageIds.value = viewModel._messageIndexMap.value.keys
-                }
-                else {
-                    selectedMessageIds.value = emptySet()
-                }
-            }))
-            topBarViewModel.addMenuItem(MenuItem("Delete Selected Messages", {
-                coroutineScope.launch {
-                    viewModel.deleteMultipleMessages(selectedMessageIds.value)
-                    selectedMessageIds.value = emptySet()
-                }
-            }), 9)
+            topBarViewModel.setCustomIcons(
+                listOf(
+                    CustomIcon(Icons.Default.SelectAll, {
+                        if (selectedMessageIds.value.size < messages.size) {
+                            selectedMessageIds.value = viewModel._messageIndexMap.value.keys
+                        }
+                        else {
+                            selectedMessageIds.value = emptySet()
+                        }
+                    }, "Select All"),
+                    CustomIcon(Icons.Default.Delete, {
+                        coroutineScope.launch {
+                            viewModel.deleteMultipleMessages(selectedMessageIds.value)
+                            selectedMessageIds.value = emptySet()
+                        }
+                    }, "Delete Selected Messages")
+                )
+            )
+        } else{
+            topBarViewModel.setCustomIcons(emptyList())
+            selectedMessageIds.value = emptySet()
         }
-    }
 
-    LaunchedEffect (selectedMessageIds.value)
-    {
-        Log.d("QQWWEE", "${selectedMessageIds.value}")
     }
 
     fun scrollMessage()
@@ -281,7 +287,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
-                //val pictureList = mutableListOf<String>()
                 val pictureList = mutableListOf<FileInfoWithIcon>()
                 val attachmentList = mutableListOf<String>()
                 var hasPictures = false
@@ -407,9 +412,16 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                                 viewModel.deleteMessage(message.id)
                             }
                         },
+                        onSelectedClick = {
+                            viewModel.setMultipleMessageSelected(true)
+                            if(message.id in selectedMessageIds.value) {
+                                selectedMessageIds.value -= message.id
+                            } else{
+                                selectedMessageIds.value += message.id
+                            }
+                        } ,
                         onViewMessage = {
                             //TemporaryDataHolder.setMessage(message.content)
-
                             viewModel.setTempMessageId(message.id)
                             navController.navigate("navViewMessage")
                         },
@@ -418,6 +430,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             viewModel.setEditMode(true)
                         },
                         bDeleteEnabled = bDeleteEnabled,
+                        messageSelected = messageChecked,
                     )
                 }
             }
@@ -442,6 +455,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
     DisposableEffect(topicId) {
         onDispose {
+            topBarViewModel.setCustomIcons(emptyList())
+            topBarViewModel.setMenuItems(emptyList())
             viewModel.resetState()
         }
     }

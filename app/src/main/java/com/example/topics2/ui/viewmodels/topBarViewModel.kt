@@ -99,6 +99,7 @@ class TopBarViewModel : ViewModel() {
             if (it == oldIcon) newIcon else it
         }
     }
+
 }
 
 object GlobalViewModelHolder {
