@@ -1,6 +1,9 @@
 package com.example.topics2.ui.viewmodels
 
+import android.content.Context
 import android.net.Uri
+import android.os.Environment
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -21,6 +24,7 @@ import com.example.topics2.db.entities.FileTbl
 import com.example.topics2.model.Message
 import com.example.topics2.model.MessageSearchContent
 import com.example.topics2.model.MessageSearchHandler
+import com.example.topics2.model.ToPDF
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +32,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import java.io.File
 
 // TODO Fix category add when adding message
 // TODO Fix created time when  editing when adding message
@@ -132,6 +137,7 @@ class MessageViewModel (
     fun getMessageIndexFromID(messageID: Int):Int {
         return _messageIndexMap.value[messageID] ?: -1
     }
+
 
 
     private val _multipleMessageSelected = MutableStateFlow<Boolean>(false)
@@ -274,6 +280,34 @@ class MessageViewModel (
             type =  type
         )
         messageDao.updateMessage(editedMessage)
+    }
+
+
+    val toPdf = ToPDF()
+
+
+    suspend fun exportMessagesToPDF(messageIDs: Set<Int>) {
+        Log.d("QQWWEE THIS IS THE MESSAGE TO EXPORT", "${messageIDs}")
+        val contentById = _messagesContentById.value
+
+        // Use the map to build a list of message contents based on the provided IDs
+        val contentList = messageIDs.mapNotNull { id ->
+            contentById[id]
+        }
+
+        Log.d("ViewModel", "Exporting ${contentList.size} messages to PDF using map lookup for IDs: $messageIDs")
+
+        if (contentList.isEmpty()) {
+            Log.w("ViewModel", "No messages found for the provided IDs: $messageIDs")
+            return
+        }
+
+        // Create the PDF using the ToPDF function
+        toPdf.createPdfInDirectory(
+            relativeDirectoryName = "Exports",
+            fileName = "testFileName",
+            contentList = contentList
+        )
     }
 
     companion object {
