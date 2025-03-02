@@ -91,4 +91,6 @@ dependencies {
     implementation (libs.androidx.foundation)
     implementation (libs.androidx.material.v15)
     implementation (libs.androidx.runtime.livedata)
+
+    implementation (libs.androidx.material.icons.extended)
 }

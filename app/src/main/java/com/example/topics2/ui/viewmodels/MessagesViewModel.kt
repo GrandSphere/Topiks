@@ -103,6 +103,7 @@ class MessageViewModel (
         _topicID.value = 0
         filePathMap.clear()
         _searchMessages.value = emptyList()
+        _multipleMessageSelected.value = false
     }
 
     // For search results
@@ -130,6 +131,13 @@ class MessageViewModel (
 
     fun getMessageIndexFromID(messageID: Int):Int {
         return _messageIndexMap.value[messageID] ?: -1
+    }
+
+
+    private val _multipleMessageSelected = MutableStateFlow<Boolean>(false)
+    val multipleMessageSelected: StateFlow<Boolean> get() = _multipleMessageSelected
+    fun setMultipleMessageSelected(newState: Boolean) {
+        _multipleMessageSelected.value =  newState
     }
 
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
@@ -165,8 +173,8 @@ class MessageViewModel (
         messageDao.getSearchMessages()
             .distinctUntilChanged()
             .onEach { messageList ->
-            _searchMessages.value = messageList
-        }.launchIn(viewModelScope)
+                _searchMessages.value = messageList
+            }.launchIn(viewModelScope)
     }
 
     // Add Message

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.topics.ui.themes.cDateStampFont
 import com.example.topics.ui.themes.cMessageFont
@@ -55,7 +56,9 @@ fun MessageBubble( // New Message Bubble
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onViewMessage: () -> Unit = {},
+    onSelectedClick: () -> Unit = {},
     bDeleteEnabled: Boolean = false,
+    messageSelected: Boolean = false,
     timestamp: String
 ) {
 //    var messagecontent = messageContent
@@ -226,6 +229,14 @@ fun MessageBubble( // New Message Bubble
             onClick = {
                 showMenu = false
                 onViewMessage()
+            }
+        )
+        DropdownMenuItem(
+            // :TODO FIX THIS IF
+            text = { Text(if(messageSelected) "Unselect" else "Select" ,color = textColour)},
+            onClick = {
+                showMenu = false
+                onSelectedClick()
             }
         )
         if (bDeleteEnabled) {
