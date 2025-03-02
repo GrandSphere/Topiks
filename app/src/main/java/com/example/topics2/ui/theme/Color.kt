@@ -4,10 +4,17 @@ import androidx.compose.ui.graphics.Color
 
 val DarkCustomPrimary = Color.DarkGray  // OLED primary color (pure black)
 val DarkCustomOnPrimary = Color.White  // White text/icons on primary elements
-val DarkCustomSecondary = Color(0xFF2C2C2C)  // Dark gray for secondary UI elements
+//val DarkCustomSecondary = Color(0xFF2C2C2C)  // Dark gray for secondary UI elements
+val DarkCustomSecondary = Color(0xFF0F0F0F)  // Dark gray for secondary UI elements
+//val DarkCustomSecondary = Color(0xFF2C2C2C)  // Dark gray for secondary UI elements
+//val DarkCustomOnSecondary = Color.Gray  // White text/icons on secondary elements
 val DarkCustomOnSecondary = Color.Gray  // White text/icons on secondary elements
 val DarkCustomBackground = Color.Black  // Black background for OLED screens
-val DarkCustomOnBackground = Color.White  // White text/icons on background elements
+//val DarkCustomOnBackground = Color(0xFFB5B5B5)  // White text/icons on background elements
+val DarkCustomOnBackground = Color(0xFFC5C5C5)  // White text/icons on background elements
+//val DarkCustomOnBackground = Color(0xFFD5D5D5)  // White text/icons on background elements
+//val DarkCustomOnBackground = Color(0xFFE1E1E1)  // White text/icons on background elements
+//val DarkCustomOnBackground = Color.White  // White text/icons on background elements
 val DarkCustomSurface = Color.Black  // Very dark gray for surfaces like cards or containers
 val DarkCustomOnSurface = Color.White  // White text/icons on surface elements
 val DarkCustomError = Color(0xFFB00020)  // Deep red for error elements

@@ -2,6 +2,7 @@ package com.example.topics2.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -40,7 +41,9 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel)
         )
     }
     Box(){
-Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+Column(modifier = Modifier
+    .fillMaxSize()
+    .padding(horizontal = 8.dp)) {
     CustomTextBox(
         onValueChange = { newtext -> inputText = newtext },
         inputText = inputText ?: "",

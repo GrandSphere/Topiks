@@ -50,7 +50,10 @@ fun CustomTopAppBar(
                     .padding(vertical = 0.dp), // Remove extra vertical padding
                 contentAlignment = Alignment.CenterStart // Center only vertically and align to start (left)
             ) {
-                Text(text = title)
+                Text(
+                    text = title,
+                    color = colours.onBackground
+                )
             }
         },
         actions = {

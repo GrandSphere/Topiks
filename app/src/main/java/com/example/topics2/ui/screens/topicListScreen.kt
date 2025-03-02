@@ -330,8 +330,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
         }
         DropdownMenu(
             modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.4f)
+//                .fillMaxHeight()
+//                .fillMaxWidth(0.4f)
                 .background(colors.background)
             ,
             expanded = showMenu,

@@ -189,8 +189,8 @@ fun MessageBubble( // New Message Bubble
     DropdownMenu(
         expanded = showMenu,
         modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth(0.4f)
+//            .fillMaxHeight()
+//            .fillMaxWidth(0.4f)
             .background(colours.background)
         ,
 
