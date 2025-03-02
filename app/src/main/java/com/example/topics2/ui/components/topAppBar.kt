@@ -1,8 +1,10 @@
 package com.example.topics2.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import com.example.topics2.ui.viewmodels.GlobalViewModelHolder
+import com.example.topics2.ui.viewmodels.TopBarViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,9 +44,12 @@ fun CustomTopAppBar(
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val colours = MaterialTheme.colorScheme
+
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val customIcons by topBarViewModel.customIcons.collectAsState()
     TopAppBar(
 //        CenterAlignedTopAppBar(
-         modifier = Modifier.height(45.dp),
+        modifier = Modifier.height(45.dp),
 //        title = { Text(text = title) },
         title = {
             Box(
@@ -56,6 +62,23 @@ fun CustomTopAppBar(
             }
         },
         actions = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Loop over custom icons and add them to the top app bar
+                customIcons.forEach { customIcon ->
+                    IconButton(
+                        onClick = { customIcon.onClick() }
+                    ) {
+                        Icon(
+                            imageVector = customIcon.icon,
+                            contentDescription = customIcon.contentDescription,
+                            tint = colours.onBackground
+                        )
+                    }
+                }
+            }
             IconButton(
                 onClick = { isMenuExpanded = true }
 
@@ -68,14 +91,15 @@ fun CustomTopAppBar(
             CustomTopMenu(
                 isMenuExpanded = isMenuExpanded,
                 onDismiss = { isMenuExpanded = false },
-                navController = navController
+                navController = navController,
+                topBarViewModel =  topBarViewModel,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-             titleContentColor = colours.onBackground,
-             actionIconContentColor = colours.onBackground,
-        containerColor = colours.background // Change this to any color
-    )
+            titleContentColor = colours.onBackground,
+            actionIconContentColor = colours.onBackground,
+            containerColor = colours.background // Change this to any color
+        )
     )
 }
 
@@ -86,9 +110,9 @@ fun CustomTopMenu(
     isMenuExpanded: Boolean,
     onDismiss: () -> Unit,
     navController: NavController,
+    topBarViewModel: TopBarViewModel
 ) {
     val colours = MaterialTheme.colorScheme
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val menuItems by topBarViewModel.menuItems.collectAsState()
 
     DropdownMenu(

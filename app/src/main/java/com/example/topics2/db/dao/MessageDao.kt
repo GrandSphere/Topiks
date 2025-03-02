@@ -31,6 +31,9 @@ interface MessageDao {
     @Query("DELETE FROM message_tbl WHERE id = :messageID")
     suspend fun deleteMessagesWithID(messageID: Int)
 
+    @Query("DELETE FROM message_tbl WHERE id IN (:messageIds)")
+    suspend fun deleteMessagesWithID(messageIds: Set<Int>)
+
     @Update
     suspend fun updateMessage(message: MessageTbl)
 

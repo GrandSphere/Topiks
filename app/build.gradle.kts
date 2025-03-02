@@ -14,7 +14,7 @@ android {
         minSdk = 31
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -91,4 +92,6 @@ dependencies {
     implementation (libs.androidx.foundation)
     implementation (libs.androidx.material.v15)
     implementation (libs.androidx.runtime.livedata)
+
+    implementation (libs.androidx.material.icons.extended)
 }
