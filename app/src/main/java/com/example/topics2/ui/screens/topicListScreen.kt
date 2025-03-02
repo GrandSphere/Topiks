@@ -332,7 +332,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             modifier = Modifier
 //                .fillMaxHeight()
 //                .fillMaxWidth(0.4f)
-                .background(colors.background)
+//                .background(colors.background)
+                .background(colors.secondary)
             ,
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
