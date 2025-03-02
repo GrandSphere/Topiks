@@ -1,5 +1,6 @@
 package com.example.topics2.ui.viewmodels
 
+import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 data class MenuItem(val label: String, val onClick: () -> Unit)
 // TopBarViewModel.kt
 class TopBarViewModel : ViewModel() {
+
     private val _topBarTitle = MutableStateFlow("Unknown")  // Default title
     val topBarTitle: StateFlow<String> get() = _topBarTitle
 

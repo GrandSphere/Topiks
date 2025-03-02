@@ -300,16 +300,17 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
 
                 modifier = Modifier
                     .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
-                containerColor = colors.background,
+//                containerColor = colors.background,
+                containerColor = colors.surface,
 //                 containerColor = Color.Red.copy(alpha = 0.7f),
                 tonalElevation = 0.dp,
                 onDismissRequest = { showDialog = false }, // Close on outside tap
-                title = { Text("Confirm Delete", color = colors.onBackground) },
+                title = { Text("Confirm Delete", color = colors.onSurface) },
 //                text = { Text("Delete topic: '${topic.name}'?", color = colors.onBackground) },
                 text = {
                     Text(
                         styledText,
-                        color = colors.onBackground // Default text color
+                        color = colors.onSurface // Default text color
                     )
                 },
                 confirmButton = {
@@ -318,27 +319,29 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         viewModel.deleteTopic(topic.id)
                         coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
                     }) {
-                        Text("Delete", color = colors.onBackground)
+                        Text("Delete", color = colors.onSurface)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel", color = colors.onBackground)
+                        Text("Cancel", color = colors.onSurface)
                     }
                 }
             )
         }
         DropdownMenu(
             modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.4f)
-                .background(colors.background)
+//                .fillMaxHeight()
+//                .fillMaxWidth(0.4f)
+//                .background(colors.background)
+                .background(colors.surface)
             ,
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
+            val textColour: Color = colors.onSurface
             DropdownMenuItem( // Edit Topic Button
-                text = { Text("Edit") },
+                text = { Text("Edit", color = textColour) },
                 onClick = {
 
                     viewModel.setEditMode(true)
@@ -347,7 +350,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 }
             )
             DropdownMenuItem( // Delete Topic Button
-                text = { Text("Delete") },
+                text = { Text("Delete", color = textColour) },
                 onClick = {
                     showDialog = true
 //                    viewModel.deleteTopic(topic.id)
