@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.AlertDialog
@@ -144,7 +145,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 MenuItem("Back") {
                     navController.popBackStack()
                 },
-
                 )
         )
     }
@@ -171,15 +171,17 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             selectedMessageIds.value = emptySet()
                         }
                     }, "Select All"),
+                    CustomIcon(Icons.Default.ImportExport, {
+                        coroutineScope.launch {
+                            viewModel.exportMessagesToPDF(selectedMessageIds.value)
+                        }
+                    }, "Export Selected Messages"),
                     CustomIcon(Icons.Default.Delete, {
                         showDialog = true
-//                        coroutineScope.launch {
-//                            viewModel.deleteMultipleMessages(selectedMessageIds.value)
-//                            selectedMessageIds.value = emptySet()
-//                        }
-                    }, "Delete Selected Messages")
+                    }, "Delete Selected Messages"),
                 )
             )
+
         } else{
 //            topBarViewModel.setCustomIcons(emptyList())
             topBarViewModel.setCustomIcons(listOf(
@@ -454,6 +456,10 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         onEditClick = {
                             viewModel.setTempMessageId(message.id)
                             viewModel.setEditMode(true)
+                        },
+                        onExportClick = {
+                            coroutineScope.launch {
+                                viewModel.exportMessagesToPDF(setOf(message.id))}
                         },
                         bDeleteEnabled = bDeleteEnabled,
                         messageSelected = messageChecked,
