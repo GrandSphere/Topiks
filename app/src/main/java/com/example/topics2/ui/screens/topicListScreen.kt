@@ -300,7 +300,8 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
 
                 modifier = Modifier
                     .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
-                containerColor = colors.background,
+//                containerColor = colors.background,
+                containerColor = colors.secondary,
 //                 containerColor = Color.Red.copy(alpha = 0.7f),
                 tonalElevation = 0.dp,
                 onDismissRequest = { showDialog = false }, // Close on outside tap
