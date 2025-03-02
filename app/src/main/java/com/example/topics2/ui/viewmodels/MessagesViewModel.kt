@@ -1,6 +1,7 @@
 package com.example.topics2.ui.viewmodels
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
@@ -68,8 +69,10 @@ class MessageViewModel (
 
     // Retrieve messages
     private val _messages = MutableStateFlow<List<MessageTbl>>(emptyList())
-    private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
+    val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messages: StateFlow<List<MessageTbl>> = _messages
+    val messagesMap: MutableState<Map<Int,Int>> = _messageIndexMap
+
     fun collectMessages(topicId: Int) {
         messageDao.getMessagesForTopic(topicId)
             .distinctUntilChanged()
@@ -149,6 +152,10 @@ class MessageViewModel (
     // Delete Message
     suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
+    }
+    // Delete Message
+    suspend fun deleteMultipleMessages(messageIds: Set<Int>) {
+        messageDao.deleteMessagesWithID(messageIds)
     }
 
     // Retrieve messages from all Topics, to search through

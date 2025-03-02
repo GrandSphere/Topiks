@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -63,10 +64,8 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     viewModel.setTopicColor(topicColor)
     viewModel.setTopicId(topicId)
 
-
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
-
 
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
@@ -91,12 +90,11 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var bDeleteEnabled:Boolean by remember { mutableStateOf(false) }
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
 
+    val selectedMessageIds = remember { mutableStateOf<Set<Int>>(emptySet()) }
+
 
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
-        .onFocusChanged { focusState ->
-//            isFocused = focusState.isFocused
-        }
 
     var toFocusSearchBox by  remember { mutableStateOf(false) }
     LaunchedEffect(toFocusSearchBox) {
@@ -106,31 +104,19 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             toFocusSearchBox = false
         }
     }
-    //var deleteName:String by remember { mutableStateOf("Enable Delete")}
-    //LaunchedEffect (bDeleteEnabled){
-    //    if(bDeleteEnabled) {
-    //        deleteName = "Disable delete"
-    //    } else
-    //    {
-    //        deleteName = "Enable delete"
-    //    }
-    //}
-    LaunchedEffect(Unit) {
 
+    LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
                 MenuItem("Search") {
                     bSearch = !bSearch
                     iTempMessage=-1
                     toFocusSearchBox = true
-                //    focusManager.clearFocus()
-                //    focusRequester.requestFocus()
-//                    coroutineScope.launch { ExportDatabaseWithPicker(context) }
                 },
                 MenuItem("Select Messages") {
                     selectMultiple= !selectMultiple
                 },
-                MenuItem( "Toggle Delete") {
+                MenuItem( "Enable Delete") {
                     bDeleteEnabled= !bDeleteEnabled
                 },
                 MenuItem("Back") {
@@ -139,6 +125,40 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
 
                 )
         )
+    }
+    LaunchedEffect(bDeleteEnabled){
+        if (bDeleteEnabled)
+        {
+            topBarViewModel.updateMenuItem("Enable Delete",
+                MenuItem("Disable Delete", {bDeleteEnabled = false}) )
+        }
+        else {
+            topBarViewModel.updateMenuItem("Disable Delete",
+            MenuItem("Enable Delete", {bDeleteEnabled= true}) )
+        }
+    }
+    LaunchedEffect(selectMultiple){
+        if (selectMultiple){
+            topBarViewModel.addMenuItem(MenuItem("Select All Messages", {
+                if (selectedMessageIds.value.size < messages.size) {
+                    selectedMessageIds.value = viewModel._messageIndexMap.value.keys
+                }
+                else {
+                    selectedMessageIds.value = emptySet()
+                }
+            }))
+            topBarViewModel.addMenuItem(MenuItem("Delete Selected Messages", {
+                coroutineScope.launch {
+                    viewModel.deleteMultipleMessages(selectedMessageIds.value)
+                    selectedMessageIds.value = emptySet()
+                }
+            }), 9)
+        }
+    }
+
+    LaunchedEffect (selectedMessageIds.value)
+    {
+        Log.d("QQWWEE", "${selectedMessageIds.value}")
     }
 
     fun scrollMessage()
@@ -214,7 +234,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 bShowSearchNav = showSearchNav,
                 onNextClick = {
                     if ( searchResultCount  < searchResults.size) {
-                        Log.d("AASSDDQQ: ", "This is the counter: ${searchResultCount}")
                         searchResultCount++
                         scrollMessage()
                     } else{
@@ -289,21 +308,6 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    if (selectMultiple) {
-                        Checkbox(
-                            checked = messageChecked,
-                            onCheckedChange = { messageChecked = it },
-                            modifier = Modifier
-                                .scale(0.75f)
-                                .padding(start = 10.dp, end = 4.dp, bottom = 0.dp, top = 0.dp)
-                                .size(1.dp),
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = topicColor,
-                                uncheckedColor = colors.onBackground,
-                                checkmarkColor = topicFontColor,
-                            )
-                        )
-                    }
                     var highlightedSearchText by remember { mutableStateOf<AnnotatedString?>(null) }
                     highlightedSearchText=null
 //                    if (index==iTempMessage)
@@ -350,6 +354,30 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     }
 
                     val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
+                    if (selectMultiple) {
+                        Checkbox(
+                            checked =  (message.id in selectedMessageIds.value),
+                            onCheckedChange = {
+                                messageChecked = it
+                                if ( messageChecked ) {
+                                    selectedMessageIds.value += message.id
+                                } else
+                                {
+                                    selectedMessageIds.value -= message.id
+                                }
+                            },
+                            modifier = Modifier
+                                .scale(0.75f)
+                                .padding(start = 10.dp, end = 4.dp, bottom = 0.dp, top = 0.dp)
+                                .size(1.dp),
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = topicColor,
+                                uncheckedColor = colors.onBackground,
+                                checkmarkColor = topicFontColor,
+                            )
+                        )
+                    }
+
                     MessageBubble(
                         onFocusClear = {focusManager.clearFocus()},
                         navController = navController,
