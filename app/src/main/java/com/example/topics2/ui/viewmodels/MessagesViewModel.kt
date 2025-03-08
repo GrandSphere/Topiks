@@ -42,6 +42,9 @@ class MessageViewModel (
     private val filesDao: FilesDao
 ): ViewModel() {
 
+    private val _toastMessage = MutableStateFlow<String?>(null)
+    val toastMessage: StateFlow<String?> = _toastMessage
+
     // Function to update focus state
     private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
     val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
@@ -109,6 +112,7 @@ class MessageViewModel (
         filePathMap.clear()
         _searchMessages.value = emptyList()
         _multipleMessageSelected.value = false
+        _toastMessage.value = ""
     }
 
     // For search results
@@ -232,6 +236,12 @@ class MessageViewModel (
             }
     }
 
+    fun clearToast() {
+        _toastMessage.value = null
+    }
+    fun updateToast(toastMessage: String) {
+        _toastMessage.value = toastMessage
+    }
     // Add File to File_tbl
     suspend fun addFile(
         topicId: Int,
@@ -282,11 +292,9 @@ class MessageViewModel (
         messageDao.updateMessage(editedMessage)
     }
 
-
-    val toPdf = ToPDF()
-
-    suspend fun exportMessagesToPDF(messageIDs: Set<Int>) {
+    fun exportMessagesToPDF(messageIDs: Set<Int>) {
         Log.d("QQWWEE THIS IS THE MESSAGE TO EXPORT", "${messageIDs}")
+        val toPdf = ToPDF()
         val contentById = _messagesContentById.value
 
         // Use the map to build a list of message contents based on the provided IDs
@@ -299,15 +307,17 @@ class MessageViewModel (
 
         if (contentList.isEmpty()) {
             Log.w("ViewModel", "No messages found for the provided IDs: $messageIDs")
+            updateToast("No Messages found to export")
             return
         }
 
         // Create the PDF using the ToPDF function
-        toPdf.createPdfInDirectory(
+        val success: Boolean = toPdf.createPdfInDirectory(
             relativeDirectoryName = "Exports",
             fileName = fileName,
             contentList = contentList
         )
+        updateToast(if (success) "Export successful" else "Export failed")
     }
 
     companion object {

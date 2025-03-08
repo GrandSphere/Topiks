@@ -2,84 +2,132 @@ package com.example.topics2.model
 
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.min
+
 
 class ToPDF {
+    companion object {
+        // Define margin constants
+        const val LEFT_MARGIN = 40f
+        const val RIGHT_MARGIN = 170f
+        const val TOP_MARGIN = 25f
+    }
 
     fun createPdfInDirectory(
-        relativeDirectoryName: String, // e.g. "Exports/test"
+        relativeDirectoryName: String,
         fileName: String,
         contentList: List<String>,
-        separator: String? = null // Optional separator between messages
-    ) {
-        // Base directory is Documents/Topics/files/
-        val baseDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+        separator: String? = null
+    ): Boolean {
+        val baseDirectory =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
         val fullDirectoryPath = File(baseDirectory, "Topics/files/$relativeDirectoryName")
-        Log.d("ToPDF", "Full directory path: ${fullDirectoryPath.absolutePath}")
 
-        // Ensure the directory exists, and create it if necessary
-        if (!fullDirectoryPath.exists()) {
-            if (fullDirectoryPath.mkdirs()) {
-                Log.d("ToPDF", "Directory created: ${fullDirectoryPath.absolutePath}")
-            } else {
-                Log.e("ToPDF", "Failed to create directory: ${fullDirectoryPath.absolutePath}")
-                return
-            }
-        } else {
-            Log.d("ToPDF", "Directory already exists: ${fullDirectoryPath.absolutePath}")
+        if (!fullDirectoryPath.exists() && !fullDirectoryPath.mkdirs()) {
+            Log.e("ToPDF", "Failed to create directory: ${fullDirectoryPath.absolutePath}")
+            return false
         }
 
-        // Create the PDF file in this directory
         val pdfFile = File(fullDirectoryPath, "$fileName.pdf")
-        Log.d("ToPDF", "PDF file will be created at: ${pdfFile.absolutePath}")
 
-        try {
+        return try {
             FileOutputStream(pdfFile).use { outputStream ->
-                // Create a new PdfDocument and a page with A4 dimensions (595 x 842 points)
                 val pdfDocument = PdfDocument()
                 val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-                val page = pdfDocument.startPage(pageInfo)
-                val canvas = page.canvas
-
-                // Set up a paint object for text drawing
                 val paint = Paint().apply { textSize = 12f }
-                var yPosition = 25
+                val pageWidth = pageInfo.pageWidth - LEFT_MARGIN - RIGHT_MARGIN
+                var yPosition = TOP_MARGIN
+                var page: PdfDocument.Page? = null
+                var canvas: Canvas?
 
-                for ((index, message) in contentList.withIndex()) {
-                    // Split each message by newline characters
-                    val lines = message.split("\n")
+                Log.d("ToPDF", "Starting to write content to PDF.")
+
+                for (message in contentList) {
+                    val lines = wrapText(message, paint, pageWidth)
                     for (line in lines) {
-                        canvas.drawText(line, 10f, yPosition.toFloat(), paint)
-                        yPosition += (paint.descent() - paint.ascent()).toInt()
+                        if (yPosition + (paint.descent() - paint.ascent()) > pageInfo.pageHeight - TOP_MARGIN) {
+                            // If yPosition exceeds the page height, start a new page
+                            page?.let {
+                                pdfDocument.finishPage(it)
+                            }
+                            page = pdfDocument.startPage(pageInfo)
+                            canvas = page?.canvas
+                            yPosition = TOP_MARGIN
+                        } else {
+                            canvas = page?.canvas
+                        }
+                        canvas?.drawText(line, LEFT_MARGIN, yPosition, paint)
+                        yPosition += (paint.descent() - paint.ascent())
                     }
 
-                    // If a separator is provided, draw it; otherwise add extra space (newline equivalent)
-                    if (separator != null) {
-                        if (separator.isNotEmpty()) {
-                            canvas.drawText(separator, 10f, yPosition.toFloat(), paint)
+                    if (!separator.isNullOrEmpty()) {
+                        if (yPosition + (paint.descent() - paint.ascent()) > pageInfo.pageHeight - TOP_MARGIN) {
+                            // If yPosition exceeds the page height, start a new page
+                            page?.let {
+                                pdfDocument.finishPage(it)
+                            }
+                            page = pdfDocument.startPage(pageInfo)
+                            canvas = page?.canvas
+                            yPosition = TOP_MARGIN
+                        } else {
+                            canvas = page?.canvas
                         }
-                        yPosition += (paint.descent() - paint.ascent()).toInt()
-                    } else {
-                        // Extra spacing if no separator is provided
-                        yPosition += 10
+                        canvas?.drawText(separator, LEFT_MARGIN, yPosition, paint)
+                        yPosition += (paint.descent() - paint.ascent())
                     }
                 }
 
-                // Finish the page and write the PDF document to the file
-                pdfDocument.finishPage(page)
+                page?.let {
+                    pdfDocument.finishPage(it)
+                }
                 pdfDocument.writeTo(outputStream)
                 pdfDocument.close()
+
                 Log.d("ToPDF", "PDF file written successfully.")
+                return (pdfFile.exists() && pdfFile.length() > 0)
             }
         } catch (e: Exception) {
             Log.e("ToPDF", "Error writing PDF file: ${e.localizedMessage}", e)
+            return false
         }
+    }
+
+    private fun wrapText(text: String, paint: Paint, maxWidth: Float): List<String> {
+        val wrappedLines = mutableListOf<String>()
+        val words = text.split(" ")
+        val currentLine = StringBuilder()
+
+        for (word in words) {
+            val testLine = currentLine.toString() + if (currentLine.isNotEmpty()) " $word" else word
+            val width = paint.measureText(testLine)
+
+            if (width <= maxWidth) {
+                currentLine.append(if (currentLine.isNotEmpty()) " " else "").append(word)
+            } else {
+                wrappedLines.add(currentLine.toString())
+                currentLine.clear()
+                currentLine.append(word)
+            }
+        }
+
+        if (currentLine.isNotEmpty()) {
+            wrappedLines.add(currentLine.toString())
+        }
+
+        return wrappedLines
     }
 }
