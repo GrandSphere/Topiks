@@ -1,6 +1,7 @@
 package com.example.topics2.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -68,6 +69,7 @@ import com.example.topics2.ui.viewmodels.MessageViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.time.toDuration
 
 @Composable
 fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int,
@@ -79,7 +81,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
     var showDialog by remember { mutableStateOf(false) }
     val messages by viewModel.messages.collectAsState()
     var inputBarHeightPx by remember { mutableStateOf(0) }
-
+    val toastMessage by viewModel.toastMessage.collectAsState()
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
     val selectMultiple by viewModel.multipleMessageSelected.collectAsState()
@@ -117,7 +119,13 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             toFocusSearchBox = false
         }
     }
-
+    // Show toast message when state changes
+    LaunchedEffect(toastMessage) {
+        toastMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearToast()
+        }
+    }
     LaunchedEffect(Unit) {
         topBarViewModel.setCustomIcons(listOf(
             CustomIcon(icon = Icons.Default.Search,
@@ -145,7 +153,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 MenuItem("Back") {
                     navController.popBackStack()
                 },
-                )
+            )
         )
     }
     LaunchedEffect(bDeleteEnabled){
@@ -183,7 +191,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
             )
 
         } else{
-//            topBarViewModel.setCustomIcons(emptyList())
+//     topBarViewModel.setCustomIcons(emptyList())
             topBarViewModel.setCustomIcons(listOf(
                 CustomIcon(icon = Icons.Default.Search,
                     {
@@ -516,6 +524,7 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                     showDialog = false
                     coroutineScope.launch {
                         viewModel.deleteMultipleMessages(selectedMessageIds.value)
+                        viewModel.setMultipleMessageSelected(false)
                         selectedMessageIds.value = emptySet()
                     }
                 }) {

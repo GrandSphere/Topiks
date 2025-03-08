@@ -19,6 +19,7 @@ object SettingsManager {
         "topics/files"
     )
     private val settingsFile: File = File(settingsDir, SETTINGS_FILE_NAME)
+
     private var settings: MutableMap<String, Any> = DefaultSettings.settingsMap.toMutableMap()
 
     // Initialize settings from XML
@@ -42,6 +43,8 @@ object SettingsManager {
             }
         } else {
             saveSettings(context = context)
+            settingsFile.setReadable(true)
+            settingsFile.setWritable(true)
         }
     }
 
