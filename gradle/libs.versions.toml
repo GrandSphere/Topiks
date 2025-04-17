@@ -42,6 +42,7 @@ annotation = "1.9.1"
 documentfile = "1.0.1"
 appcompat = "1.7.0"
 uiDesktop = "1.7.0"
+runtimeLivedataVersion = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,8 +63,8 @@ androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedat
 androidx-ui-v140 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 androidx-ui-v15 = { module = "androidx.compose.ui:ui", version.ref = "androidxUi" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
-androidx-room-compiler = { module = "androidx.room:room-compiler" }
-androidx-room-runtime = { module = "androidx.room:room-runtime" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCommon"}
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -84,6 +85,7 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 lucene-analyzers-common = { module = "org.apache.lucene:lucene-analyzers-common", version.ref = "luceneAnalyzersCommon" }
 lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "luceneCore" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtxVersion" }
@@ -95,6 +97,7 @@ androidx-annotation = { group = "androidx.annotation", name = "annotation", vers
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
+runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedataVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
