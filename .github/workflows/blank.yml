@@ -1,35 +1,23 @@
-# This is a basic workflow to help you get started with Actions
+name: Build and Release APK
 
-name: BuildAndRelease
-
+on:
+  push:
+    branches:
+      - master
 
 permissions:
-   contents: write
-    
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push request events but only for the "master" branch
-  push:
-    branches: [ "master" ]
-    
+  contents: write  # Required for creating releases
 
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-     # Set up JDK for Android
+      # Set up JDK for Android
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -40,20 +28,61 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # Grant execute permission for gradlew
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # Fix line endings for gradlew and make executable
+      - name: Fix gradlew line endings
+        run: |
+          sed -i 's/\r$//' gradlew
+          chmod +x gradlew
+
+      # Install specific Android build tools and platforms
+      - name: Install Android Build Tools
+        run: |
+          sdkmanager "build-tools;35.0.0" "platforms;android-35"
+
+      # Decode keystore (if available)
+      - name: Decode Keystore
+        if: env.KEYSTORE_BASE64 != ''
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+          ls -la app/  # Debug: List files to confirm keystore.jks exists
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      # Debug keystore presence
+      - name: Verify Keystore File
+        run: |
+          echo "Checking for keystore.jks:"
+          if [ -f app/keystore.jks ]; then
+            echo "keystore.jks exists"
+            ls -la app/keystore.jks
+          else
+            echo "keystore.jks does not exist"
+          fi
 
       # Build the release APK
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --stacktrace
 
-      # Upload the APK as an artifact (optional, for debugging)
+      # Debug APK output
+      - name: Debug APK Output
+        run: |
+          echo "Listing all APKs in build/outputs/apk/:"
+          find . -type f -path "*/build/outputs/apk/*" -name "*.apk" || echo "No APKs found in build/outputs/apk/"
+          echo "Listing contents of app/build/outputs/apk/release/:"
+          ls -la app/build/outputs/apk/release/ || echo "Directory app/build/outputs/apk/release/ not found"
+        if: always()
+
+      # Upload the APK as an artifact
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn  # Warn instead of failing if no APK is found
 
       # Create a GitHub Release and upload the APK
       - name: Create GitHub Release
@@ -62,6 +91,6 @@ jobs:
           tag_name: v${{ github.run_number }}
           name: Release ${{ github.run_number }}
           body: Automated release for commit ${{ github.sha }}
-          files: app/build/outputs/apk/release/app-release.apk
+          files: app/build/outputs/apk/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
