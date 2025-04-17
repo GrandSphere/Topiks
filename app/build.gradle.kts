@@ -36,7 +36,7 @@ android {
             applicationVariants.configureEach {
                 outputs.configureEach {
                     this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-                    outputFileName = "app-release.apk"
+                    outputFileName = "Topiks.apk"
                 }
             }
         }
