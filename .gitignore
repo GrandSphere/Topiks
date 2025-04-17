@@ -59,3 +59,7 @@ outTmp/
 kotlin-ide/
 .kotlin/
 .teamcity/
+app/release/app-release.apk
+app/release/baselineProfiles/0/app-release.dm
+*.dm
+app/release/Topics.apk
