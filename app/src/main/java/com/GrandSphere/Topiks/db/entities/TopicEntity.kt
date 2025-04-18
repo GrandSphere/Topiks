@@ -1,0 +1,33 @@
+package com.GrandSphere.Topiks.db.enitities
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import com.GrandSphere.Topiks.db.entities.CategoriesTbl
+
+@Entity(
+    tableName = "topic_tbl",
+    foreignKeys = [
+        ForeignKey(
+            entity = CategoriesTbl::class, // Reference to CategoryTbl
+            parentColumns = ["id"],
+            childColumns = ["categoryId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index(value = ["lastEditTime"]),  // Index on lastEditTime for faster sorting
+        Index(value = ["createTime"]),    // Index on createTime for faster sorting
+    ]
+)
+data class TopicTbl(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val name: String,
+    val lastEditTime: Long,
+    val createTime: Long,
+    val colour: Int,
+    val categoryId: Int, // Foreign key from CategoryTbl
+    val iconPath: String,
+    val priority: Int
+)
