@@ -3,7 +3,7 @@
     <!-- For a specific directory in external storage -->
     <external-path
         name="external_files"
-        path="Documents/topics/files/" />
+        path="Documents/topiks/files/" />
 
     <!-- Optionally, you can define other directories -->
     <!-- For app-specific files (internal storage) -->

@@ -16,7 +16,7 @@ object SettingsManager {
     private const val SETTINGS_FILE_NAME = "settings.xml"
     private val settingsDir: File = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-        "topics/files"
+        "topiks/files"
     )
     private val settingsFile: File = File(settingsDir, SETTINGS_FILE_NAME)
 

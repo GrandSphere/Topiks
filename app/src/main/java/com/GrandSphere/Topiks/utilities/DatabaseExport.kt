@@ -22,14 +22,14 @@ suspend fun ExportDatabaseWithPicker(context: Context) {
     withContext(Dispatchers.IO) {
         val externalDir = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-            "topics/files"
+            "topiks/files"
         )
         if (!externalDir.exists() && !externalDir.mkdirs()) {
             logFunc(context, "Failed to create directory: $externalDir")
             throw IOException("Failed to create directory: $externalDir")
         }
         // Directly create a file path using externalDir
-        val databaseName = "topics_database"
+        val databaseName = "topiks_database"
 
         // Get the current date and time
         val now = LocalDateTime.now()
@@ -44,7 +44,7 @@ suspend fun ExportDatabaseWithPicker(context: Context) {
 
 suspend fun exportDatabaseToUri(context: Context, destinationFile: File) {
     try {
-        val databaseName = "topics_database"
+        val databaseName = "topiks_database"
         // Get the database file from internal storage
         val databaseFile = File(context.getDatabasePath(databaseName).absolutePath)
         Log.d("Export Database from: ", "$databaseFile")
