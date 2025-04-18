@@ -1,8 +1,8 @@
 package com.GrandSphere.Topiks.ui.viewmodels
 
-//import androidx.compose.material.MaterialTheme
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +16,8 @@ import com.GrandSphere.Topiks.db.enitities.TopicTbl
 import com.GrandSphere.Topiks.model.TopicSearchHandler
 import com.GrandSphere.Topiks.model.tblTopicIdName
 import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
+import com.GrandSphere.Topiks.ui.components.addTopic.colorToArgb
+import com.GrandSphere.Topiks.utilities.copyFileToUserFolder
 import com.GrandSphere.Topiks.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +29,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-// TODO ADD CATEGORY TO DB WHEN ADDING TOPIC
 
 class TopicViewModel(private val topicDao: TopicDao, private val context: Context) : ViewModel() {
 
@@ -56,6 +57,12 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
     private val topicSearchHandler: TopicSearchHandler = TopicSearchHandler(emptyList())
     private val _topicsSubset = MutableStateFlow<List<tblTopicIdName>>(emptyList())
     private val _topicsMap = MutableStateFlow<Map<Int, TopicTbl>>(emptyMap())
+
+    private val _selectedFileStringBeforeEdit = MutableStateFlow<String>("")
+    val selectedFileStringBeforeEdit: StateFlow<String> = _selectedFileStringBeforeEdit
+
+    private val _selectedFileChanged = MutableStateFlow<Boolean>(false)
+    val selectedFileChanged: StateFlow<Boolean> = _selectedFileChanged
 
     // For search results
     private val _searchResults = MutableLiveData<List<tblTopicIdName>>()
@@ -95,6 +102,18 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
             }
         } catch (e: Exception) {
             logFunc(context, "TopicViewModel: Error during search: ${e.message}")
+        }
+    }
+
+    fun launchFilePicker(
+        launcher: androidx.activity.result.ActivityResultLauncher<String>,
+        mimeTypes: Array<String>
+    ) {
+        val mimeType = mimeTypes.firstOrNull() ?: "*/*"
+        try {
+            launcher.launch(mimeType)
+        } catch (e: Exception) {
+            logFunc(context, "TopicViewModel: Error launching file picker: ${e.message}")
         }
     }
 
@@ -165,6 +184,27 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
         }
     }
 
+    fun initializeEditMode(topicId: Int) {
+        viewModelScope.launch {
+            try {
+                setEditedMode(true)
+                val topicObj = getTopicObjectById(topicId)
+                if (topicObj != null) {
+                    setTempTopicName(topicObj.name)
+                    val color = argbToColor(topicObj.colour)
+                    setColour(color)
+                    setTempColour(color)
+                    setFileURI(topicObj.iconPath ?: "")
+                } else {
+                    logFunc(context, "TopicViewModel: Topic with ID $topicId not found")
+                }
+                setEditMode(false)
+            } catch (e: Exception) {
+                logFunc(context, "TopicViewModel: Error initializing edit mode: ${e.message}")
+            }
+        }
+    }
+
     suspend fun getIconPathByID(topicId: Int):String{
         return topicDao.getIconPathById(topicId)
     }
@@ -211,9 +251,82 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
             }
         }
     }
-   fun getTopicById(topicId: Int): TopicTbl {
-      return topicDao.getTopicById(topicId)
-   }
+    fun getTopicById(topicId: Int): TopicTbl {
+        return topicDao.getTopicById(topicId)
+    }
+
+    fun loadIconPathForEdit(topicId: Int) {
+        viewModelScope.launch {
+            try {
+                val topicIconPath = topicDao.getIconPathById(topicId) ?: ""
+                _selectedFileStringBeforeEdit.value = topicIconPath
+            } catch (e: Exception) {
+                logFunc(context, "TopicViewModel: Error loading icon path: ${e.message}")
+            }
+        }
+    }
+
+    fun clearViewModelState() {
+        setFileURI("")
+        setTempTopicName("")
+        setEditMode(false)
+        setEditedMode(false)
+        _selectedFileChanged.value = false
+    }
+
+    fun confirmTopic(
+        topicId: Int,
+        topicName: String,
+        widthSetting: Int = 100,
+        heightSetting: Int = 100
+    ) {
+        viewModelScope.launch {
+            try {
+                if (topicName.isBlank()) return@launch
+
+                val nColor: Color = colour.value
+                val iColor: Int = colorToArgb(nColor)
+                var topicIconPath = selectedFileStringBeforeEdit.value
+
+                // Handle file copying if a new file is selected
+                val selectedFileUri = fileURI.value
+                if (selectedFileUri.isNotEmpty() && selectedFileUri != selectedFileStringBeforeEdit.value) {
+                    _selectedFileChanged.value = true
+                    val tempPath = copyFileToUserFolder(
+                        context = context,
+                        currentUri = selectedFileUri.toUri(),
+                        directoryName = "",
+                        width = widthSetting,
+                        height = heightSetting,
+                        thumbnailOnly = true
+                    )
+                    topicIconPath = tempPath.first
+                }
+
+                if (bEditedMode.value) {
+                    editTopic(
+                        topicId = topicId,
+                        topicName = topicName,
+                        topicColour = iColor,
+                        topicCategory = 1,
+                        topicIconPath = topicIconPath,
+                        topicPriority = 0
+                    )
+                } else {
+                    addTopic(
+                        topicName = topicName,
+                        topicColour = iColor,
+                        topicCategory = 1,
+                        topicIconPath = topicIconPath,
+                        topicPriority = 0
+                    )
+                }
+                clearViewModelState()
+            } catch (e: Exception) {
+                logFunc(context, "TopicViewModel: Error confirming topic: ${e.message}")
+            }
+        }
+    }
 
     fun addTopic(
         topicName: String,
