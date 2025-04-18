@@ -1,5 +1,6 @@
 package com.GrandSphere.Topiks.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -57,261 +58,125 @@ import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.components.messageScreen.InputBarMessageScreen
 import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
+import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
 import com.GrandSphere.Topiks.utilities.determineFileType
+import com.GrandSphere.Topiks.utilities.helper.highlightSearchText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun MessageScreen(navController: NavController, viewModel: MessageViewModel, topicId: Int,
-                  messageId: Int = -1, topicColor: Color= MaterialTheme.colorScheme.tertiary) {
-    viewModel.collectMessages(topicId)
-    viewModel.setTopicColor(topicColor)
-    viewModel.setTopicId(topicId)
-
-    var showDialog by remember { mutableStateOf(false) }
+fun MessageScreen(
+    navController: NavController,
+    viewModel: MessageViewModel,
+    topicId: Int,
+    messageId: Int = -1,
+    topicColor: Color = MaterialTheme.colorScheme.tertiary
+) {
     val messages by viewModel.messages.collectAsState()
-    var inputBarHeightPx by remember { mutableStateOf(0) }
     val toastMessage by viewModel.toastMessage.collectAsState()
-    val focusManager = LocalFocusManager.current // For clearing focus
+    val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val selectMultiple by viewModel.multipleMessageSelected.collectAsState()
     val colors = MaterialTheme.colorScheme
-    val coroutineScope = rememberCoroutineScope() // this should be passed from messagescreen
+    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    val topicFontColor = chooseColorBasedOnLuminance(topicColor)
-    viewModel.setTopicFontColor(topicFontColor)
-    val density = LocalDensity.current
-    val inputBarHeight = with(density) { inputBarHeightPx.toDp() } // TODO this needs to go, might still be needed when we finally fix scrolling
-    val context = LocalContext.current
-    var showMenu: Boolean by remember { mutableStateOf(false ) }
-
-    var showSearchNav: Boolean by remember { mutableStateOf(true ) }
-    var bSearch: Boolean by remember { mutableStateOf(false ) }
-    var inputText by remember{ mutableStateOf("")}
+    val isSearchActive by viewModel.isSearchActive.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
-    var searchResultCount: Int by remember { mutableStateOf(0 ) }
-
-    var iTempMessage by remember { mutableStateOf(-1) }
-    var bDeleteEnabled:Boolean by remember { mutableStateOf(false) }
+    val searchResultCount by viewModel.searchResultCount.collectAsState()
+    val currentSearchMessageIndex by viewModel.currentSearchMessageIndex.collectAsState()
+    val isDeleteEnabled by viewModel.isDeleteEnabled.collectAsState()
+    val selectedMessageIds by viewModel.selectedMessageIds.collectAsState()
+    val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
+    val requestSearchFocus by viewModel.requestSearchFocus.collectAsState()
+    val topicFontColor:Color by viewModel.topicFontColor.collectAsState()
+    val context = LocalContext.current
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    var inputBarHeightPx by remember { mutableStateOf(0) }
+    val density = LocalDensity.current
+    val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
-    val selectedMessageIds = remember { mutableStateOf<Set<Int>>(emptySet()) }
+    // Initialize ViewModel
+    LaunchedEffect(Unit) {
+        viewModel.initialize(
+            topicId = topicId,
+            topicColor = topicColor,
+            messageId = messageId,
+        )
+        viewModel.updateTopBar(topBarViewModel)
+    }
 
-
-    val focusModifier = Modifier // Used to set edit cursor
-        .focusRequester(focusRequester)
-
-    var toFocusSearchBox by  remember { mutableStateOf(false) }
-    LaunchedEffect(toFocusSearchBox) {
-        if (toFocusSearchBox) {
+    // Handle search focus
+    LaunchedEffect(requestSearchFocus) {
+        if (requestSearchFocus) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
-            toFocusSearchBox = false
+            viewModel.clearSearchFocusRequest()
         }
     }
-    // Show toast message when state changes
+
+    // Show toast message
     LaunchedEffect(toastMessage) {
         toastMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             viewModel.clearToast()
         }
     }
-    LaunchedEffect(Unit) {
-        topBarViewModel.setCustomIcons(listOf(
-            CustomIcon(icon = Icons.Default.Search,
-                {
-                    bSearch = !bSearch
-                    iTempMessage=-1
-                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
-                },
-                "Search"
-            )
-        ))
-        topBarViewModel.setMenuItems(
-            listOf(
-                MenuItem("Search") {
-                    bSearch = !bSearch
-                    iTempMessage=-1
-                    if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
-                },
-                MenuItem("Select Messages") {
-                    viewModel.setMultipleMessageSelected(!selectMultiple)
-                },
-                MenuItem( "Enable Delete") {
-                    bDeleteEnabled= !bDeleteEnabled
-                },
-                MenuItem("Back") {
-                    navController.popBackStack()
-                },
-            )
-        )
-    }
-    LaunchedEffect(bDeleteEnabled){
-        if (bDeleteEnabled)
-        {
-            topBarViewModel.updateMenuItem("Enable Delete",
-                MenuItem("Disable Delete", {bDeleteEnabled = false}) )
-        }
-        else {
-            topBarViewModel.updateMenuItem("Disable Delete",
-                MenuItem("Enable Delete", {bDeleteEnabled= true}) )
-        }
-    }
-    LaunchedEffect(selectMultiple){
-        if (selectMultiple){
-            topBarViewModel.setCustomIcons(
-                listOf(
-                    CustomIcon(Icons.Default.SelectAll, {
-                        if (selectedMessageIds.value.size < messages.size) {
-                            selectedMessageIds.value = viewModel._messageIndexMap.value.keys
-                        }
-                        else {
-                            selectedMessageIds.value = emptySet()
-                        }
-                    }, "Select All"),
-                    CustomIcon(Icons.Default.ImportExport, {
-                        coroutineScope.launch {
-                            viewModel.exportMessagesToPDF(selectedMessageIds.value)
-                        }
-                    }, "Export Selected Messages"),
-                    CustomIcon(Icons.Default.Delete, {
-                        showDialog = true
-                    }, "Delete Selected Messages"),
-                )
-            )
 
-        } else{
-//     topBarViewModel.setCustomIcons(emptyList())
-            topBarViewModel.setCustomIcons(listOf(
-                CustomIcon(icon = Icons.Default.Search,
-                    {
-                        bSearch = !bSearch
-                        iTempMessage=-1
-                        if (bSearch) { toFocusSearchBox = true } else {toFocusSearchBox = false}
-                    },
-                    "Search"
-                )
-            ))
-            selectedMessageIds.value = emptySet()
-        }
-
-    }
-
-    fun scrollMessage()
-    {
-        iTempMessage=-1
-        if ((searchResults.isEmpty()) || (searchResultCount > searchResults.size) || (searchResultCount < 0)) {
-            return
-        }
-
-        if (searchResultCount == 0){ searchResultCount = 1}
-        val messageId = searchResults[searchResultCount -1].id
-        val messageIndex = viewModel.getMessageIndexFromID(messageId)
-
-        if (messageIndex >= 0) {
-            iTempMessage=messageIndex
-            coroutineScope.launch {
-                scrollState.scrollToItem(messageIndex)
-            }
-
-        }
-    }
-
-    LaunchedEffect(searchResults) {
-        if(searchResults.isEmpty())
-        {
-            searchResultCount = 0
-        }
-        else {
-            searchResultCount = searchResults.size
-            scrollMessage()
-        }
-    }
-    LaunchedEffect(inputText) {
-
-        if (inputText.length > 0) {
-            viewModel.messageSearch(inputText)
-        }
-    }
-    LaunchedEffect(messages.size) {
-        if (messageId != -1) {
+    // Scroll to message on search or initial load
+    LaunchedEffect(searchResults, messages.size) {
+        if (isSearchActive && searchResults.isNotEmpty() && currentSearchMessageIndex >= 0) {
+            scrollState.scrollToItem(currentSearchMessageIndex)
+        } else if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
             if (messageIndex >= 0) {
                 scrollState.scrollToItem(messageIndex)
             }
-        } else {
-            // Scroll to the last message if no specific message ID is selected
-            if (messages.isNotEmpty()) {
-                scrollState.scrollToItem(messages.size - 1)
-            }
+        } else if (messages.isNotEmpty()) {
+            scrollState.scrollToItem(messages.size - 1)
         }
     }
+    LaunchedEffect (selectMultiple){
+        viewModel.updateTopBar(topBarViewModel)
+    }
+    // Update top bar on delete toggle
+    LaunchedEffect(isDeleteEnabled) {
+        viewModel.updateTopBar(topBarViewModel)
+    }
+
     Column(
         modifier = Modifier
             .padding(top = 0.dp)
             .fillMaxSize()
-            //.background(Color.Red)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    viewModel.setToFocusTextbox(false)
-                })
-            }
+            .focusClear()
     ) {
-//        bSearch= true
-        if (bSearch) {
+        if (isSearchActive) {
             CustomSearchBox(
-                focusModifier = focusModifier.focusRequester(focusRequester),
-                inputText = inputText,
+                focusModifier = Modifier.focusRequester(focusRequester),
+                inputText = searchQuery,
                 sPlaceHolder = "Search Messages...",
-                onValueChange = { newText ->
-                    inputText = newText
-                    viewModel.messageSearch(newText)
-                },
-                bShowSearchNav = showSearchNav,
-                onNextClick = {
-                    if ( searchResultCount  < searchResults.size) {
-                        searchResultCount++
-                        scrollMessage()
-                    } else{
-                        searchResultCount = 0
-                        scrollMessage()
-                    }
-                },
-                onPreviousClick = {
-                    if (searchResultCount > 1) {
-                        searchResultCount--
-                        scrollMessage()
-                    } else{
-                        searchResultCount = searchResults.size
-                        scrollMessage()
-                    }
-                },
-                onClick = { toFocusSearchBox = true},
+                onValueChange = { viewModel.updateSearchQuery(it) },
+                bShowSearchNav = true,
+                onNextClick = { viewModel.navigateNextSearchResult() },
+                onPreviousClick = { viewModel.navigatePreviousSearchResult() },
+                onClick = { viewModel.toggleSearch() },
                 iSearchCount = searchResults.size,
-                iCurrentSearch = searchResultCount,
+                iCurrentSearch = searchResultCount
             )
         }
 
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .pointerInput(Unit) {
-                    detectTapGestures(onPress = {
-                        focusManager.clearFocus()
-                    })
-                }
-//                .fillMaxSize()
+                .focusClear()
                 .weight(1f)
                 .fillMaxWidth()
-                //.background(Color.Red)
                 .padding(bottom = inputBarHeight)
         ) {
-
-            // Checks attachments and photos before sending to messageBubble
             items(messages.size) { index ->
                 val message = messages[index]
                 val pictureList = mutableListOf<FileInfoWithIcon>()
@@ -323,91 +188,45 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                 for (fileInfo in filesForMessage) {
                     val filePath = fileInfo.filePath
                     val fileType = determineFileType(context, filePath.toUri())
-
                     when (fileType) {
-                        "Image" -> { // Contain Picture
+                        "Image" -> {
                             pictureList.add(fileInfo)
                             hasPictures = true
                         }
-
-                        else -> { // Contain other file types
+                        else -> {
                             attachmentList.add(filePath)
                             hasAttachments = true
                         }
                     }
                 }
 
-                // Format timestamp
                 val timestamp = SimpleDateFormat(
                     "yyyy-MM-dd HH:mm",
                     Locale.getDefault()
                 ).format(message.createTime)
 
-                // Call MessageBubble
-                var messageChecked: Boolean by remember { mutableStateOf(false) }
+                var messageChecked by remember { mutableStateOf(message.id in selectedMessageIds) }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start ,
-                    modifier = Modifier
-                        .padding(0.dp)
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier.padding(0.dp)
                 ) {
-                    var highlightedSearchText by remember { mutableStateOf<AnnotatedString?>(null) }
-                    highlightedSearchText=null
-//                    if (index==iTempMessage)
-                    if ((bSearch) && (index == iTempMessage))
-                    { // Put Search highlighting here
-                        highlightedSearchText = buildAnnotatedString {
-                            val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
-                            val contentWords = message.content.split(" ")
-
-                            contentWords.forEach { word ->
-                                var currentIndex = 0 // Track the current position in the word
-
-                                normalizedQuery.forEach { substring ->
-                                    while (true) {
-                                        val matchIndex = word.indexOf(substring, currentIndex, ignoreCase = true)
-                                        if (matchIndex == -1) break
-
-                                        // Append the part before the match
-                                        withStyle(style = SpanStyle(color = topicFontColor)) {
-                                            append(word.substring(currentIndex, matchIndex))
-                                        }
-
-                                        // Append the matched part
-//                                       withStyle(style = SpanStyle(background = colors.surfaceVariant ,color = colors.onSurfaceVariant)) {
-//                                       withStyle(style = SpanStyle(background = topicFontColor.copy(alpha=0.3f) ,color = topicFontColor)) {
-                                        withStyle(style = SpanStyle(background = topicFontColor ,color = topicColor)) {
-                                            append(word.substring(matchIndex, matchIndex + substring.length))
-                                        }
-
-                                        // Move the index forward
-                                        currentIndex = matchIndex + substring.length
-                                    }
-                                }
-
-                                // Append the remaining part of the word
-                                if (currentIndex < word.length) {
-                                    withStyle(style = SpanStyle(color = topicFontColor)) {
-                                        append(word.substring(currentIndex))
-                                    }
-                                }
-                                append(" ") // Add space between words
-                            }
-                        }
+                    val contentToDisplay = if (isSearchActive && index == currentSearchMessageIndex) {
+                        highlightSearchText(
+                            messageContent = message.content,
+                            searchQuery = searchQuery,
+                            topicColor = topicColor,
+                            topicFontColor = topicFontColor
+                        )
+                    } else {
+                        AnnotatedString(message.content)
                     }
-
-                    val contentToDisplay = highlightedSearchText ?: AnnotatedString(message.content)
                     if (selectMultiple) {
                         Checkbox(
-                            checked =  (message.id in selectedMessageIds.value),
+                            checked = message.id in selectedMessageIds,
                             onCheckedChange = {
-                                messageChecked = it
-                                if ( messageChecked ) {
-                                    selectedMessageIds.value += message.id
-                                } else
-                                {
-                                    selectedMessageIds.value -= message.id
-                                }
+                                Log.d("QQEE: " , "Supposed to check here")
+                                viewModel.toggleMessageSelection(message.id)
                             },
                             modifier = Modifier
                                 .scale(0.75f)
@@ -416,19 +235,17 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                             colors = CheckboxDefaults.colors(
                                 checkedColor = topicColor,
                                 uncheckedColor = colors.onBackground,
-                                checkmarkColor = topicFontColor,
+                                checkmarkColor = topicFontColor
                             )
                         )
                     }
 
                     MessageBubble(
-                        onFocusClear = {focusManager.clearFocus()},
+                        onFocusClear = { focusManager.clearFocus() },
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
                         annotatedMessageContent = contentToDisplay,
-//                        messageContent = if (bSearch) "a"  else  message.content,
-//                        messageContent = message.content,
                         containsPictures = hasPictures,
                         selectMultile = selectMultiple,
                         containsAttachments = hasAttachments,
@@ -442,16 +259,10 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         },
                         onSelectedClick = {
                             viewModel.setMultipleMessageSelected(true)
-                            if(message.id in selectedMessageIds.value) {
-                                selectedMessageIds.value -= message.id
-                                messageChecked = false
-                            } else{
-                                messageChecked = true
-                                selectedMessageIds.value += message.id
-                            }
-                        } ,
+                            viewModel.toggleMessageSelection(message.id)
+                            messageChecked = message.id in selectedMessageIds
+                        },
                         onViewMessage = {
-                            //TemporaryDataHolder.setMessage(message.content)
                             viewModel.setTempMessageId(message.id)
                             navController.navigate("navViewMessage")
                         },
@@ -461,81 +272,59 @@ fun MessageScreen(navController: NavController, viewModel: MessageViewModel, top
                         },
                         onExportClick = {
                             coroutineScope.launch {
-                                viewModel.exportMessagesToPDF(setOf(message.id))}
+                                viewModel.exportMessagesToPDF(setOf(message.id))
+                            }
                         },
-                        bDeleteEnabled = bDeleteEnabled,
-                        messageSelected = messageChecked,
+                        bDeleteEnabled = isDeleteEnabled,
+                        messageSelected = messageChecked
                     )
                 }
             }
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-            //.background(Color.Transparent)
-//                .align(Alignment.BottomCenter)
-//                .align(Alignment.Bottom)
-//                .onSizeChanged { size ->
-//                    inputBarHeightPx = size.height
-//                }
+            modifier = Modifier.fillMaxWidth()
         ) {
-            InputBarMessageScreen(navController = navController, viewModel = viewModel, topicId = topicId, topicColour = topicColor)
+            InputBarMessageScreen(
+                navController = navController,
+                viewModel = viewModel,
+                topicId = topicId,
+                topicColour = topicColor
+            )
         }
     }
-    LaunchedEffect(showMenu) {
 
-    }
-
-
-    if (showDialog) {
+    if (showDeleteDialog) {
         val styledText = buildAnnotatedString {
-            append("Delete ") // Default text
-//                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
+            append("Delete ")
             withStyle(style = SpanStyle(color = colors.error)) {
-                append(selectedMessageIds.value.size.toString()) // Styled part (topic.name)
+                append(selectedMessageIds.size.toString())
             }
-            append(" selected messages ?") // End of the text
+            append(" selected messages ?")
         }
         AlertDialog(
-
-            modifier = Modifier
-                .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
-//                containerColor = colors.background,
+            modifier = Modifier.background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
             containerColor = colors.surface,
-//                 containerColor = Color.Red.copy(alpha = 0.7f),
             tonalElevation = 0.dp,
-            onDismissRequest = { showDialog = false }, // Close on outside tap
+            onDismissRequest = { viewModel.cancelDeleteDialog() },
             title = { Text("Confirm Delete", color = colors.onSurface) },
-            text = {
-                Text(
-                    styledText,
-                    color = colors.onSurface
-                )
-            },
+            text = { Text(styledText, color = colors.onSurface) },
             confirmButton = {
-                TextButton(onClick = {
-                    showDialog = false
-                    coroutineScope.launch {
-                        viewModel.deleteMultipleMessages(selectedMessageIds.value)
-                        viewModel.setMultipleMessageSelected(false)
-                        selectedMessageIds.value = emptySet()
-                    }
-                }) {
+                TextButton(onClick = { viewModel.confirmDeleteSelectedMessages() }) {
                     Text("Delete", color = colors.onSurface)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { viewModel.cancelDeleteDialog() }) {
                     Text("Cancel", color = colors.onSurface)
                 }
             }
         )
     }
+
     DisposableEffect(topicId) {
         onDispose {
             topBarViewModel.setCustomIcons(emptyList())
-//            topBarViewModel.setMenuItems(emptyList())
             viewModel.resetState()
         }
     }

@@ -2,6 +2,11 @@ package com.GrandSphere.Topiks.ui.viewmodels
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -23,6 +28,8 @@ import com.GrandSphere.Topiks.model.Message
 import com.GrandSphere.Topiks.model.MessageSearchContent
 import com.GrandSphere.Topiks.model.MessageSearchHandler
 import com.GrandSphere.Topiks.model.ToPDF
+import com.GrandSphere.Topiks.model.dataClasses.CustomIcon
+import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +37,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 // TODO Fix category add when adding message
 // TODO Fix created time when  editing when adding message
@@ -67,9 +75,11 @@ class MessageViewModel (
     fun setTopicColor(topicColor: Color) {_topicColor.value = topicColor}
 
     // Topic Font Color
-    private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
-    val topicFontColor: StateFlow<Color> = _topicColor
-    fun setTopicFontColor(topicColor: Color) {_topicFontColor.value = topicColor}
+    private val _topicFontColor = MutableStateFlow<Color>(Color.Black)
+    val topicFontColor: StateFlow<Color> = _topicFontColor
+    fun setTopicFontColor() {_topicFontColor.value = chooseColorBasedOnLuminance(topicColor.value)
+        Log.d("QQWWEE: " , "CHANGED NOW: ${_topicFontColor.value}")
+    }
 
 
     // Retrieve messages
@@ -78,39 +88,261 @@ class MessageViewModel (
     val messages: StateFlow<List<MessageTbl>> = _messages
     val messagesMap: MutableState<Map<Int,Int>> = _messageIndexMap
 
+    // New state properties
+    private val _showDeleteDialog = MutableStateFlow<Boolean>(false)
+    val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog
+    fun setShowDeleteDialog(show: Boolean) { _showDeleteDialog.value = show }
+
+    private val _isSearchActive = MutableStateFlow<Boolean>(false)
+    val isSearchActive: StateFlow<Boolean> = _isSearchActive
+    private val _requestSearchFocus = MutableStateFlow<Boolean>(false)
+    val requestSearchFocus: StateFlow<Boolean> = _requestSearchFocus
+    fun clearSearchFocusRequest() { _requestSearchFocus.value = false }
+
+    private val _searchResultCount = MutableStateFlow<Int>(0)
+    val searchResultCount: StateFlow<Int> = _searchResultCount
+
+    private val _currentSearchMessageIndex = MutableStateFlow<Int>(-1)
+    val currentSearchMessageIndex: StateFlow<Int> = _currentSearchMessageIndex
+
+    private val _isDeleteEnabled = MutableStateFlow<Boolean>(false)
+    val isDeleteEnabled: StateFlow<Boolean> = _isDeleteEnabled
+    fun toggleDeleteEnabled() { _isDeleteEnabled.value = !_isDeleteEnabled.value }
+
+    private val _selectedMessageIds = MutableStateFlow<Set<Int>>(emptySet())
+    val selectedMessageIds: StateFlow<Set<Int>> = _selectedMessageIds
+
+    private val _searchQuery = MutableStateFlow<String>("")
+val searchQuery: StateFlow<String> = _searchQuery
+fun updateSearchQuery(query: String) {
+    _searchQuery.value = query
+    if (query.isNotEmpty()) {
+        messageSearch(query)
+    } else {
+        clearSearchResult()
+    }
+}
+    fun toggleSearch() {
+        _isSearchActive.value = !_isSearchActive.value
+        if (_isSearchActive.value) {
+            _requestSearchFocus.value = true
+            _currentSearchMessageIndex.value = -1
+        } else {
+            _requestSearchFocus.value = false
+            _searchQuery.value = ""
+            clearSearchResult()
+        }
+    }
+    fun toggleMessageSelection(messageId: Int) {
+        val currentSet = _selectedMessageIds.value
+        _selectedMessageIds.value = if (messageId in currentSet) {
+            currentSet - messageId
+        } else {
+            currentSet + messageId
+        }
+        Log.d("QQEE This is the selected messages", _selectedMessageIds.value.toString())
+    }
+    fun toggleSelectAllMessages() {
+        if (_selectedMessageIds.value.size < _messages.value.size) {
+            _selectedMessageIds.value = _messageIndexMap.value.keys
+        } else {
+            _selectedMessageIds.value = emptySet()
+        }
+    }
+    fun navigateNextSearchResult() {
+        val results = _searchResults.value ?: emptyList()
+        if (results.isEmpty()) {
+            _searchResultCount.value = 0
+            _currentSearchMessageIndex.value = -1
+            return
+        }
+        val currentCount = _searchResultCount.value
+        if (currentCount < results.size) {
+            _searchResultCount.value = currentCount + 1
+        } else {
+            _searchResultCount.value = 1
+        }
+        updateCurrentSearchMessage()
+    }
+    /**
+     * Navigates to the previous search result and updates the current search index.
+     *
+     * If at the start of the search results, wraps around to the last result.
+     */
+    fun navigatePreviousSearchResult() {
+        val results = _searchResults.value ?: emptyList()
+        if (results.isEmpty()) {
+            _searchResultCount.value = 0
+            _currentSearchMessageIndex.value = -1
+            return
+        }
+        val currentCount = _searchResultCount.value
+        if (currentCount > 1) {
+            _searchResultCount.value = currentCount - 1
+        } else {
+            _searchResultCount.value = results.size
+        }
+        updateCurrentSearchMessage()
+    }
+    /**
+     * Updates the current search message index based on the search result count.
+     *
+     * Sets [currentSearchMessageIndex] to the index of the message corresponding to the current
+     * search result, or -1 if no valid result is found.
+     */
+    private fun updateCurrentSearchMessage() {
+        val results = _searchResults.value ?: emptyList()
+        val count = _searchResultCount.value
+        if (count in 1..results.size) {
+            val messageId = results[count - 1].id
+            val messageIndex = getMessageIndexFromID(messageId)
+            _currentSearchMessageIndex.value = if (messageIndex >= 0) messageIndex else -1
+        } else {
+            _currentSearchMessageIndex.value = -1
+            _searchResultCount.value = 0
+        }
+    }
+    /**
+ * Confirms deletion of selected messages.
+ *
+     * Deletes the messages in [selectedMessageIds], clears the selection, and hides the delete dialog.
+     */
+    fun confirmDeleteSelectedMessages() {
+        viewModelScope.launch {
+            deleteMultipleMessages(_selectedMessageIds.value)
+            _selectedMessageIds.value = emptySet()
+            _multipleMessageSelected.value = false
+            _showDeleteDialog.value = false
+        }
+    }
+    fun cancelDeleteDialog() {
+    _showDeleteDialog.value = false
+}
+
+
+    /**
+     * Initializes the ViewModel for a specific topic and message.
+     *
+     * Collects messages for the given [topicId], sets the [topicColor], and scrolls to the specified
+     * [messageId] if provided. If no [messageId] is provided, scrolls to the last message.
+     *
+     * @param topicId The ID of the topic to load messages for.
+     * @param topicColor The color associated with the topic.
+     * @param messageId The ID of the message to scroll to, or -1 to scroll to the last message.
+     * @param topicFontColor The font color for the topic, calculated based on luminance.
+     */
+    fun initialize(topicId: Int, topicColor: Color, messageId: Int ) {
+        setTopicId(topicId)
+        setTopicColor(topicColor)
+        setTopicFontColor()
+        collectMessages(topicId)
+    }
+
+
+    /**
+     * Updates the top bar icons and menu items based on the current state.
+     *
+     * Configures the top bar with appropriate icons and menu items depending on whether
+     * multiple messages are being selected ([multipleMessageSelected]).
+     *
+     * @param topBarViewModel The ViewModel for managing the top bar.
+     */
+    fun updateTopBar(topBarViewModel: TopBarViewModel) {
+        val searchIcon = CustomIcon(
+            icon = Icons.Default.Search,
+            onClick = {
+                toggleSearch()
+            },
+            contentDescription = "Search"
+        )
+
+        if (_multipleMessageSelected.value) {
+            Log.d("QQWWEERR: ", "Changed now")
+            topBarViewModel.setCustomIcons(
+                listOf(
+                    CustomIcon(
+                        icon = Icons.Default.SelectAll,
+                        onClick =  { toggleSelectAllMessages() },
+                        contentDescription = "Select All"
+                    ),
+                    CustomIcon(
+                        icon = Icons.Default.ImportExport,
+                        onClick = {
+                            viewModelScope.launch { exportMessagesToPDF(_selectedMessageIds.value) }
+                        },
+                        contentDescription = "Export Selected Messages"
+                    ),
+                    CustomIcon(
+                        icon = Icons.Default.Delete,
+                        onClick = {
+                            if (_selectedMessageIds.value.size > 0) {
+                                _showDeleteDialog.value = true
+                            }
+                        },
+                        contentDescription = "Delete Selected Messages"
+                    )
+                )
+            )
+        } else {
+            topBarViewModel.setCustomIcons(listOf(searchIcon))
+        }
+
+        topBarViewModel.setMenuItems(
+            listOf(
+                MenuItem("Search") { toggleSearch() },
+                MenuItem("Select Messages") { setMultipleMessageSelected(!_multipleMessageSelected.value) },
+                MenuItem(if (_isDeleteEnabled.value) "Disable Delete" else "Enable Delete") {
+                    toggleDeleteEnabled()
+                },
+                MenuItem("Back") { /* Handled in Composable due to navController */ }
+            )
+        )
+    }
     fun collectMessages(topicId: Int) {
         messageDao.getMessagesForTopic(topicId)
             .distinctUntilChanged()
             .onEach { messageList ->
-            _messages.value = messageList
-            _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
-           // Generate HashMap
-           _messageIndexMap.value = messageList
-            .mapIndexed { index, message -> message.id to index }
-            .toMap()
-            createMessageSubset(messageList)
-        }.launchIn(viewModelScope)
+                _messages.value = messageList
+                _messagesContentById.value = messageList.associateBy({ it.id }, { it.content })
+                // Generate HashMap
+                _messageIndexMap.value = messageList
+                    .mapIndexed { index, message -> message.id to index }
+                    .toMap()
+                createMessageSubset(messageList)
+                // Reset search when messages change
+                if (_searchResults.value?.isNotEmpty() == true) {
+                    messageSearch(_searchQuery.value)
+                }
+            }.launchIn(viewModelScope)
     }
     // Function to reset the entire state of the ViewModel
     fun resetState() {
-        _ToFocusTextbox.value = false
-        _ToUnFocusTextbox.value = false
-        _bEditMode.value = false
-        _tempMessageId.value = 0
-        _topicColor.value = Color.Cyan
-        _topicFontColor.value = Color.Cyan
-        _messages.value = emptyList()
-        _messageIndexMap.value = emptyMap()
-        _searchResults.value = emptyList()
-        _messageSubset.value = emptyList()
-        _messageMap.value = emptyMap()
-        _messagesContentById.value = emptyMap()
-        _topicID.value = 0
-        filePathMap.clear()
-        _searchMessages.value = emptyList()
-        _multipleMessageSelected.value = false
-        _toastMessage.value = ""
-    }
+    _ToFocusTextbox.value = false
+    _ToUnFocusTextbox.value = false
+    _bEditMode.value = false
+    _tempMessageId.value = 0
+    _topicColor.value = Color.Cyan
+    _topicFontColor.value = Color.Cyan
+    _messages.value = emptyList()
+    _messageIndexMap.value = emptyMap()
+    _searchResults.value = emptyList()
+    _messageSubset.value = emptyList()
+    _messageMap.value = emptyMap()
+    _messagesContentById.value = emptyMap()
+    _topicID.value = 0
+    filePathMap.clear()
+    _searchMessages.value = emptyList()
+    _multipleMessageSelected.value = false
+    _toastMessage.value = null
+    _showDeleteDialog.value = false
+    _isSearchActive.value = false
+    _requestSearchFocus.value = false
+    _searchQuery.value = ""
+    _searchResultCount.value = 0
+    _currentSearchMessageIndex.value = -1
+    _isDeleteEnabled.value = false
+    _selectedMessageIds.value = emptySet()
+}
 
     // For search results
     private val _searchResults = MutableLiveData<List<Message>>()
@@ -123,7 +355,7 @@ class MessageViewModel (
     fun createMessageSubset(messageList: List<MessageTbl>) {
         _messageSubset.value = messageList.map { Message(it.id, it.content) }
         // Create a Map for fast lookup by id
-         val messageMap = _messageSubset.value.associateBy { it.id }
+        val messageMap = _messageSubset.value.associateBy { it.id }
         _messageMap.value = messageMap
 
         messageSearchHandler.updateDataset(_messageSubset.value)
