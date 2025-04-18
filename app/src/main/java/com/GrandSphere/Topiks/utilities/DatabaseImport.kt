@@ -17,7 +17,7 @@ import java.io.IOException
 
 suspend fun importDatabaseFromUri(context: Context, uri: Uri) = withContext(Dispatchers.IO) {
     try {
-        val databaseName = "topics_database"
+        val databaseName = "topiks_database"
         val currentDatabaseFile = File(context.getDatabasePath(databaseName).absolutePath)
         val walFile = File(context.getDatabasePath("$databaseName-wal").absolutePath)
         val shmFile = File(context.getDatabasePath("$databaseName-shm").absolutePath)

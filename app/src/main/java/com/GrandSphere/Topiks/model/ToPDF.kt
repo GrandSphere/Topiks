@@ -25,7 +25,7 @@ class ToPDF {
     ): Boolean {
         val baseDirectory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        val fullDirectoryPath = File(baseDirectory, "Topics/files/$relativeDirectoryName")
+        val fullDirectoryPath = File(baseDirectory, "topiks/files/$relativeDirectoryName")
 
         if (!fullDirectoryPath.exists() && !fullDirectoryPath.mkdirs()) {
             Log.e("ToPDF", "Failed to create directory: ${fullDirectoryPath.absolutePath}")

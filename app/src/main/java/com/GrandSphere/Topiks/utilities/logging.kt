@@ -13,7 +13,7 @@ fun logFunc(context: Context, message: String) {
     // Define the directory where the log file will be stored
     val externalDir = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-        "topics/files"
+        "topiks/files"
     )
 
     // Create the directory if it doesn't exist

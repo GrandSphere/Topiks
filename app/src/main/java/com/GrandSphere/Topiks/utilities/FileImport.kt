@@ -29,7 +29,7 @@ fun copyFileToUserFolder(
     }
 
     try {
-        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topics/files/$directoryName")
+        val externalDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "topiks/files/$directoryName")
         if (!externalDir.exists() && !externalDir.mkdirs()) {
             throw IOException("Failed to create directory: $externalDir")
         }
