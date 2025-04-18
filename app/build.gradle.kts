@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.topics2"
+    namespace = "com.GrandSphere.Topiks"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.topics2"
+        applicationId = "com.GrandSphere.Topiks"
         minSdk = 31
         targetSdk = 34
         versionCode = 1
