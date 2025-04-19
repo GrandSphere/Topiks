@@ -1,5 +1,5 @@
 package com.GrandSphere.Topiks.ui.screens
-//
+// Moved to viewmodel
 
 import ExportDatabaseWithPicker
 import android.net.Uri
@@ -37,11 +37,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,13 +68,13 @@ import com.GrandSphere.Topiks.db.enitities.TopicTbl
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
 import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
+import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 import com.GrandSphere.Topiks.utilities.helper.restartMainActivity
 import com.GrandSphere.Topiks.utilities.importDatabaseFromUri
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
@@ -84,20 +84,15 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    val focusManager = LocalFocusManager.current // For clearing focus
+    val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
-    // FilePicker Logic
     val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
-
     val openFileLauncher = filePickerScreen { uri -> selectedFileUri.value = uri?: Uri.parse("")}
 
-
-    val focusModifier = Modifier // Used to set edit cursor
+    val focusModifier = Modifier
         .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
-            //isFocused = focusState.isFocused
         }
 
     var toFocusSearchBox by  remember { mutableStateOf(false) }
@@ -143,11 +138,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus() // Clear focus when tapping outside
-                    })
-                }
+                .focusClear()
         ) {
             // TODO:: Search Box focus
 
@@ -162,8 +153,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 oncHold = { navController.navigate("newSearch") },
                 onClick = { toFocusSearchBox = true},
             )
-            //TextButton() { }
-//            Spacer(modifier = Modifier.height(10.dp))
             // Topic List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
@@ -195,7 +184,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 viewModel.setFileURI("")
                 navController.navigate("navaddtopic/-1")
             },
-            shape = CircleShape, // Change the shape to rounded corners
+            shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
@@ -246,7 +235,7 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     modifier = Modifier
                         .size(35.dp)
                         .fillMaxSize()
-                        .clip(CircleShape) // Clip the image into a circular shape
+                        .clip(CircleShape)
                 )
             } else {
                 // Show an icon as a fallback if no image URL is provided
@@ -353,8 +342,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 text = { Text("Delete", color = textColour) },
                 onClick = {
                     showDialog = true
-//                    viewModel.deleteTopic(topic.id)
-//                    coroutineScope.launch { viewModel.deleteMessagesForTopic(topic.id)}
                     showMenu = false
                 }
             )

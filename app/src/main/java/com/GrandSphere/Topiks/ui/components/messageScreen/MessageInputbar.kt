@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.global.CustomButton
 import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
@@ -275,7 +276,6 @@ fun InputBarMessageScreen(
                 onClick = {
                     copiedFilePathList.clear()
                     tempFilePath = Pair("","")
-                    Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
                     tempInputText = inputText
                     inputText = ""
                     viewModel.setToFocusTextbox(false)
@@ -303,7 +303,8 @@ fun InputBarMessageScreen(
                                     tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     addedFiles.forEach { uri ->
-                                        val filetype = determineFileType(context, uri)
+                                        val filetype = determineFileType(context, uri.toString())
+
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
                                             currentUri = uri,
@@ -357,7 +358,7 @@ fun InputBarMessageScreen(
                                     tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     selectedFileUris.value?.forEach { uri ->
-                                        val filetype = determineFileType(context, uri)
+                                        val filetype = determineFileType(context, uri.toString())
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
                                             currentUri = uri,
@@ -369,12 +370,11 @@ fun InputBarMessageScreen(
                                         val normalFilePath =tempFilePath.first
                                         val thumbnailFilePath =tempFilePath.second
 
-                                        //copiedFilePathList.add(tempFilePath)
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
                                             messageId = messageId.toInt(),
-                                            fileType = determineFileType(context, uri),
+                                            fileType = determineFileType(context, uri.toString()),
                                             filePath = normalFilePath,
                                             iconPath =  thumbnailFilePath,
                                             description = "",
@@ -402,16 +402,12 @@ fun InputBarMessageScreen(
                     }
                     .size(vButtonSize)
                     .fillMaxWidth(1f)
-                    //.background(Color.Transparent)
                     .align(Alignment.Bottom),
                 imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
-                //imageVector = Icons.Filled.Send, // Attach file icon
                 contentDescription = "Send",
-                //tint = colors.tertiary,
                 tint = topicColour,
                 iconModifier = Modifier
                     .size(vIconSize)
-                //.aspectRatio(2.5f)
             )
             Spacer(modifier = Modifier.width(12.dp))
         }
