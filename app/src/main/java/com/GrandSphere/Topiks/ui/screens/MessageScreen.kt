@@ -177,7 +177,7 @@ fun MessageScreen(
                 ) {
                     if (selectMultiple) {
                         Checkbox(
-                            checked = message.isSelected,
+                            checked = message.id in selectedMessageIds,
                             onCheckedChange = {
                                 viewModel.toggleMessageSelection(message.id)
                             },
