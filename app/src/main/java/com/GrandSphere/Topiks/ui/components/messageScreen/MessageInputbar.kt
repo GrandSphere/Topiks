@@ -63,157 +63,101 @@ import multipleFilePicker
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController, viewModel: MessageViewModel, topicId: Int,
+    navController: NavController,
+    viewModel: MessageViewModel,
+    topicId: Int,
     topicColour: Color = MaterialTheme.colorScheme.onPrimary,
-    onFocus: () -> Unit ={},
+    onFocus: () -> Unit = {}
 ) {
-    val vFontSize: TextUnit = 18.sp // You can change this value as needed
-    val vButtonSize: Dp = 40.dp // You can change this value as needed
-    val vClearButtonSize: Dp = 15.dp // You can change this value as needed
-    val vIconSize: Dp = 25.dp // You can change this value as needed
+    val vFontSize: TextUnit = 18.sp
+    val vButtonSize: Dp = 40.dp
+    val vClearButtonSize: Dp = 15.dp
+    val vIconSize: Dp = 25.dp
     val vMaxLinesSize: Dp = 80.dp
 
-    var inputText by remember { mutableStateOf("") }
-    val messagePriority = 0
+    val context = LocalContext.current
     val colours = MaterialTheme.colorScheme
+    val inputText by viewModel.inputText.collectAsState()
+    val selectedFiles by viewModel.selectedFiles.collectAsState()
+    val bEditMode by viewModel.bEditMode.collectAsState()
+    val toFocusTextbox by viewModel.toFocusTextbox.collectAsState()
 
-    var isFocused by remember { mutableStateOf(false) }
-
-    val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }
-    val toFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-    val toUnFocusTextbox by viewModel.ToFocusTextbox.collectAsState()
-    val focusRequester2 = remember { FocusRequester() }
-    var bEditedMode by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
-    val widthSetting = 500
-    val heightSetting = 500
-
-    val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
-    val selectedFileUrisBeforeEdit: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val openFileLauncher = multipleFilePicker(
-        onUserFilesSelected = { uris ->
-            selectedFileUris.value = (selectedFileUris.value ?: emptyList()) + (uris ?: emptyList())
-        }
+        onUserFilesSelected = { uris -> viewModel.addSelectedFiles(uris) }
     )
-    //var compareFilesResult: Pair<List<Uri>, List<Uri>> by remember {mutableStateOf(Pair(emptyList(), emptyList()))}
+
     LaunchedEffect(toFocusTextbox) {
         if (toFocusTextbox) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
             viewModel.setToFocusTextbox(false)
-        } else {
         }
     }
 
     LaunchedEffect(Unit) {
-        // kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
-        viewModel.setEditMode(false)
-        bEditedMode = false
-        viewModel.setTempMessageId(-1)
-        viewModel.setToFocusTextbox(true)
+        viewModel.initializeInputBar()
     }
 
-    // Focus change listener to update isFocused state
-    val focusModifier = Modifier // Used to set edit cursor
-        .focusRequester(focusRequester)
-        .onFocusChanged { focusState ->
-            isFocused = focusState.isFocused
-        }
-
-//    var tempMessageID by remember { mutableStateOf(viewModel.tempMessageId.value) }
-
-    val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
-    val bEditMode by viewModel.bEditMode.collectAsState()
-    val iNumToTake: Int = 10
-
-    LaunchedEffect(bEditMode) {
-        if (bEditMode) {
-            bEditedMode = true
-            inputText = viewModel.getMessageContentById(tempMessageID) ?: ""
-            // use tempMessageID to get inputText
-            selectedFileUris.value = viewModel.getFilesByMessageId(tempMessageID)
-            selectedFileUrisBeforeEdit.value = selectedFileUris.value
-            viewModel.setEditMode(false)
-        }
-        else {
-            //viewModel.setTempMessageId(-1)
-        }
-    }
-
-    Column() {
+    Column {
+        // File attachments
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 200.dp) // Set your maximum height here
-                .verticalScroll(rememberScrollState()) // Makes the content scrollable
+                .heightIn(max = 200.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            selectedFileUris.value?.forEachIndexed() { index, attachment ->
+            selectedFiles.forEachIndexed { index, attachment ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
                         .background(colours.background)
                 ) {
-                    Text( // get text name from path
-                        text = "\u2022 " +  getFileNameFromUri(LocalContext.current, attachment),
+                    Text(
+                        text = "\u2022 " + getFileNameFromUri(LocalContext.current, attachment),
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
-                            .padding(start = 1.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onPress = {
-                                    },
-                                    onLongPress = {
-                                    }
-                                )
-                            },
+                            .padding(start = 1.dp, top = 5.dp, bottom = 5.dp, end = 10.dp),
                         style = TextStyle(
                             fontSize = 16.sp,
-                            color = topicColour,
-//                    textDecoration = TextDecoration.Underline
+                            color = topicColour
                         )
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton( // CLEAR BUTTON
-                        onClick = {
-                            selectedFileUris.value =
-                                selectedFileUris.value!!.toMutableList().apply { removeAt(index) }
-                        },
+                    IconButton(
+                        onClick = { viewModel.removeSelectedFile(index) },
                         modifier = Modifier
                             .size(vClearButtonSize)
-                            //.align(Alignment.Bottom)
                             .align(Alignment.Bottom)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
-                            contentDescription = "clear",
-                            //tint = colors.tertiary,
+                            contentDescription = "Clear",
                             tint = topicColour,
-                            modifier = Modifier
-                                .height(vClearButtonSize)
+                            modifier = Modifier.height(vClearButtonSize)
                         )
                     }
                 }
             }
-
         }
 
+        // Input bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp)
         ) {
-
-
             CustomTextBox(
                 inputText = inputText,
-                onValueChange = { newText -> inputText = newText },
+                onValueChange = { viewModel.updateInputText(it) },
                 vMaxLinesSize = vMaxLinesSize,
                 vFontSize = vFontSize,
                 sPlaceHolder = "Type a message...",
                 isFocused = true,
-                focusModifier = focusModifier.focusRequester(focusRequester),
+                focusModifier = Modifier.focusRequester(focusRequester),
                 boxModifier = Modifier
                     .weight(1f)
                     .padding(0.dp)
@@ -223,175 +167,31 @@ fun InputBarMessageScreen(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            CustomButton( // ADD BUTTON
-                onClick = {
-                    openFileLauncher.launch(arrayOf("*/*"))
-                },
+            CustomButton(
+                onClick = { openFileLauncher.launch(arrayOf("*/*")) },
                 buttonModifier = Modifier
                     .size(vButtonSize)
                     .align(Alignment.Bottom),
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Attach",
-                //tint = colors.tertiary,
                 tint = topicColour,
-                iconModifier = Modifier
-                    .height(vIconSize)
+                iconModifier = Modifier.height(vIconSize)
             )
 
-            Spacer(
-                modifier = focusModifier
-                    .width(5.dp)
-                    .focusRequester(focusRequester)
-            )
-            var tempInputText: String = inputText
-            val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
-            val copiedFilePathList = mutableListOf<String>()
-            var tempFilePath = Pair("","")
-            CustomButton( // SEND BUTTON
-                onLongPress = {
-                    inputText=""
-                    selectedFileUris.value = emptyList()
-                    viewModel.setTempMessageId(-1)
-                    viewModel.setEditMode(false)
-                    bEditedMode=false
-                },
-                onClick = {
-                    copiedFilePathList.clear()
-                    tempFilePath = Pair("","")
-                    tempInputText = inputText
-                    inputText = ""
-                    viewModel.setToFocusTextbox(false)
+            Spacer(modifier = Modifier.width(5.dp))
 
-                    if (!selectedFileUris.value.isNullOrEmpty() || (tempInputText.length > 0)) {
-                        // Edit mode
-                        if ((bEditedMode) && (viewModel.tempMessageId.value > -1)){
-                            coroutineScope.launch {
-                                val messageID: Int = tempMessageID
-                                viewModel.editMessage(
-                                    messageId = messageID,
-                                    topicId = topicId,
-                                    content = tempInputText,
-                                    priority = messagePriority,
-                                    categoryId = 1,
-                                    type = 1
-                                )
-
-                                val(deletedFiles, addedFiles) = compareFileLists(
-                                    selectedFileUrisBeforeEdit.value,
-                                    selectedFileUris.value
-                                )
-                                // Add any additional files to the DB
-                                if (!addedFiles.isNullOrEmpty()) {
-                                    tempFilePath = Pair("","")
-                                    // Copy file, get list of paths as return value
-                                    addedFiles.forEach { uri ->
-                                        val filetype = determineFileType(context, uri.toString())
-
-                                        tempFilePath = copyFileToUserFolder(
-                                            context = context,
-                                            currentUri = uri,
-                                            directoryName = filetype,
-                                            height =  heightSetting,
-                                            width = widthSetting,
-                                            )
-                                        val normalFilePath =tempFilePath.first
-                                        val thumbnailFilePath =tempFilePath.second
-                                        // add list of paths to DB
-                                        viewModel.addFile(
-                                            topicId = topicId,
-                                            messageId = messageID,
-                                            fileType = filetype,
-                                            filePath = normalFilePath,
-                                            description = "",
-                                            categoryId = 1,
-                                            iconPath = thumbnailFilePath
-                                        )
-                                    }
-                                }
-                                // Remove deleted files from db
-                                if (!deletedFiles.isNullOrEmpty()) {
-                                    val fileIDsToDelete: List<Int> =
-                                        deletedFiles.mapNotNull { uri ->
-                                            val filePath = uri.path
-                                            filePath?.let { viewModel.getIdForFilePath(it) }
-                                        }
-                                    if (fileIDsToDelete.isNotEmpty()) {
-                                        viewModel.deleteFiles(fileIDsToDelete)
-                                    }
-                                }
-                                selectedFileUris.value = emptyList()
-                                viewModel.setEditMode(false)
-                                bEditedMode = false
-                            }
-
-                        } else {
-                            // Write message to db
-                            coroutineScope.launch {
-
-                                val messageId = viewModel.addMessage(
-                                    topicId = topicId,
-                                    content = tempInputText,
-                                    priority = messagePriority,
-                                    type = 0, //based on if check to see what type - message or image or file etc
-                                    categoryID = 1
-                                )
-
-                                if (!selectedFileUris.value.isNullOrEmpty()) {
-                                    tempFilePath = Pair("","")
-                                    // Copy file, get list of paths as return value
-                                    selectedFileUris.value?.forEach { uri ->
-                                        val filetype = determineFileType(context, uri.toString())
-                                        tempFilePath = copyFileToUserFolder(
-                                            context = context,
-                                            currentUri = uri,
-                                            directoryName = filetype,
-                                            height = heightSetting,
-                                            width = widthSetting,
-                                            )
-
-                                        val normalFilePath =tempFilePath.first
-                                        val thumbnailFilePath =tempFilePath.second
-
-                                        // add list of paths to DB
-                                        viewModel.addFile(
-                                            topicId = topicId,
-                                            messageId = messageId.toInt(),
-                                            fileType = determineFileType(context, uri.toString()),
-                                            filePath = normalFilePath,
-                                            iconPath =  thumbnailFilePath,
-                                            description = "",
-                                            categoryId = 1,
-                                        )
-                                    }
-                                    selectedFileUris.value = emptyList()
-                                }
-                            }
-                        }
-                    }
-                    viewModel.setTempMessageId(-1)
-                },
+            CustomButton(
+                onClick = { viewModel.sendMessage(topicId, context) },
+                onLongPress = { viewModel.clearInputBar() },
                 buttonModifier = Modifier
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = { offset ->
-                                inputText=""
-                                selectedFileUris.value = emptyList()
-                                viewModel.setTempMessageId(-1)
-                                viewModel.setEditMode(false)
-                                bEditedMode=false
-                            }
-                        )
-                    }
                     .size(vButtonSize)
-                    .fillMaxWidth(1f)
                     .align(Alignment.Bottom),
-                imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
+                imageVector = if (bEditMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
                 contentDescription = "Send",
                 tint = topicColour,
-                iconModifier = Modifier
-                    .size(vIconSize)
+                iconModifier = Modifier.size(vIconSize)
             )
+
             Spacer(modifier = Modifier.width(12.dp))
         }
     }

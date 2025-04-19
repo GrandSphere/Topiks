@@ -1,5 +1,6 @@
 package com.GrandSphere.Topiks.utilities.helper
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -28,11 +29,11 @@ fun highlightSearchText(
     highlightBackgroundColor: Color = topicFontColor,
     highlightFontColor: Color = topicColor
 ): AnnotatedString {
+     Log.d("QQWWEE", "INSIDE")
     val normalizedQuery = searchQuery.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
     if (normalizedQuery.isEmpty()) {
         return AnnotatedString(messageContent)
     }
-
     return AnnotatedString.Builder().apply {
         val contentWords = messageContent.split(" ")
         contentWords.forEach { word ->

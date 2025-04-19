@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.GrandSphere.Topiks.ui.themes.cDateStampFont
 import com.GrandSphere.Topiks.ui.themes.cMessageFont
 import com.GrandSphere.Topiks.ui.themes.cShowMoreFont
