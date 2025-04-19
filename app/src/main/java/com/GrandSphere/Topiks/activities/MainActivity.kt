@@ -32,7 +32,7 @@ import com.GrandSphere.Topiks.ui.screens.MessageViewScreen
 import com.GrandSphere.Topiks.ui.screens.ShowMorePictures
 import com.GrandSphere.Topiks.ui.screens.TopicListScreen
 import com.GrandSphere.Topiks.ui.screens.allSearch
-import com.GrandSphere.Topiks.ui.themes.TopicsTheme
+import com.GrandSphere.Topiks.ui.themes.TopiksTheme
 import com.GrandSphere.Topiks.ui.viewmodels.CategoryViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
@@ -54,14 +54,13 @@ class MainActivity : ComponentActivity() {
                val bDarkMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
                iTheme = if (bDarkMode) 0 else 1
            }
-            TopicsTheme(iTheme) { TopicsApp(applicationContext) }
+            TopiksTheme(iTheme) { TopiksApp(applicationContext) }
         }
 
     }
 
-    //val Purple200 = Color(0xFFBB86FC) FIX THIS
     @Composable
-    fun TopicsApp(context: Context) {
+    fun TopiksApp(context: Context) {
         val database = AppDatabase.getDatabase(context)
         val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
 
@@ -70,7 +69,6 @@ class MainActivity : ComponentActivity() {
             viewModel(factory = CategoryViewModel.Factory)
         val settingsViewModel: SettingsViewModel = viewModel()
         val searchViewModel: searchViewModel = viewModel()
-//            val topBarViewModel: TopBarViewModel = viewModel()
 
         val topBarViewModel = viewModel<TopBarViewModel>()
         GlobalViewModelHolder.setTopBarViewModel(topBarViewModel)
