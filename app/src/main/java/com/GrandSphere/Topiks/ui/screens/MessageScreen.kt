@@ -1,9 +1,9 @@
 package com.GrandSphere.Topiks.ui.screens
 
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,32 +41,23 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 import com.GrandSphere.Topiks.model.dataClasses.CustomIcon
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
-import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.components.messageScreen.InputBarMessageScreen
 import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
-import com.GrandSphere.Topiks.utilities.determineFileType
-import com.GrandSphere.Topiks.utilities.helper.highlightSearchText
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Composable
 fun MessageScreen(
@@ -93,24 +84,23 @@ fun MessageScreen(
     val selectedMessageIds by viewModel.selectedMessageIds.collectAsState()
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
     val requestSearchFocus by viewModel.requestSearchFocus.collectAsState()
-    val topicFontColor:Color by viewModel.topicFontColor.collectAsState()
+    val topicFontColor by viewModel.topicFontColor.collectAsState()
     val context = LocalContext.current
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
-    // Initialize ViewModel
     LaunchedEffect(Unit) {
         viewModel.initialize(
             topicId = topicId,
             topicColor = topicColor,
             messageId = messageId,
+            context = context
         )
         viewModel.updateTopBar(topBarViewModel)
     }
 
-    // Handle search focus
     LaunchedEffect(requestSearchFocus) {
         if (requestSearchFocus) {
             focusManager.clearFocus()
@@ -119,7 +109,6 @@ fun MessageScreen(
         }
     }
 
-    // Show toast message
     LaunchedEffect(toastMessage) {
         toastMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -127,7 +116,6 @@ fun MessageScreen(
         }
     }
 
-    // Scroll to message on search or initial load
     LaunchedEffect(searchResults, messages.size) {
         if (isSearchActive && searchResults.isNotEmpty() && currentSearchMessageIndex >= 0) {
             scrollState.scrollToItem(currentSearchMessageIndex)
@@ -140,10 +128,11 @@ fun MessageScreen(
             scrollState.scrollToItem(messages.size - 1)
         }
     }
-    LaunchedEffect (selectMultiple){
+
+    LaunchedEffect(selectMultiple) {
         viewModel.updateTopBar(topBarViewModel)
     }
-    // Update top bar on delete toggle
+
     LaunchedEffect(isDeleteEnabled) {
         viewModel.updateTopBar(topBarViewModel)
     }
@@ -179,53 +168,15 @@ fun MessageScreen(
         ) {
             items(messages.size) { index ->
                 val message = messages[index]
-                val pictureList = mutableListOf<FileInfoWithIcon>()
-                val attachmentList = mutableListOf<String>()
-                var hasPictures = false
-                var hasAttachments = false
-                val filesForMessage by viewModel.getFilesByMessageIdFlow(message.id)
-                    .collectAsState(initial = emptyList())
-                for (fileInfo in filesForMessage) {
-                    val filePath = fileInfo.filePath
-                    val fileType = determineFileType(context, filePath.toUri())
-                    when (fileType) {
-                        "Image" -> {
-                            pictureList.add(fileInfo)
-                            hasPictures = true
-                        }
-                        else -> {
-                            attachmentList.add(filePath)
-                            hasAttachments = true
-                        }
-                    }
-                }
-
-                val timestamp = SimpleDateFormat(
-                    "yyyy-MM-dd HH:mm",
-                    Locale.getDefault()
-                ).format(message.createTime)
-
-                var messageChecked by remember { mutableStateOf(message.id in selectedMessageIds) }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier.padding(0.dp)
                 ) {
-                    val contentToDisplay = if (isSearchActive && index == currentSearchMessageIndex) {
-                        highlightSearchText(
-                            messageContent = message.content,
-                            searchQuery = searchQuery,
-                            topicColor = topicColor,
-                            topicFontColor = topicFontColor
-                        )
-                    } else {
-                        AnnotatedString(message.content)
-                    }
                     if (selectMultiple) {
                         Checkbox(
-                            checked = message.id in selectedMessageIds,
+                            checked = message.isSelected,
                             onCheckedChange = {
-                                Log.d("QQEE: " , "Supposed to check here")
                                 viewModel.toggleMessageSelection(message.id)
                             },
                             modifier = Modifier
@@ -245,38 +196,23 @@ fun MessageScreen(
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
-                        annotatedMessageContent = contentToDisplay,
-                        containsPictures = hasPictures,
+                        annotatedMessageContent = message.annotatedContent,
+                        containsPictures = message.hasPictures,
                         selectMultile = selectMultiple,
-                        containsAttachments = hasAttachments,
-                        listOfPictures = pictureList,
-                        listOfAttachmentsP = attachmentList,
-                        timestamp = timestamp,
-                        onDeleteClick = {
-                            coroutineScope.launch {
-                                viewModel.deleteMessage(message.id)
-                            }
-                        },
-                        onSelectedClick = {
-                            viewModel.setMultipleMessageSelected(true)
-                            viewModel.toggleMessageSelection(message.id)
-                            messageChecked = message.id in selectedMessageIds
-                        },
+                        containsAttachments = message.hasAttachments,
+                        listOfPictures = message.pictures,
+                        listOfAttachmentsP = message.attachments,
+                        timestamp = message.timestamp,
+                        onDeleteClick = message.onDelete,
+                        onSelectedClick = message.onSelect,
                         onViewMessage = {
-                            viewModel.setTempMessageId(message.id)
+                            message.onView()
                             navController.navigate("navViewMessage")
                         },
-                        onEditClick = {
-                            viewModel.setTempMessageId(message.id)
-                            viewModel.setEditMode(true)
-                        },
-                        onExportClick = {
-                            coroutineScope.launch {
-                                viewModel.exportMessagesToPDF(setOf(message.id))
-                            }
-                        },
+                        onEditClick = message.onEdit,
+                        onExportClick = message.onExport,
                         bDeleteEnabled = isDeleteEnabled,
-                        messageSelected = messageChecked
+                        messageSelected = message.isSelected
                     )
                 }
             }
