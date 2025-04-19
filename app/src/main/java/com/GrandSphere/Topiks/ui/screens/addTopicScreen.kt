@@ -1,5 +1,7 @@
 package com.GrandSphere.Topiks.ui.screens
 
+// Moved to viewmodel
+
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,28 +27,19 @@ import com.GrandSphere.Topiks.ui.components.addTopic.TopicCategory
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicColour
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicName
 import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
+import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
-    val focusManager = LocalFocusManager.current
     val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
-        topBarViewModel.setMenuItems(
-            listOf(
-            )
-        )
+        topBarViewModel.setMenuItems( listOf() )
 
         if (bEditMode) {
-            viewModel.setEditedMode(true)
-            val topicObj = viewModel.getTopicObjectById(topicId)
-            viewModel.setTempTopicName(topicObj?.name ?: "")
-            viewModel.setColour(argbToColor(topicObj?.colour ?: 111111))
-            viewModel.setTempColour(argbToColor(topicObj?.colour ?: 111111))
-            viewModel.setFileURI(topicObj?.iconPath ?: "")
-            viewModel.setEditMode(false)
+            viewModel.initializeEditMode(topicId)
         }
     }
     Box(
@@ -54,11 +47,7 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
             .fillMaxSize()
             .padding(0.dp)
             .imePadding()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus() // Clear focus when tapping outside
-                })
-            }
+            .focusClear()
     ) {
         Column(
             modifier = Modifier
@@ -84,8 +73,6 @@ fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topi
                 horizontalArrangement = Arrangement.Center
             ) {
                 TopicName(navController, viewModel, topicId)
-                //onAddTopic = onAddTopic,
-                //onCancel = onCancel
             }
         }
     }

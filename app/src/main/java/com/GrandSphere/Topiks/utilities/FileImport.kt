@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import java.io.File
 import java.io.FileOutputStream
@@ -35,6 +36,7 @@ fun copyFileToUserFolder(
         }
 
         var fileName = getFileNameFromUri(context, currentUri)
+
         var destinationFile = File(externalDir, fileName)
 
         // If the file already exists, add timestamp to avoid overwrite
@@ -50,7 +52,7 @@ fun copyFileToUserFolder(
         }
 
         var thumbnailPath = ""
-        val fileType = determineFileType(context, currentUri)
+        val fileType = determineFileType(context, currentUri.toString())
 
         if (fileType == "Image") {
             val folderName = if (thumbnailOnly) "Icons" else "Thumbnails"

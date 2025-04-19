@@ -1,6 +1,9 @@
 package com.GrandSphere.Topiks.ui.components.addTopic
+// Moved to viewmodel
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -48,28 +51,24 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
     val imageMimeTypes = arrayOf(
         "image/jpeg", "image/png", "image/gif", "image/bmp", "image/webp" )
 
-    // FilePicker Logic
-    val selectedFileUri: MutableState<Uri> = remember { mutableStateOf(Uri.EMPTY) }
-    val openFileLauncher = iconFilePicker(
-        onFileSelected = { uri: Uri? ->
-            selectedFileUri.value = uri ?: Uri.parse("")
-            viewModel.setFileURI(uri.toString())
-        }
-    )
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        viewModel.setFileURI(uri?.toString() ?: "")
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Box( modifier = Modifier.size(60.dp)){} // used only for spacing
-        Spacer(modifier = Modifier.width(16.dp)) // Spacer to add some space between the rows
+        Box( modifier = Modifier.size(60.dp)){}
+        Spacer(modifier = Modifier.width(16.dp))
         Box(
             modifier = Modifier
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
-                        // Clear focus when tapping outside
-                        openFileLauncher.launch(imageMimeTypes)
+                        viewModel.launchFilePicker(filePickerLauncher, imageMimeTypes)
                     })
                 }
                 .clip(CircleShape)

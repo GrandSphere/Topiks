@@ -1,5 +1,7 @@
 package com.GrandSphere.Topiks.ui.components.addTopic
 
+// Moved to viewmodel
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -38,22 +40,21 @@ fun TopicCategory(viewModel: TopicViewModel) {
         }
 
     // Initial text state, set to "Topics"
-     var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
-     viewModel.setTempCategory(inputText)
-    //viewModel.category
+    var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
+    viewModel.setTempCategory(inputText)
     Row(
         modifier = Modifier
             .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 4.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start, // Align items to the start of the row
-        verticalAlignment = Alignment.CenterVertically // Vertically center the text and TextField
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
     ) { // Label "Category"
         Text(
             text = "Category:",
             modifier = Modifier
                 .padding(start = 3.dp, top = 3.dp, end = 8.dp),
             style = TextStyle(
-                fontSize = 18.sp, // Set the font size
+                fontSize = 18.sp,
                 color = colours.onSecondary,
             )
         )
@@ -62,7 +63,7 @@ fun TopicCategory(viewModel: TopicViewModel) {
             modifier = Modifier
                 .weight(1f)
                 .padding(0.dp)
-                .align(Alignment.CenterVertically) // Align the text field vertically in the center
+                .align(Alignment.CenterVertically)
         ) {
             BasicTextField(
                 value = inputText,
@@ -71,7 +72,7 @@ fun TopicCategory(viewModel: TopicViewModel) {
                 },
                 modifier = focusModifier
                     .fillMaxWidth()
-                    .padding(start = 3.dp, top = 3.dp), // Padding inside text field
+                    .padding(start = 3.dp, top = 3.dp),
                 textStyle = TextStyle(
                     fontSize = 18.sp,
                     color = colours.onBackground,
@@ -79,11 +80,11 @@ fun TopicCategory(viewModel: TopicViewModel) {
                 ),
                 cursorBrush = if (isFocused) SolidColor(colours.tertiary) else SolidColor(Color.Transparent), // Show cursor only when focused
                 decorationBox = @Composable { innerTextField ->
-                    if (inputText.isEmpty()) { // Show "Category..." text only when the input is empty
+                    if (inputText.isEmpty()) {
                         Text(
                             text = "Category...",
                             style = TextStyle(
-                                color = colours.secondary, // Placeholder color
+                                color = colours.secondary,
                                 fontSize = 18.sp,
                                 lineHeight = 20.sp
                             ),
