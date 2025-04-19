@@ -88,7 +88,6 @@ fun InputBarMessageScreen(
 
     val widthSetting = 500
     val heightSetting = 500
-    // FilePicker Logic
 
     val selectedFileUris: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
     val selectedFileUrisBeforeEdit: MutableState<List<Uri>?> = remember { mutableStateOf(emptyList()) }
@@ -115,22 +114,6 @@ fun InputBarMessageScreen(
         viewModel.setToFocusTextbox(true)
     }
 
-//    LaunchedEffect(toFocusTextbox) {
-//        if (toFocusTextbox) {
-//            focusRequester.requestFocus()
-//            // Reset focus state to false after focus is requested
-//            viewModel.setToFocusTextbox(false)
-//        }
-//    }
-
-
-//    LaunchedEffect(Unit) {
-////        viewModel.setToFocusTextbox(true)
-////        kotlinx.coroutines.delay(100) // Optional: Give the UI time to adjust
-////        viewModel.setToFocusTextbox(false)
-//        //viewModel.setToFocusTextbox(false)
-//        //focusRequester.requestFocus()
-//    }
     // Focus change listener to update isFocused state
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
