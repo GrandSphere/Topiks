@@ -1,5 +1,7 @@
 package com.GrandSphere.Topiks.ui.screens
 
+// Moved to viewmodel
+
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
