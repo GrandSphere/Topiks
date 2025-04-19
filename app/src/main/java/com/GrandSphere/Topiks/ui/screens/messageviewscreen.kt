@@ -41,44 +41,43 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel)
         )
     }
     Box(){
-Column(modifier = Modifier
-    .fillMaxSize()
-    .padding(horizontal = 8.dp)) {
-    CustomTextBox(
-        onValueChange = { newtext -> inputText = newtext },
-        inputText = inputText ?: "",
-        sPlaceHolder = "",
-        boxModifier = Modifier.fillMaxSize(),
-        focusModifier = Modifier.fillMaxSize()
-    )
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp)) {
+            CustomTextBox(
+                onValueChange = { newtext -> inputText = newtext },
+                inputText = inputText ?: "",
+                sPlaceHolder = "",
+                boxModifier = Modifier.fillMaxSize(),
+                focusModifier = Modifier.fillMaxSize()
+            )
 
-}
-    FloatingActionButton(
-        onClick = {
-            coroutineScope.launch {
-                viewModel.editMessage(
-                    messageId = tempMessageID,
-                    topicId = viewModel.topicId.value,
-                    content = inputText ?: "",
-                    priority = 1,
-                    categoryId = 1,
-                    type = 1
-                )
-            }
-            navController.popBackStack()
-        },
-        shape = CircleShape, // Change the shape to rounded corners
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
-            .padding(16.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "Add Topic",
-            modifier = Modifier.size(24.dp)
-        )
+        }
+        FloatingActionButton(
+            onClick = {
+                coroutineScope.launch {
+                    viewModel.editMessage(
+                        messageId = tempMessageID,
+                        topicId = viewModel.topicId.value,
+                        content = inputText ?: "",
+                        priority = 1,
+                        categoryId = 1,
+                        type = 1
+                    )
+                }
+                navController.popBackStack()
+            },
+            shape = CircleShape, // Change the shape to rounded corners
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Add Topic",
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
-}
-
 }
