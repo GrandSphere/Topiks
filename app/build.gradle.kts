@@ -1,3 +1,9 @@
+import com.android.build.gradle.internal.scope.InternalArtifactType
+import org.gradle.internal.extensions.core.extra
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,17 +11,101 @@ plugins {
     id("kotlin-kapt")
 }
 
+
+
+// Path to the version file
+val versionPropsFile = project.file("version.properties")
+
+// Task to bump the patch number
+val patchVersionUpdate by tasks.registering {
+    // Declare inputs/outputs for incremental builds
+    inputs.file(versionPropsFile)
+    outputs.file(versionPropsFile)
+
+    doLast {
+        // 1. Load current properties
+        val props = Properties().apply {
+            versionPropsFile.inputStream().use { load(it) }
+        }
+        // 2. Increment patch
+        val newPatch = props.getProperty("version.patch").toInt() + 1
+        props.setProperty("version.patch", newPatch.toString())
+        // 3. Save back to file
+        versionPropsFile.outputStream().use { props.store(it, null) }
+    }
+}
+
+val generateVersionKt by tasks.registering {
+    dependsOn(patchVersionUpdate)  // ensure patch bumps first
+
+    // Inputs: the updated version file
+    inputs.file(versionPropsFile)
+    // Outputs: the generated source file
+    val outputDir = layout.buildDirectory.dir("generated/source/version")
+    outputs.dir(outputDir)
+
+    doLast {
+        val props = Properties().apply {
+            versionPropsFile.inputStream().use { load(it) }
+        }
+        val major = props.getProperty("version.major")
+        val minor = props.getProperty("version.minor")
+        val patch = props.getProperty("version.patch")
+        val versionName = "$major.$minor.$patch"
+
+        // Write Version.kt
+        val dir = outputDir.get().asFile.apply { mkdirs() }
+        file("$dir/Version.kt").writeText("""
+            package com.GrandSphere.Topiks
+
+            /** Auto‑generated semantic version */
+            object Version {
+                const val APP = "$versionName"
+            }
+        """.trimIndent())
+    }
+}
+
+kotlin {
+    sourceSets["main"].kotlin.srcDir(generateVersionKt.map { it.outputs.files.singleFile })
+}
+
+
+tasks.matching { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
+    .configureEach {
+        dependsOn(generateVersionKt)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 android {
     namespace = "com.GrandSphere.Topiks"
     compileSdk = 35
+
 
     defaultConfig {
         applicationId = "com.GrandSphere.Topiks"
         minSdk = 31
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.3.0"
-
+        versionCode = 3
+        versionName = "ABC"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

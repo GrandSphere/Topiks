@@ -1,4 +1,5 @@
 package com.GrandSphere.Topiks.ui.components.messageScreen
+// Moved to viewmodel
 
 import android.net.Uri
 import android.util.Log
@@ -63,7 +64,6 @@ import multipleFilePicker
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
-    navController: NavController,
     viewModel: MessageViewModel,
     topicId: Int,
     topicColour: Color = MaterialTheme.colorScheme.onPrimary,

@@ -10,7 +10,7 @@ data class MenuItem(val label: String, val onClick: () -> Unit)
 // TopBarViewModel.kt
 class TopBarViewModel : ViewModel() {
 
-    private val _topBarTitle = MutableStateFlow("Unknown")  // Default title
+    private val _topBarTitle = MutableStateFlow("Topics")  // Default title
     val topBarTitle: StateFlow<String> get() = _topBarTitle
 
     // Add StateFlow for menu items
@@ -50,7 +50,7 @@ class TopBarViewModel : ViewModel() {
         _menuItems.value = items
      }
 
-    fun clearMenuItems(items: List<MenuItem>) {
+    fun clearMenuItems() {
         _menuItems.value = emptyList()
     }
 
