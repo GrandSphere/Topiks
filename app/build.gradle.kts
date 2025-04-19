@@ -78,6 +78,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.material.icons.extended)
     implementation(libs.runtime.livedata)
+    implementation (libs.androidx.webkit)
 
     kapt(libs.androidx.room.compiler)
 

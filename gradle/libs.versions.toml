@@ -43,6 +43,7 @@ documentfile = "1.0.1"
 appcompat = "1.7.0"
 uiDesktop = "1.7.0"
 runtimeLivedataVersion = "1.7.8"
+webkit = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +63,7 @@ androidx-runtime = { module = "androidx.compose.runtime:runtime", version.ref = 
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui-v140 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 androidx-ui-v15 = { module = "androidx.compose.ui:ui", version.ref = "androidxUi" }
+androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCommon"}
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }

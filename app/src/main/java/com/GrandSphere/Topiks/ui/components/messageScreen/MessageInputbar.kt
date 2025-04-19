@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.global.CustomButton
 import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
@@ -303,7 +304,9 @@ fun InputBarMessageScreen(
                                     tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     addedFiles.forEach { uri ->
-                                        val filetype = determineFileType(context, uri)
+                                        val filetype = determineFileType(context, uri.toString())
+
+                                        Log.d("QQRREE",filetype.toString())
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
                                             currentUri = uri,
@@ -357,7 +360,7 @@ fun InputBarMessageScreen(
                                     tempFilePath = Pair("","")
                                     // Copy file, get list of paths as return value
                                     selectedFileUris.value?.forEach { uri ->
-                                        val filetype = determineFileType(context, uri)
+                                        val filetype = determineFileType(context, uri.toString())
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
                                             currentUri = uri,
@@ -374,7 +377,7 @@ fun InputBarMessageScreen(
                                         viewModel.addFile(
                                             topicId = topicId,
                                             messageId = messageId.toInt(),
-                                            fileType = determineFileType(context, uri),
+                                            fileType = determineFileType(context, uri.toString()),
                                             filePath = normalFilePath,
                                             iconPath =  thumbnailFilePath,
                                             description = "",
