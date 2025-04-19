@@ -276,7 +276,6 @@ fun InputBarMessageScreen(
                 onClick = {
                     copiedFilePathList.clear()
                     tempFilePath = Pair("","")
-                    Log.d("THIS IS BEFORE COPYING: ", "${copiedFilePathList}")
                     tempInputText = inputText
                     inputText = ""
                     viewModel.setToFocusTextbox(false)
@@ -306,7 +305,6 @@ fun InputBarMessageScreen(
                                     addedFiles.forEach { uri ->
                                         val filetype = determineFileType(context, uri.toString())
 
-                                        Log.d("QQRREE",filetype.toString())
                                         tempFilePath = copyFileToUserFolder(
                                             context = context,
                                             currentUri = uri,
@@ -372,7 +370,6 @@ fun InputBarMessageScreen(
                                         val normalFilePath =tempFilePath.first
                                         val thumbnailFilePath =tempFilePath.second
 
-                                        //copiedFilePathList.add(tempFilePath)
                                         // add list of paths to DB
                                         viewModel.addFile(
                                             topicId = topicId,
@@ -405,16 +402,12 @@ fun InputBarMessageScreen(
                     }
                     .size(vButtonSize)
                     .fillMaxWidth(1f)
-                    //.background(Color.Transparent)
                     .align(Alignment.Bottom),
                 imageVector = if (bEditedMode) Icons.Filled.Check else Icons.AutoMirrored.Filled.Send,
-                //imageVector = Icons.Filled.Send, // Attach file icon
                 contentDescription = "Send",
-                //tint = colors.tertiary,
                 tint = topicColour,
                 iconModifier = Modifier
                     .size(vIconSize)
-                //.aspectRatio(2.5f)
             )
             Spacer(modifier = Modifier.width(12.dp))
         }
