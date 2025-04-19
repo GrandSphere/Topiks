@@ -219,7 +219,6 @@ fun MessageScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             InputBarMessageScreen(
-                navController = navController,
                 viewModel = viewModel,
                 topicId = topicId,
                 topicColour = topicColor

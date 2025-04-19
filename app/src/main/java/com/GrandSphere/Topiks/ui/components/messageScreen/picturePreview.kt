@@ -35,32 +35,19 @@ import coil.compose.rememberAsyncImagePainter
 import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 import com.GrandSphere.Topiks.utilities.helper.TemporaryDataHolder
 import com.GrandSphere.Topiks.utilities.openFile
-
-
-fun calculateHeight(iPicturesToShow: Int, iNumberColumns: Int, cPadding: Dp, cBorder: Dp): Dp {
-    val rows = (iPicturesToShow + if (iPicturesToShow < 4) 0 else 1).toDouble() / iNumberColumns
-    val itemHeight = 100.dp // Adjust this based on your image size
-    val spacing = 3.dp
-    val padding = cPadding * 2
-    val border = cBorder * 2
-    return (itemHeight * rows.toInt() + spacing * (rows.toInt() - 1) + padding + border)
-}
+// Moved to viewmodel
 
 @Composable
 fun picturesPreview( // State 1
     modifiera: Modifier = Modifier,
     navController: NavController,
-    topicColor: Color,
     topicFontColor: Color,
     listOfImages: List<FileInfoWithIcon>,
-    listOfThumbnails: List<String> = emptyList(),
     iPictureCount: Int = 4,
-   // onShowMore: () -> Unit, // Pass a lambda to update the state
 ) {
     val imagePaths: List<String> = listOfImages.map { it.filePath }
     TemporaryDataHolder.setImagePaths(imagePaths)
 
-    val opacity2: Float = 0.1f
     var iNumberColumns: Int = 2 // Number of columns (2 per row)
     val opacity: Float = 0.2f
     var iPicturesToShow= 0

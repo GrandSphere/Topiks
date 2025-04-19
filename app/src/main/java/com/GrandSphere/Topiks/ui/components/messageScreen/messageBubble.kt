@@ -96,7 +96,6 @@ fun MessageBubble(
                         .fillMaxWidth(),
                     listOfImages = listOfPictures,
                     iPictureCount = iPictureCount,
-                    topicColor = topicColor,
                     topicFontColor = topicFontColor
                 )
             }
