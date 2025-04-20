@@ -57,7 +57,7 @@ fun AboutScreen() {
     val githubUrl = "https://github.com/GrandSphere/Topiks"
     val licenseUrl = "https://github.com/GrandSphere/Topiks/LICENSE"
     val kofiUrl = "https://ko-fi.com/grandspherestudios"
-    val liberapayUrl = ""
+    val liberapayUrl = "https://liberapay.com/GrandSphere"
 
     Column(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun AboutScreen() {
     ) {
 
         Image(
-            painter = painterResource(id = R.mipmap.topiks_icon_blockfont_foreground), // Use the foreground resource
+            painter = painterResource(id = R.mipmap.topiks_icon_blockfont_foreground),
             contentDescription = "App Icon",
             modifier = Modifier
                 .size(128.dp)
@@ -87,7 +87,6 @@ fun AboutScreen() {
         Text(
             text = "Grand Sphere Studios",
             style = MaterialTheme.typography.bodyMedium,
-//            modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
             text = "Version: ${Version.APP}",
@@ -129,7 +128,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue // Blue to represent hyperlink
+                tint = Color.Blue
             )
         }
 
@@ -147,7 +146,6 @@ fun AboutScreen() {
                 text = AnnotatedString("GitHub Repository"),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = Color.Blue,
-//                fontSize = 16.sp
                 ),
                 onClick = {
                     uriHandler.openUri(githubUrl)
@@ -158,7 +156,7 @@ fun AboutScreen() {
                 imageVector = Icons.Default.OpenInNew,
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp).align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue // Blue to represent hyperlink
+                tint = Color.Blue
             )
         }
 
@@ -187,7 +185,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue // Blue to represent hyperlink
+                tint = Color.Blue
             )
         }
 
@@ -211,7 +209,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue // Blue to represent hyperlink
+                tint = Color.Blue
             )
         }
     }
