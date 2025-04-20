@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
-import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.searchViewModel
 import com.GrandSphere.Topiks.ui.themes.cSearchTopicFont
+import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 
 @Composable
-fun allSearch( messageViewModel: MessageViewModel, searchViewModel: searchViewModel, navController: NavController,
-               highlightColor: Color = MaterialTheme.colorScheme.surfaceVariant) {
+fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searchViewModel, navController: NavController,
+              highlightColor: Color = MaterialTheme.colorScheme.surfaceVariant) {
 
     messageViewModel.collectSearchMessages()
     var inputText by remember { mutableStateOf("") }

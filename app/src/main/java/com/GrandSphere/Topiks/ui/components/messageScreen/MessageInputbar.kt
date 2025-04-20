@@ -53,7 +53,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.global.CustomButton
 import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
-import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.utilities.helper.compareFileLists
 import com.GrandSphere.Topiks.utilities.copyFileToUserFolder
 import com.GrandSphere.Topiks.utilities.determineFileType
@@ -64,7 +64,7 @@ import multipleFilePicker
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
-    viewModel: MessageViewModel,
+    viewModel: MessageViewModelContract,
     topicId: Int,
     topicColour: Color = MaterialTheme.colorScheme.onPrimary,
     onFocus: () -> Unit = {}

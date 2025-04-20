@@ -1,3 +1,4 @@
+/*
 package com.GrandSphere.Topiks.ui.viewmodels
 
 import android.content.Context
@@ -53,7 +54,7 @@ class MessageViewModel(
     private val filesDao: FilesDao
 ) : ViewModel() {
 
-    // Toast messages
+    // Toast messages/add
     private val _toastMessage = MutableStateFlow<String?>(null)
     val toastMessage: StateFlow<String?> = _toastMessage
 
@@ -268,6 +269,8 @@ class MessageViewModel(
         val messageId = addMessage(topicId, content, priority, type, categoryId).toInt()
         addFilesToMessage(messageId, topicId, _selectedFiles.value, context, widthSetting, heightSetting)
     }
+
+
 
     private suspend fun editMessageWithFiles(
         messageId: Int,
@@ -755,3 +758,5 @@ class MessageViewModel(
         }
     }
 }
+
+*/
