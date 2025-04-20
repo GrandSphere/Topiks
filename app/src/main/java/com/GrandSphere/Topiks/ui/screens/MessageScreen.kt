@@ -2,7 +2,6 @@ package com.GrandSphere.Topiks.ui.screens
 
 // Moved to viewmodel
 
-import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -16,11 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -51,20 +45,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.GrandSphere.Topiks.model.dataClasses.CustomIcon
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.components.messageScreen.InputBarMessageScreen
 import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
-import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
-import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
-import kotlinx.coroutines.launch
+import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 
 @Composable
 fun MessageScreen(
     navController: NavController,
-    viewModel: MessageViewModel,
+    viewModel: MessageViewModelContract,
     topicId: Int,
     messageId: Int = -1,
     topicColor: Color = MaterialTheme.colorScheme.tertiary
@@ -80,8 +71,9 @@ fun MessageScreen(
     val isSearchActive by viewModel.isSearchActive.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
-    val searchResultCount by viewModel.searchResultCount.collectAsState()
-    val currentSearchMessageIndex by viewModel.currentSearchMessageIndex.collectAsState()
+    val searchResultCount by viewModel.currentSearchNav.collectAsState()
+    val currentSearchMessageIndex by viewModel.searchedMessageIndex.collectAsState()
+    val currentSearchNav by viewModel.currentSearchNav.collectAsState()
     val isDeleteEnabled by viewModel.isDeleteEnabled.collectAsState()
     val selectedMessageIds by viewModel.selectedMessageIds.collectAsState()
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
@@ -93,6 +85,12 @@ fun MessageScreen(
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
+   val tempMessageId = viewModel.tempMessageId
+    LaunchedEffect (tempMessageId){
+        //Log.d("QQMESSAGE TEMPMSG ID: ", viewModel.getTempMessageId().toString())
+        //Log.d("QQMESSAGE test : ", viewModel.gettest().toString())
+
+    }
     LaunchedEffect(Unit) {
         viewModel.initialize(
             topicId = topicId,
@@ -103,11 +101,13 @@ fun MessageScreen(
         viewModel.updateTopBar(topBarViewModel)
     }
 
+
     LaunchedEffect(requestSearchFocus) {
         if (requestSearchFocus) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
-            viewModel.clearSearchFocusRequest()
+            //viewModel.clearSearchFocusRequest()
+            viewModel.clearSearchFocusFocus()
         }
     }
 
@@ -118,10 +118,15 @@ fun MessageScreen(
         }
     }
 
-    LaunchedEffect(searchResults, messages.size) {
+    LaunchedEffect(currentSearchNav){
         if (isSearchActive && searchResults.isNotEmpty() && currentSearchMessageIndex >= 0) {
             scrollState.scrollToItem(currentSearchMessageIndex)
-        } else if (messageId != -1) {
+        }
+    }
+
+    LaunchedEffect(searchResults, messages.size) {
+        if (searchResults.isEmpty()) viewModel.resetCurrentSearchNav()
+        if (messageId != -1) {
             val messageIndex = viewModel.getMessageIndexFromID(messageId)
             if (messageIndex >= 0) {
                 scrollState.scrollToItem(messageIndex)
@@ -198,9 +203,8 @@ fun MessageScreen(
                         navController = navController,
                         topicColor = topicColor,
                         topicFontColor = topicFontColor,
-                        annotatedMessageContent = message.annotatedContent,
+                        annotatedMessageContent = viewModel.createContentToDisplay(message.messageContent, message.id),
                         containsPictures = message.hasPictures,
-                        selectMultile = selectMultiple,
                         containsAttachments = message.hasAttachments,
                         listOfPictures = message.pictures,
                         listOfAttachmentsP = message.attachments,
@@ -224,7 +228,6 @@ fun MessageScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             InputBarMessageScreen(
-                navController = navController,
                 viewModel = viewModel,
                 topicId = topicId,
                 topicColour = topicColor

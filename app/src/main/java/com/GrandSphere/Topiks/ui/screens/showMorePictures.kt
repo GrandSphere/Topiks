@@ -43,14 +43,8 @@ fun ShowMorePictures( // State 2
     topicColor: Color = MaterialTheme.colorScheme.primary,
     topicFontColor: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
-   // val topicColor: Color = viewModel.topicColor.collectAsState().value
-    //val topicFontColor: Color = viewModel.topicFontColor.collectAsState().value
-   // val imagePaths: List<String> = viewModel.imagePaths.collectAsState().value
-    //val imagePaths = by remeberTemporaryDataHolder.getImagePaths()
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
     val context: Context = LocalContext.current;
-   // val imagePaths = listOf("/storage/emulated/0/Documents/topics/files/Screenshot_20210430-054520_Camera.jpg")
-    //
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(

@@ -53,7 +53,7 @@ private val LightColorScheme = darkColorScheme(
 )
 
 @Composable
-fun TopicsTheme(
+fun TopiksTheme(
     theme: Int = 0,
     content: @Composable () -> Unit
 ) {

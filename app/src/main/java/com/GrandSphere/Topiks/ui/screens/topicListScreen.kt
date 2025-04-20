@@ -3,6 +3,7 @@ package com.GrandSphere.Topiks.ui.screens
 
 import ExportDatabaseWithPicker
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -252,7 +253,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                         modifier = Modifier
                             .fillMaxSize()
                             .background(argbToColor(topic.colour))
-                            //.background(argbToColor(topic.topicColour))
                             .heightIn(max = 35.dp),
                     ) {
                         Text(
@@ -332,7 +332,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
             DropdownMenuItem( // Edit Topic Button
                 text = { Text("Edit", color = textColour) },
                 onClick = {
-
                     viewModel.setEditMode(true)
                     navController.navigate("navaddtopic/${topic.id}")
                     showMenu = false
