@@ -1,9 +1,0 @@
-./app/src/androidTest/java/com/GrandSphere/Topiks/ExampleInstrumentedTest.kt
-./app/src/main/java/com/GrandSphere/Topiks/activities/TestActivity.kt
-./app/src/main/java/com/GrandSphere/Topiks/ui/components/addTopic/addTopicName.kt
-./app/src/main/java/com/GrandSphere/Topiks/ui/screens/allSearchScreen.kt
-./app/src/main/java/com/GrandSphere/Topiks/unused/messageScreen/TestMessageBubble.kt
-./app/src/main/java/com/GrandSphere/Topiks/unused/messageScreen/testMessageScreen.kt
-./app/src/main/java/com/GrandSphere/Topiks/unused/old/newsearch.kt
-./app/src/main/java/com/GrandSphere/Topiks/unused/old/nexttest.kt
-./app/src/main/java/com/GrandSphere/Topiks/unused/old/secondattempt.kt
