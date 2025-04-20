@@ -63,12 +63,12 @@ jobs:
       - name: Read Version from version.properties
         id: get_version
         run: |
-          VERSION_MAJOR=$(grep 'version.major' app/version.properties | cut -d'=' -f2)
-          VERSION_MINOR=$(grep 'version.minor' app/version.properties | cut -d'=' -f2)
-          VERSION_PATCH=$(grep 'version.patch' app/version.properties | cut -d'=' -f2)
-          FULL_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-          echo "Full version: $FULL_VERSION"
-          echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
+           VERSION_MAJOR=$(grep 'version.major' app/version.properties | cut -d'=' -f2 | tr -d '\n\r')
+           VERSION_MINOR=$(grep 'version.minor' app/version.properties | cut -d'=' -f2 | tr -d '\n\r')
+           VERSION_PATCH=$(grep 'version.patch' app/version.properties | cut -d'=' -f2 | tr -d '\n\r')
+           FULL_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+           echo "Full version: $FULL_VERSION"
+           echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
 
       # Build the release APK
       - name: Build Release APK
