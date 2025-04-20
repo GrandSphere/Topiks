@@ -46,7 +46,7 @@ See the LICENSE file for details.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/riaan-ve/Topiks
+   git clone https://github.com/GrandSphere/Topiks
    cd Topiks
    ```
 
@@ -86,7 +86,7 @@ Follow Kotlin Coding Conventions and ensure compliance with the GPL-3.0 license.
 
 ## Known Issues
 
-Report issues at https://github.com/riaan-ve/Topiks/issues.
+Report issues at https://github.com/GrandSphere/Topiks/issues.
 
 
 ## Contact
@@ -94,4 +94,4 @@ Report issues at https://github.com/riaan-ve/Topiks/issues.
 For questions or feedback, contact:
 
 - vaneeden.a@proton.me
-- esterhuyse.e@proton.me
+- esterhuyse.a@proton.me
