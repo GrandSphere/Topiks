@@ -39,6 +39,7 @@ class TopBarViewModel : ViewModel() {
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
             "navtopicListScreen" -> "Topics"
+            "navShowMorePictures" -> "Pictures"
             else -> "Unknown"
         }
 

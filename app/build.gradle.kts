@@ -1,7 +1,3 @@
-import com.android.build.gradle.internal.scope.InternalArtifactType
-import org.gradle.internal.extensions.core.extra
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.util.Properties
 
 plugins {
@@ -76,25 +72,6 @@ tasks.matching { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
         dependsOn(generateVersionKt)
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 android {
     namespace = "com.GrandSphere.Topiks"
     compileSdk = 35
@@ -148,35 +125,14 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.documentfile)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.material)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.coil.compose)
-    implementation(libs.picasso)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.material.icons.extended)
-    implementation(libs.runtime.livedata)
-    implementation (libs.androidx.webkit)
-
     kapt(libs.androidx.room.compiler)
+    implementation(libs.runtime.livedata)
+    implementation(libs.material.icons.extended)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.annotation)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    debugImplementation(libs.androidx.ui.test.manifest)
-    debugImplementation(libs.androidx.ui.tooling)
 }
