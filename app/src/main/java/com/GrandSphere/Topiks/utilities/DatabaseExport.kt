@@ -6,8 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.GrandSphere.Topiks.db.AppDatabase
-import com.GrandSphere.Topiks.utilities.logFunc
 import com.GrandSphere.Topiks.utilities.copyStream
+import com.GrandSphere.Topiks.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

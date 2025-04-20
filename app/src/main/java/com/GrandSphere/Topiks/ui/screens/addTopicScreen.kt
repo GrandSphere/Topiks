@@ -2,7 +2,6 @@ package com.GrandSphere.Topiks.ui.screens
 
 // Moved to viewmodel
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +18,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicCategory
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicColour
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicName
-import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel

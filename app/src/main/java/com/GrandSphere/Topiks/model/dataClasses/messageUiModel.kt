@@ -1,6 +1,5 @@
 package com.GrandSphere.Topiks.model.dataClasses
 
-import androidx.compose.ui.text.AnnotatedString
 import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 
 data class MessageUiModel(
