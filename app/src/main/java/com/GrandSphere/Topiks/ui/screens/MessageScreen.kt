@@ -2,6 +2,7 @@ package com.GrandSphere.Topiks.ui.screens
 
 // Moved to viewmodel
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,12 +50,12 @@ import com.GrandSphere.Topiks.ui.components.messageScreen.InputBarMessageScreen
 import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
-import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 
 @Composable
 fun MessageScreen(
     navController: NavController,
-    viewModel: MessageViewModel,
+    viewModel: MessageViewModelContract,
     topicId: Int,
     messageId: Int = -1,
     topicColor: Color = MaterialTheme.colorScheme.tertiary
@@ -84,6 +85,12 @@ fun MessageScreen(
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
+   val tempMessageId = viewModel.tempMessageId
+    LaunchedEffect (tempMessageId){
+        //Log.d("QQMESSAGE TEMPMSG ID: ", viewModel.getTempMessageId().toString())
+        //Log.d("QQMESSAGE test : ", viewModel.gettest().toString())
+
+    }
     LaunchedEffect(Unit) {
         viewModel.initialize(
             topicId = topicId,
@@ -94,11 +101,13 @@ fun MessageScreen(
         viewModel.updateTopBar(topBarViewModel)
     }
 
+
     LaunchedEffect(requestSearchFocus) {
         if (requestSearchFocus) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
-            viewModel.clearSearchFocusRequest()
+            //viewModel.clearSearchFocusRequest()
+            viewModel.clearSearchFocusFocus()
         }
     }
 

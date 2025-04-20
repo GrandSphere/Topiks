@@ -1,5 +1,6 @@
 package com.GrandSphere.Topiks.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
 import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
-import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import kotlinx.coroutines.launch
 
 @Composable
-fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel) {
-    val tempMessageID: Int by viewModel.tempMessageId.collectAsState()
+fun MessageViewScreen(navController: NavController, viewModel: MessageViewModelContract) {
+    val tempMessageID: Int = viewModel.getTempMessageID()
     var inputText by remember { mutableStateOf( viewModel.getMessageContentById(tempMessageID))}
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,7 +57,7 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModel)
         FloatingActionButton(
             onClick = {
                 coroutineScope.launch {
-                    viewModel.editMessage(
+                    viewModel.editMessageOnly(
                         messageId = tempMessageID,
                         topicId = viewModel.topicId.value,
                         content = inputText ?: "",
