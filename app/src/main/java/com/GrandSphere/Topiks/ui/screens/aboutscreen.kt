@@ -20,10 +20,18 @@ package com.GrandSphere.Topiks.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,10 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.GrandSphere.Topiks.R
@@ -44,54 +54,165 @@ import com.GrandSphere.Topiks.Version
 @Composable
 fun AboutScreen() {
     val uriHandler = LocalUriHandler.current
-    val githubUrl = "https://github.com/riaan-ve/Topiks"
+    val githubUrl = "https://github.com/GrandSphere/Topiks"
+    val licenseUrl = "https://github.com/GrandSphere/Topiks/LICENSE"
+    val kofiUrl = "https://ko-fi.com/grandspherestudios"
+    val liberapayUrl = ""
 
-fun logVersion() {
-    println("CuIrrent version: ${Version.APP}")
-}
-   val context = LocalContext.current
-    val colors = MaterialTheme.colorScheme
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+        ,
+//            .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Image(
             painter = painterResource(id = R.mipmap.topiks_icon_blockfont_foreground), // Use the foreground resource
             contentDescription = "App Icon",
             modifier = Modifier
                 .size(128.dp)
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp),
+                .align(Alignment.CenterHorizontally),
             contentScale = ContentScale.Fit
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Topiks",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        Text(
-            text = "Version: ${Version.APP}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Grand Sphere Studios",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
+//            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Version: ${Version.APP}",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "License:",
+            style = MaterialTheme.typography.bodyMedium,
         )
         ClickableText(
-            text = AnnotatedString("GitHub Repository"),
+            text = AnnotatedString("GNU General Public License 3"),
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = Color.Blue,
-                fontSize = 16.sp
             ),
             onClick = {
-                uriHandler.openUri(githubUrl)
+                uriHandler.openUri(licenseUrl)
             }
         )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        {
+            ClickableText(
+                text = AnnotatedString("(GPLv3)"),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Blue,
+                ),
+                onClick = {
+                    uriHandler.openUri(licenseUrl)
+                }
+            )
+
+            Spacer(modifier = Modifier.width(2.dp))
+            Icon(
+                imageVector = Icons.Default.OpenInNew,
+
+                contentDescription = "Hyperlink Icon",
+                modifier = Modifier.size(10.dp)
+                    .align(alignment = Alignment.CenterVertically),
+                tint = Color.Blue // Blue to represent hyperlink
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Github:",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        {
+            ClickableText(
+                text = AnnotatedString("GitHub Repository"),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Blue,
+//                fontSize = 16.sp
+                ),
+                onClick = {
+                    uriHandler.openUri(githubUrl)
+                }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Icon(
+                imageVector = Icons.Default.OpenInNew,
+                contentDescription = "Hyperlink Icon",
+                modifier = Modifier.size(10.dp).align(alignment = Alignment.CenterVertically),
+                tint = Color.Blue // Blue to represent hyperlink
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Donate:",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        {
+            ClickableText(
+                text = AnnotatedString("Ko-fi"),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Blue,
+                ),
+                onClick = {
+                    uriHandler.openUri(kofiUrl)
+                }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Icon(
+                imageVector = Icons.Default.OpenInNew,
+                contentDescription = "Hyperlink Icon",
+                modifier = Modifier.size(10.dp)
+                    .align(alignment = Alignment.CenterVertically),
+                tint = Color.Blue // Blue to represent hyperlink
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        {
+            ClickableText(
+                text = AnnotatedString("Liberapay"),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.Blue,
+                ),
+                onClick = {
+                    uriHandler.openUri(liberapayUrl)
+                }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Icon(
+                imageVector = Icons.Default.OpenInNew,
+                contentDescription = "Hyperlink Icon",
+                modifier = Modifier.size(10.dp)
+                    .align(alignment = Alignment.CenterVertically),
+                tint = Color.Blue // Blue to represent hyperlink
+            )
+        }
     }
 }
