@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,10 +32,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
-import com.GrandSphere.Topiks.ui.viewmodels.searchViewModel
 import com.GrandSphere.Topiks.ui.themes.cSearchTopicFont
+import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
+import com.GrandSphere.Topiks.ui.viewmodels.searchViewModel
 
 @Composable
 fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searchViewModel, navController: NavController,

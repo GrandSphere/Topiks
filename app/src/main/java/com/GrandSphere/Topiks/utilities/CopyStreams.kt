@@ -6,13 +6,10 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
-import android.webkit.MimeTypeMap.getFileExtensionFromUrl
-import androidx.core.net.toUri
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.URLConnection
 
 /**
  * Utility function to copy data from InputStream to OutputStream.

@@ -1,40 +1,97 @@
-## Key
-Priority 0 = Immediate Fix needed.
-Priority 1 = Important but not breaking
-Priority 2 = Important functionality
-Priority 3 = Implement when possible
-Priority 4 = Implement when you don't want to do something else
-Priority 5 = get to it when you really want to.
+# Topiks
+
+Topiks is an Android note-taking app that organizes notes into topics and categories, using a messaging-like interface. It supports text notes, file attachments, fuzzy search, PDF export, customizable themes, and local data storage with a focus on privacy.
+
+## License
+
+Topiks is licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+Third-party library (Coil) are licensed under Apache 2.0. See the LICENSE file for details.
+
+Copyright © 2025 GrandSphere Studios
+See the LICENSE file for details.
+
+## Features
+
+- **Topic Organization**: Group notes into topics with customizable background colors.
+- **File Attachments**: Add images or other files to notes, stored locally.
+- **Fuzzy Search**: Search notes within a topic or globally with fuzzy matching.
+- **PDF Export**: Export individual or multiple notes to PDF.
+- **Customizable Themes**: Select light, dark, or system-default themes.
+- **Database Import/Export**: Back up and restore data via database files.
+- **Privacy Focused**: Requires no internet or other permissions.
+
+## Technical Information
+
+- **Language**: Kotlin
+- **UI Framework**: Jetpack Compose
+- **Architecture**: MVVM
+- **Database**: Room
+- **Minimum SDK**: Android 12 (API 31)
+- **Target SDK**: Android 14 (API 34)
+- **License**: GNU GPL-3.0
+
+## Getting Started
+
+### Prerequisites
+
+- Android Studio (e.g., Koala or later)
+- JDK 11
+- Kotlin 2.0.20
+- Gradle 8.5.2
+- Device/Emulator running Android 12 (API 31) or higher
+
+### Build
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/riaan-ve/Topiks
+   cd Topiks
+   ```
+
+2. Open the project in Android Studio and sync Gradle to download dependencies.
+
+3. Configure signing for release builds:
+
+    - Create a `keystore.jks` file with android studio.
+
+4. Build and run:
+
+    - Select a device or emulator (API 31+).
+    - Run via Android Studio
+
+### Dependencies
+
+Key dependencies (see `app/build.gradle`):
+
+- Jetpack Compose (UI)
+- Room (database)
+- Dagger Hilt v2.51 (dependency injection, partially implemented)
+- Jetpack Navigation Compose (navigation)
+- Coil and Picasso (image loading)
 
 
-## Priorty 0
-Fix:[l] Chatscreen GUI 
-Fix:[dl] Integrate search for different windows (Topics, Messages, both)
+## Contributing
 
-## Priorty 1
-Fix: Auto Scroll messages
-Feature: Add error handling. App should not crash so often. Rather give errors. Big issue is if table changed, user cannot backup.
-Fix: Image types only should be allowed for Topic Icon
-Fix: Copying files should rename previous file and keep both. Current implementation Does not allow saving 2 files with different names. Alternate solutions is making a new folder for each message topic or day
+Contributions are welcome. To contribute:
 
-## Priorty 2
-Fix: Allow editing a topic
-Feature: Open files on click
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/your-feature`).
+3. Commit changes (`git commit -m "Add your feature"`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a pull request.
 
-## Priorty 3
-Optimize: only top (n) notes must be loaded, show more button to be displayed. Search would query all messages. Same for topics.
-Feature: Image previews should be stored thumbnails.
-Feature: Camera access
-Feature: Voice recorder access
-Feature: Share to and from
-Feature: User Split Database
-Feature: Custom settings
+Follow Kotlin Coding Conventions and ensure compliance with the GPL-3.0 license.
 
-## Priorty 4
-Feature: In slot audio playback
-Feature: Allow combining messages
+## Known Issues
 
-## Priorty 5
-Feature: Widget for new topic/note
+Report issues at https://github.com/riaan-ve/Topiks/issues.
 
-### General Unsorted Notes
+
+## Contact
+
+For questions or feedback, contact:
+
+- vaneeden.a@proton.me
+- esterhuyse.e@proton.me

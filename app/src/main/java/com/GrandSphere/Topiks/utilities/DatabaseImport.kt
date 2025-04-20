@@ -6,7 +6,6 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import com.GrandSphere.Topiks.db.AppDatabase
-import com.GrandSphere.Topiks.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
