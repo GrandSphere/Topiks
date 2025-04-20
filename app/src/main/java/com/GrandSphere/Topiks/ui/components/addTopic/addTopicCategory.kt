@@ -17,8 +17,6 @@
 
 package com.GrandSphere.Topiks.ui.components.addTopic
 
-// Moved to viewmodel
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -49,14 +47,12 @@ fun TopicCategory(viewModel: TopicViewModel) {
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
     val colours = MaterialTheme.colorScheme
-    // Focus change listener to update isFocused state
     val focusModifier = Modifier
         .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
             isFocused = focusState.isFocused
         }
 
-    // Initial text state, set to "Topics"
     var inputText by remember { mutableStateOf(viewModel.tempcategory.value) }
     viewModel.setTempCategory(inputText)
     Row(

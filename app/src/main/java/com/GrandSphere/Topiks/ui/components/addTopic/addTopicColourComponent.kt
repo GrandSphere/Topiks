@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components.addTopic
-// Moved to viewmodel
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

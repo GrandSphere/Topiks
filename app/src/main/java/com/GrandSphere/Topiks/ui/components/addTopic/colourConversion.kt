@@ -48,15 +48,11 @@ fun colorToHsv(color: Color): FloatArray {
 }
 
 fun hexToHsv(hex: String): FloatArray {
-    // Remove the leading '#' if present
     val cleanedHex = hex.removePrefix("#")
-    // Convert the hex string to an integer color value
     val colorInt = cleanedHex.toIntOrNull(16) ?: throw IllegalArgumentException("Invalid hex color string")
-    // Extract RGB components
     val r = (colorInt shr 16) and 0xFF
     val g = (colorInt shr 8) and 0xFF
     val b = colorInt and 0xFF
-    // Convert RGB to HSV
     val hsv = FloatArray(3)
     android.graphics.Color.RGBToHSV(r, g, b, hsv)
     return hsv
@@ -68,7 +64,6 @@ fun colorToArgb(color: Color): Int {
     val green = (color.green * 255).toInt() and 0xFF
     val blue = (color.blue * 255).toInt() and 0xFF
 
-    // Combine into ARGB format
     return (alpha shl 24) or (red shl 16) or (green shl 8) or blue
 }
 fun argbToColor(argb: Int): Color {
@@ -79,29 +74,27 @@ fun argbToColor(argb: Int): Color {
     return Color(red, green, blue, alpha)
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f, // Default to 0..1 range
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     modifier: Modifier = Modifier,
-    thumbColor: Color = MaterialTheme.colorScheme.tertiary, // Default thumb color
-    activeTrackColor: Color = MaterialTheme.colorScheme.onSecondary, // Default active track color
-    inactiveTrackColor: Color = MaterialTheme.colorScheme.secondary, // Default inactive track color
-    thumbSize: Dp = 16.dp, // Default thumb size
-    trackHeight: Dp = 4.dp // Default track height
+    thumbColor: Color = MaterialTheme.colorScheme.tertiary,
+    activeTrackColor: Color = MaterialTheme.colorScheme.onSecondary,
+    inactiveTrackColor: Color = MaterialTheme.colorScheme.secondary,
+    thumbSize: Dp = 16.dp,
+    trackHeight: Dp = 4.dp
 ) {
     val normalizedValue = (value - valueRange.start) / (valueRange.endInclusive - valueRange.start)
 
     Slider(
         value = normalizedValue,
         onValueChange = { newNormalizedValue ->
-            // De-normalize the value before passing it back
             onValueChange(valueRange.start + newNormalizedValue * (valueRange.endInclusive - valueRange.start))
         },
-        valueRange = 0f..1f, // Always use a normalized range
+        valueRange = 0f..1f,
         modifier = modifier,
         colors = SliderDefaults.colors(
             thumbColor = thumbColor
@@ -114,7 +107,7 @@ fun CustomSlider(
             )
         },
         track = { sliderPositions ->
-            val progressFraction = sliderPositions.value // This is normalized (0f to 1f)
+            val progressFraction = sliderPositions.value
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -187,12 +180,7 @@ fun chooseColorBasedOnLuminance(inputColor: Color): Color {
     // Compute luminance using the standard formula
     var luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
     return when { // Determine the output color based on luminance
-//        luminance < 0.5 -> Color.White
         luminance < 0.5 -> Color(0xf0f0f0FF)
-//        luminance < 0.5 -> Color(0xFFFFF0FF)
-        //luminance < 0.25 -> Color.White
-        //luminance < 0.5 -> Color.Gray
-        //luminance < 0.75 -> Color.DarkGray
         else -> Color.Black
     }
 }
