@@ -59,6 +59,17 @@ jobs:
             echo "keystore.jks does not exist"
           fi
 
+      # Read version from version.properties
+      - name: Read Version from version.properties
+        id: get_version
+        run: |
+          VERSION_MAJOR=$(grep 'version.major' app/version.properties | cut -d'=' -f2)
+          VERSION_MINOR=$(grep 'version.minor' app/version.properties | cut -d'=' -f2)
+          VERSION_PATCH=$(grep 'version.patch' app/version.properties | cut -d'=' -f2)
+          FULL_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+          echo "Full version: $FULL_VERSION"
+          echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
+
       # Build the release APK
       - name: Build Release APK
         env:
@@ -88,8 +99,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Release ${{ github.run_number }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Release ${{ steps.get_version.outputs.version }}
           body: Automated release for commit ${{ github.sha }}
           files: app/build/outputs/apk/release/*.apk
         env:
