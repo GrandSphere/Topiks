@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Moved to viewmodel
 
 package com.GrandSphere.Topiks.ui.components.addTopic
 
@@ -65,14 +64,12 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
     val bEditedMode by viewModel.bEditedMode.collectAsState()
     val colours = MaterialTheme.colorScheme
 
-    // Load icon path when in edit mode
     LaunchedEffect(bEditedMode) {
         if (bEditedMode) {
             viewModel.loadIconPathForEdit(topicId)
         }
     }
 
-    // Focus change listener
     val focusModifier = Modifier
         .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
@@ -135,7 +132,6 @@ fun TopicName(navController: NavController, viewModel: TopicViewModel, topicId: 
         Spacer(modifier = Modifier.width(12.dp))
     }
 
-    // Request focus initially
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
