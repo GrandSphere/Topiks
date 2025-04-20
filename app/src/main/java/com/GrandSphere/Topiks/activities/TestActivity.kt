@@ -7,13 +7,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import com.GrandSphere.Topiks.ui.themes.TopicsTheme
+import com.GrandSphere.Topiks.ui.themes.TopiksTheme
 
 
 class TestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { TopicsTheme { TestApp(applicationContext) } }
+        setContent { TopiksTheme { TestApp(applicationContext) } }
     }
 }
 

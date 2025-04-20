@@ -1,5 +1,5 @@
 package com.GrandSphere.Topiks.ui.components
-
+// Moved to viewmodel
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -145,9 +145,7 @@ fun CustomSearchBox(
                                 modifier = Modifier.height(25.dp)
                             )
                         }
-
                 }
-
                 Spacer(modifier = Modifier.width(5.dp))
             }
         }

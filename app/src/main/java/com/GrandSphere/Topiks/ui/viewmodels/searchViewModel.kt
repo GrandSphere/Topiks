@@ -16,6 +16,7 @@ class searchViewModel : ViewModel() {
         _searchResults.value = emptyList()
     }
 
+
     fun allSearch(query: String, debounceTime: Long = 150L) {
         allSearchHandler.search(query, debounceTime) { results ->
             _searchResults.postValue(results)

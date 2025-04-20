@@ -1,5 +1,5 @@
 package com.GrandSphere.Topiks.ui.components
-
+// Moved to viewmodel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -36,7 +37,6 @@ import com.GrandSphere.Topiks.ui.viewmodels.TopBarViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun CustomTopAppBar(
     title: String,
     navController: NavController,
@@ -47,32 +47,31 @@ fun CustomTopAppBar(
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val customIcons by topBarViewModel.customIcons.collectAsState()
     TopAppBar(
-//        CenterAlignedTopAppBar(
         modifier = Modifier.height(45.dp),
-//        title = { Text(text = title) },
         title = {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()           // Take the full height of the TopAppBar
-                    .padding(vertical = 0.dp), // Remove extra vertical padding
-                contentAlignment = Alignment.CenterStart // Center only vertically and align to start (left)
+                    .fillMaxHeight()
+                    .padding(vertical = 0.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
-                Text( text = title)
+                Text(text = title)
             }
         },
         actions = {
-            Row(
+            LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Loop over custom icons and add them to the top app bar
-                customIcons.forEach { customIcon ->
+                items(customIcons.size)
+                {
+                        index ->
                     IconButton(
-                        onClick = { customIcon.onClick() }
+                        onClick = { customIcons[index].onClick() }
                     ) {
                         Icon(
-                            imageVector = customIcon.icon,
-                            contentDescription = customIcon.contentDescription,
+                            imageVector = customIcons[index].icon,
+                            contentDescription = customIcons[index].contentDescription,
                             tint = colours.onBackground
                         )
                     }
@@ -80,29 +79,27 @@ fun CustomTopAppBar(
             }
             IconButton(
                 onClick = { isMenuExpanded = true }
-
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Settings",
+                    tint = colours.onBackground
                 )
             }
             CustomTopMenu(
                 isMenuExpanded = isMenuExpanded,
                 onDismiss = { isMenuExpanded = false },
                 navController = navController,
-                topBarViewModel =  topBarViewModel,
+                topBarViewModel = topBarViewModel,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             titleContentColor = colours.onBackground,
             actionIconContentColor = colours.onBackground,
-            containerColor = colours.background // Change this to any color
+            containerColor = colours.background
         )
     )
 }
-
-
 
 @Composable
 fun CustomTopMenu(

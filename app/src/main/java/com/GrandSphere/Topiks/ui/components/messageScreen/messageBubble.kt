@@ -1,5 +1,5 @@
 package com.GrandSphere.Topiks.ui.components.messageScreen
-
+// Moved to viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.GrandSphere.Topiks.ui.themes.cDateStampFont
 import com.GrandSphere.Topiks.ui.themes.cMessageFont
 import com.GrandSphere.Topiks.ui.themes.cShowMoreFont
@@ -50,7 +52,6 @@ fun MessageBubble(
     annotatedMessageContent: AnnotatedString,
     containsPictures: Boolean = false,
     containsAttachments: Boolean = false,
-    selectMultile: Boolean = false,
     listOfPictures: List<FileInfoWithIcon> = emptyList(),
     listOfAttachmentsP: List<String> = emptyList(),
     onEditClick: () -> Unit = {},
@@ -67,10 +68,7 @@ fun MessageBubble(
     val clipboardManager = LocalClipboardManager.current
     val listOfAttachments: List<String> = listOfAttachmentsP
     val iPictureCount: Int = listOfPictures.size
-
-    var showMore by remember { mutableStateOf(false) }
     val withContentWidth: Float = 0.8f
-    val opacity: Float = 0.2f
 
     Surface(
         shape = RoundedCornerShape(9.dp),
@@ -98,7 +96,6 @@ fun MessageBubble(
                         .fillMaxWidth(),
                     listOfImages = listOfPictures,
                     iPictureCount = iPictureCount,
-                    topicColor = topicColor,
                     topicFontColor = topicFontColor
                 )
             }
@@ -106,8 +103,6 @@ fun MessageBubble(
             if (containsAttachments) {
                 showAttachments(
                     topicFontColor = topicFontColor,
-                    topicColor = topicColor,
-                    opacity = opacity,
                     newBubbleWidth = withContentWidth,
                     attachments = listOfAttachments
                 )
@@ -115,7 +110,6 @@ fun MessageBubble(
 
             var isOverFlowing by remember { mutableStateOf(false) }
             var bShowMore by remember { mutableStateOf(false) }
-            var textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
             if (annotatedMessageContent.isNotEmpty()) {
                 Text(

@@ -5,7 +5,7 @@ import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 
 data class MessageUiModel(
     val id: Int,
-    val annotatedContent: AnnotatedString,
+    val messageContent: String,
     val timestamp: String,
     val pictures: List<FileInfoWithIcon>,
     val attachments: List<String>,

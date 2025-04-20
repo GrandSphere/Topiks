@@ -1,6 +1,6 @@
+/*
 package com.GrandSphere.Topiks.ui.viewmodels
 
-import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -13,7 +13,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,6 +34,7 @@ import com.GrandSphere.Topiks.model.ToPDF
 import com.GrandSphere.Topiks.model.dataClasses.CustomIcon
 import com.GrandSphere.Topiks.model.dataClasses.MessageUiModel
 import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
+import com.GrandSphere.Topiks.utilities.copyFileToUserFolder
 import com.GrandSphere.Topiks.utilities.determineFileType
 import com.GrandSphere.Topiks.utilities.helper.highlightSearchText
 import kotlinx.coroutines.flow.Flow
@@ -48,73 +48,291 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
-
 class MessageViewModel(
     private val messageDao: MessageDao,
     private val topicDao: TopicDao,
     private val filesDao: FilesDao
 ) : ViewModel() {
 
+    // Toast messages/add
     private val _toastMessage = MutableStateFlow<String?>(null)
     val toastMessage: StateFlow<String?> = _toastMessage
 
-    private val _ToFocusTextbox = MutableStateFlow<Boolean>(false)
-    val ToFocusTextbox: StateFlow<Boolean> = _ToFocusTextbox
-    fun setToFocusTextbox(newValue: Boolean) { _ToFocusTextbox.value = newValue }
+    // Focus control for textbox
+    private val _toFocusTextbox = MutableStateFlow(false)
+    val toFocusTextbox: StateFlow<Boolean> = _toFocusTextbox
+    fun setToFocusTextbox(newValue: Boolean) { _toFocusTextbox.value = newValue }
 
-    private val _ToUnFocusTextbox = MutableStateFlow<Boolean>(false)
-    val ToUnFocusTextbox: StateFlow<Boolean> = _ToUnFocusTextbox
-    fun setToUnFocusTextbox(newValue: Boolean) { _ToUnFocusTextbox.value = newValue }
+    private val _toUnFocusTextbox = MutableStateFlow(false)
+    val toUnFocusTextbox: StateFlow<Boolean> = _toUnFocusTextbox
+    fun setToUnFocusTextbox(newValue: Boolean) { _toUnFocusTextbox.value = newValue }
 
-    private val _bEditMode = MutableStateFlow<Boolean>(false)
+    // Edit mode
+    private val _bEditMode = MutableStateFlow(false)
     val bEditMode: StateFlow<Boolean> = _bEditMode
     fun setEditMode(newValue: Boolean) { _bEditMode.value = newValue }
 
-    private val _tempMessageId = MutableStateFlow<Int>(0)
+    // Temporary message ID
+    private val _tempMessageId = MutableStateFlow(-1)
     val tempMessageId: StateFlow<Int> = _tempMessageId
     fun setTempMessageId(newValue: Int) { _tempMessageId.value = newValue }
 
-    private val _topicColor = MutableStateFlow<Color>(Color.Cyan)
+    // Topic colors
+    private val _topicColor = MutableStateFlow(Color.Cyan)
     val topicColor: StateFlow<Color> = _topicColor
     fun setTopicColor(topicColor: Color) { _topicColor.value = topicColor }
 
-    private val _topicFontColor = MutableStateFlow<Color>(Color.Cyan)
+    private val _topicFontColor = MutableStateFlow(Color.Cyan)
     val topicFontColor: StateFlow<Color> = _topicFontColor
     fun setTopicFontColor() {
         _topicFontColor.value = chooseColorBasedOnLuminance(topicColor.value)
         Log.d("QQWWEE", "CHANGED NOW: ${_topicFontColor.value}")
     }
 
+    // Messages
     private val _messages = MutableStateFlow<List<MessageUiModel>>(emptyList())
     val messages: StateFlow<List<MessageUiModel>> = _messages
     private val _messageIndexMap = mutableStateOf<Map<Int, Int>>(emptyMap())
     val messagesMap: MutableState<Map<Int, Int>> = _messageIndexMap
 
-    private val _showDeleteDialog = MutableStateFlow<Boolean>(false)
+    // Delete dialog
+    private val _showDeleteDialog = MutableStateFlow(false)
     val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog
     fun setShowDeleteDialog(show: Boolean) { _showDeleteDialog.value = show }
 
-    private val _isSearchActive = MutableStateFlow<Boolean>(false)
+    // Search states
+    private val _isSearchActive = MutableStateFlow(false)
     val isSearchActive: StateFlow<Boolean> = _isSearchActive
-    private val _requestSearchFocus = MutableStateFlow<Boolean>(false)
+    private val _requestSearchFocus = MutableStateFlow(false)
     val requestSearchFocus: StateFlow<Boolean> = _requestSearchFocus
     fun clearSearchFocusRequest() { _requestSearchFocus.value = false }
 
-    private val _searchResultCount = MutableStateFlow<Int>(0)
-    val searchResultCount: StateFlow<Int> = _searchResultCount
+    private val _currentSearchNav = MutableStateFlow(0)
+    val currentSearchNav: StateFlow<Int> = _currentSearchNav
+    fun resetCurrentSearchNav(){_currentSearchNav.value = 0}
 
-    private val _currentSearchMessageIndex = MutableStateFlow<Int>(-1)
-    val currentSearchMessageIndex: StateFlow<Int> = _currentSearchMessageIndex
+    private val _searchedMessageIndex = MutableStateFlow(-1)
+    val searchedMessageIndex: StateFlow<Int> = _searchedMessageIndex
+    fun resetSearchedMessageIndex(){_searchedMessageIndex.value = -1}
 
-    private val _isDeleteEnabled = MutableStateFlow<Boolean>(false)
+    // Delete enabled
+    private val _isDeleteEnabled = MutableStateFlow(false)
     val isDeleteEnabled: StateFlow<Boolean> = _isDeleteEnabled
     fun toggleDeleteEnabled() { _isDeleteEnabled.value = !_isDeleteEnabled.value }
 
+    // Selected messages
     private val _selectedMessageIds = MutableStateFlow<Set<Int>>(emptySet())
     val selectedMessageIds: StateFlow<Set<Int>> = _selectedMessageIds
 
-    private val _searchQuery = MutableStateFlow<String>("")
+    // Search query
+    private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
+
+    // Input bar states
+    private val _inputText = MutableStateFlow("")
+    val inputText: StateFlow<String> = _inputText
+
+    private val _selectedFiles = MutableStateFlow<List<Uri>>(emptyList())
+    val selectedFiles: StateFlow<List<Uri>> = _selectedFiles
+
+    private val _selectedFilesBeforeEdit = MutableStateFlow<List<Uri>>(emptyList())
+    val selectedFilesBeforeEdit: StateFlow<List<Uri>> = _selectedFilesBeforeEdit
+
+    // Search results
+    private val _searchResults = MutableLiveData<List<Message>>()
+    val searchResults: LiveData<List<Message>> get() = _searchResults
+
+    private val messageSearchHandler = MessageSearchHandler(emptyList())
+    private val _messageSubset = MutableStateFlow<List<Message>>(emptyList())
+    private val _messageMap = MutableStateFlow<Map<Int, Message>>(emptyMap())
+
+    private val _multipleMessageSelected = MutableStateFlow(false)
+    val multipleMessageSelected: StateFlow<Boolean> get() = _multipleMessageSelected
+    fun setMultipleMessageSelected(newState: Boolean) {
+        _multipleMessageSelected.value = newState
+    }
+
+    private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
+    fun getMessageContentById(messageId: Int): String? {
+        return _messagesContentById.value[messageId]
+    }
+
+    private val _topicID = MutableStateFlow(0)
+    val topicId: StateFlow<Int> = _topicID
+    fun setTopicId(newValue: Int) { _topicID.value = newValue }
+
+    private val filePathMap = mutableMapOf<String, Int>()
+
+    private val _searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
+    val searchMessages: StateFlow<List<MessageSearchContent>> = _searchMessages
+
+    // Update input text
+    fun updateInputText(newText: String) {
+        _inputText.value = newText
+    }
+
+    // Add files to selected files
+    fun addSelectedFiles(uris: List<Uri>?) {
+        _selectedFiles.value = (_selectedFiles.value + (uris ?: emptyList())).distinct()
+    }
+
+    // Remove a file at index
+    fun removeSelectedFile(index: Int) {
+        _selectedFiles.value = _selectedFiles.value.toMutableList().apply { removeAt(index) }
+    }
+
+    // Initialize input bar state
+    fun initializeInputBar() {
+        _inputText.value = ""
+        _selectedFiles.value = emptyList()
+        _selectedFilesBeforeEdit.value = emptyList()
+        _bEditMode.value = false
+        _tempMessageId.value = -1
+        _toFocusTextbox.value = true
+    }
+
+    // Enter edit mode for a message
+    suspend fun enterEditMode(messageId: Int) {
+        _tempMessageId.value = messageId
+        _bEditMode.value = true
+        _inputText.value = getMessageContentById(messageId) ?: ""
+        _selectedFiles.value = getFilesByMessageId(messageId)
+        _selectedFilesBeforeEdit.value = _selectedFiles.value
+    }
+
+    // Handle send button click (add or edit message)
+    fun sendMessage(
+        topicId: Int,
+        context: Context,
+        widthSetting: Int = 500,
+        heightSetting: Int = 500
+    ) {
+        viewModelScope.launch {
+            val content = _inputText.value.trim()
+            val files = _selectedFiles.value
+            if (content.isEmpty() && files.isEmpty()) {
+                _toastMessage.value = "Message or file required"
+                return@launch
+            }
+
+            if (_bEditMode.value && _tempMessageId.value > -1) {
+                // Edit existing message
+                editMessageWithFiles(
+                    messageId = _tempMessageId.value,
+                    topicId = topicId,
+                    content = content,
+                    priority = 0,
+                    categoryId = 1,
+                    type = 1,
+                    context = context,
+                    widthSetting = widthSetting,
+                    heightSetting = heightSetting
+                )
+            } else {
+                // Add new message
+                addMessageWithFiles(
+                    topicId = topicId,
+                    content = content,
+                    priority = 0,
+                    type = 0,
+                    categoryId = 1,
+                    context = context,
+                    widthSetting = widthSetting,
+                    heightSetting = heightSetting
+                )
+            }
+
+            // Reset state
+            resetInputBar()
+        }
+    }
+
+    // Clear input bar (long press on send button)
+    fun clearInputBar() {
+        _inputText.value = ""
+        _selectedFiles.value = emptyList()
+        _selectedFilesBeforeEdit.value = emptyList()
+        _bEditMode.value = false
+        _tempMessageId.value = -1
+    }
+
+    private suspend fun addMessageWithFiles(
+        topicId: Int,
+        content: String,
+        priority: Int,
+        type: Int,
+        categoryId: Int,
+        context: Context,
+        widthSetting: Int,
+        heightSetting: Int
+    ) {
+        val messageId = addMessage(topicId, content, priority, type, categoryId).toInt()
+        addFilesToMessage(messageId, topicId, _selectedFiles.value, context, widthSetting, heightSetting)
+    }
+
+
+
+    private suspend fun editMessageWithFiles(
+        messageId: Int,
+        topicId: Int,
+        content: String,
+        priority: Int,
+        categoryId: Int,
+        type: Int,
+        context: Context,
+        widthSetting: Int,
+        heightSetting: Int
+    ) {
+        editMessage(messageId, topicId, content, priority, categoryId, type)
+        val (deletedFiles, addedFiles) = compareFileLists(_selectedFilesBeforeEdit.value, _selectedFiles.value)
+        if (deletedFiles.isNotEmpty()) {
+            val fileIdsToDelete = deletedFiles.mapNotNull { uri ->
+                val filePath = uri.path
+                filePath?.let { getIdForFilePath(it) }
+            }
+            deleteFiles(fileIdsToDelete)
+        }
+        if (addedFiles.isNotEmpty()) {
+            addFilesToMessage(messageId, topicId, addedFiles, context, widthSetting, heightSetting)
+        }
+    }
+
+    private suspend fun addFilesToMessage(
+        messageId: Int,
+        topicId: Int,
+        files: List<Uri>,
+        context: Context,
+        widthSetting: Int,
+        heightSetting: Int
+    ) {
+        files.forEach { uri ->
+            val fileType = determineFileType(context, uri.toString())
+            val (normalFilePath, thumbnailFilePath) = copyFileToUserFolder(
+                context = context,
+                currentUri = uri,
+                directoryName = fileType,
+                height = heightSetting,
+                width = widthSetting
+            )
+            addFile(
+                topicId = topicId,
+                messageId = messageId,
+                fileType = fileType,
+                filePath = normalFilePath,
+                description = "",
+                iconPath = thumbnailFilePath,
+                categoryId = 1
+            )
+        }
+    }
+
+    private fun compareFileLists(before: List<Uri>?, after: List<Uri>?): Pair<List<Uri>, List<Uri>> {
+        val beforeList = before ?: emptyList()
+        val afterList = after ?: emptyList()
+        val deleted = beforeList - afterList.toSet()
+        val added = afterList - beforeList.toSet()
+        return deleted to added
+    }
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
@@ -129,7 +347,7 @@ class MessageViewModel(
         _isSearchActive.value = !_isSearchActive.value
         if (_isSearchActive.value) {
             _requestSearchFocus.value = true
-            _currentSearchMessageIndex.value = -1
+            _searchedMessageIndex.value = -1
         } else {
             _requestSearchFocus.value = false
             _searchQuery.value = ""
@@ -159,15 +377,15 @@ class MessageViewModel(
     fun navigateNextSearchResult() {
         val results = _searchResults.value ?: emptyList()
         if (results.isEmpty()) {
-            _searchResultCount.value = 0
-            _currentSearchMessageIndex.value = -1
+            resetCurrentSearchNav()
+            resetSearchedMessageIndex()
             return
         }
-        val currentCount = _searchResultCount.value
+        val currentCount = _currentSearchNav.value
         if (currentCount < results.size) {
-            _searchResultCount.value = currentCount + 1
+            _currentSearchNav.value = currentCount + 1
         } else {
-            _searchResultCount.value = 1
+            _currentSearchNav.value = 1
         }
         updateCurrentSearchMessage()
     }
@@ -175,29 +393,29 @@ class MessageViewModel(
     fun navigatePreviousSearchResult() {
         val results = _searchResults.value ?: emptyList()
         if (results.isEmpty()) {
-            _searchResultCount.value = 0
-            _currentSearchMessageIndex.value = -1
+            resetCurrentSearchNav()
+            resetSearchedMessageIndex()
             return
         }
-        val currentCount = _searchResultCount.value
+        val currentCount = _currentSearchNav.value
         if (currentCount > 1) {
-            _searchResultCount.value = currentCount - 1
+            _currentSearchNav.value = currentCount - 1
         } else {
-            _searchResultCount.value = results.size
+            _currentSearchNav.value = results.size
         }
         updateCurrentSearchMessage()
     }
 
     private fun updateCurrentSearchMessage() {
         val results = _searchResults.value ?: emptyList()
-        val count = _searchResultCount.value
+        val count = _currentSearchNav.value
         if (count in 1..results.size) {
             val messageId = results[count - 1].id
             val messageIndex = getMessageIndexFromID(messageId)
-            _currentSearchMessageIndex.value = if (messageIndex >= 0) messageIndex else -1
+            _searchedMessageIndex.value = if (messageIndex >= 0) messageIndex else -1
         } else {
-            _currentSearchMessageIndex.value = -1
-            _searchResultCount.value = 0
+            resetSearchedMessageIndex()
+            resetCurrentSearchNav()
         }
     }
 
@@ -249,7 +467,6 @@ class MessageViewModel(
                             _showDeleteDialog.value = true
                         },
                         contentDescription = "Delete Selected Messages"
-
                     )
                 )
             )
@@ -277,18 +494,12 @@ class MessageViewModel(
                     }.first()
                     val pictures = files.filter { determineFileType(context, it.filePath) == "Image" }
                     val attachments = files.filter { determineFileType(context, it.filePath) != "Image" }.map { it.filePath }
+                    Log.d("QQWWEE search active", "${_isSearchActive.value}")
+                    Log.d("QQWWEE current index", "${_searchedMessageIndex.value}")
+                    Log.d("QQWWEE nomral index", "${index}")
                     MessageUiModel(
                         id = msg.id,
-                        annotatedContent = if (_isSearchActive.value && index == _currentSearchMessageIndex.value) {
-                            highlightSearchText(
-                                messageContent = msg.content,
-                                searchQuery = _searchQuery.value,
-                                topicColor = _topicColor.value,
-                                topicFontColor = _topicFontColor.value
-                            )
-                        } else {
-                            AnnotatedString(msg.content)
-                        },
+                        messageContent = msg.content,
                         timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(msg.createTime),
                         pictures = pictures,
                         attachments = attachments,
@@ -304,8 +515,9 @@ class MessageViewModel(
                             setTempMessageId(msg.id)
                         },
                         onEdit = {
-                            setTempMessageId(msg.id)
-                            setEditMode(true)
+                            viewModelScope.launch {
+                                enterEditMode(msg.id)
+                            }
                         },
                         onExport = { viewModelScope.launch { exportMessagesToPDF(setOf(msg.id)) } }
                     )
@@ -321,11 +533,26 @@ class MessageViewModel(
             }.launchIn(viewModelScope)
     }
 
+    fun createContentToDisplay(messageContent: String, id: Int): AnnotatedString {
+        val messageIndex = getMessageIndexFromID(id)
+
+        val annotatedContent = if (_isSearchActive.value && messageIndex == _searchedMessageIndex.value) {
+            highlightSearchText(
+                messageContent = messageContent,
+                searchQuery = _searchQuery.value,
+                topicColor = _topicColor.value,
+                topicFontColor = _topicFontColor.value
+            )
+        } else {
+            AnnotatedString(messageContent)
+        }
+        return annotatedContent
+    }
     fun resetState() {
-        _ToFocusTextbox.value = false
-        _ToUnFocusTextbox.value = false
+        _toFocusTextbox.value = false
+        _toUnFocusTextbox.value = false
         _bEditMode.value = false
-        _tempMessageId.value = 0
+        _tempMessageId.value = -1
         _topicColor.value = Color.Cyan
         _topicFontColor.value = Color.Cyan
         _messages.value = emptyList()
@@ -343,18 +570,14 @@ class MessageViewModel(
         _isSearchActive.value = false
         _requestSearchFocus.value = false
         _searchQuery.value = ""
-        _searchResultCount.value = 0
-        _currentSearchMessageIndex.value = -1
+        _currentSearchNav.value = 0
+        _searchedMessageIndex.value = -1
         _isDeleteEnabled.value = false
         _selectedMessageIds.value = emptySet()
+        _inputText.value = ""
+        _selectedFiles.value = emptyList()
+        _selectedFilesBeforeEdit.value = emptyList()
     }
-
-    private val _searchResults = MutableLiveData<List<Message>>()
-    val searchResults: LiveData<List<Message>> get() = _searchResults
-
-    private val messageSearchHandler: MessageSearchHandler = MessageSearchHandler(emptyList())
-    private val _messageSubset = MutableStateFlow<List<Message>>(emptyList())
-    private val _messageMap = MutableStateFlow<Map<Int, Message>>(emptyMap())
 
     fun createMessageSubset(messageList: List<MessageTbl>) {
         _messageSubset.value = messageList.map { Message(it.id, it.content) }
@@ -373,26 +596,17 @@ class MessageViewModel(
         return _messageIndexMap.value[messageId] ?: -1
     }
 
-    private val _multipleMessageSelected = MutableStateFlow<Boolean>(false)
-    val multipleMessageSelected: StateFlow<Boolean> get() = _multipleMessageSelected
-    fun setMultipleMessageSelected(newState: Boolean) {
-        _multipleMessageSelected.value = newState
-    }
-
-    private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
-    fun getMessageContentById(messageId: Int): String? {
-        return _messagesContentById.value[messageId]
-    }
-
     fun clearSearchResult() {
         _searchResults.value = emptyList()
     }
 
-    private val _topicID = MutableStateFlow<Int>(0)
-    val topicId: StateFlow<Int> = _topicID
-    fun setTopicId(newValue: Int) { _topicID.value = newValue }
-
-    private val filePathMap = mutableMapOf<String, Int>()
+    fun collectSearchMessages() {
+        messageDao.getSearchMessages()
+            .distinctUntilChanged()
+            .onEach { messageList ->
+                _searchMessages.value = messageList
+            }.launchIn(viewModelScope)
+    }
 
     suspend fun deleteMessage(messageId: Int) {
         messageDao.deleteMessagesWithID(messageId)
@@ -401,17 +615,6 @@ class MessageViewModel(
     suspend fun deleteMultipleMessages(messageIds: Set<Int>) {
         messageDao.deleteMessagesWithID(messageIds)
         Log.d("MessageViewModel", "Deleted message IDs: $messageIds")
-    }
-
-    private val _searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
-    val searchMessages: StateFlow<List<MessageSearchContent>> = _searchMessages
-
-    fun collectSearchMessages() {
-        messageDao.getSearchMessages()
-            .distinctUntilChanged()
-            .onEach { messageList ->
-                _searchMessages.value = messageList
-            }.launchIn(viewModelScope)
     }
 
     suspend fun addMessage(
@@ -535,6 +738,15 @@ class MessageViewModel(
         updateToast(if (success) "Export successful" else "Export failed")
     }
 
+    private fun resetInputBar() {
+        _inputText.value = ""
+        _selectedFiles.value = emptyList()
+        _selectedFilesBeforeEdit.value = emptyList()
+        _bEditMode.value = false
+        _tempMessageId.value = -1
+    }
+
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -546,3 +758,5 @@ class MessageViewModel(
         }
     }
 }
+
+*/
