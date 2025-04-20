@@ -7,26 +7,30 @@ plugins {
     id("kotlin-kapt")
 }
 
-
-
 // Path to the version file
 val versionPropsFile = project.file("version.properties")
 
-// Task to bump the patch number
+// Load the version properties and initialize variables outside the tasks block
+val props = Properties().apply {
+    versionPropsFile.inputStream().use { load(it) }
+}
+
+val major: Int = props.getProperty("version.major").toInt()
+val minor: Int = props.getProperty("version.minor").toInt()
+val patch: Int = props.getProperty("version.patch").toInt()
+val versionName: String = "$major.$minor.$patch"
+val versionCode: Int = (major * 10000 + minor * 100 + patch)  // Example versionCode calculation
+
+// Task to increment the patch number
 val patchVersionUpdate by tasks.registering {
     // Declare inputs/outputs for incremental builds
     inputs.file(versionPropsFile)
     outputs.file(versionPropsFile)
 
     doLast {
-        // 1. Load current properties
-        val props = Properties().apply {
-            versionPropsFile.inputStream().use { load(it) }
-        }
-        // 2. Increment patch
+        // Increment the patch version
         val newPatch = props.getProperty("version.patch").toInt() + 1
         props.setProperty("version.patch", newPatch.toString())
-        // 3. Save back to file
         versionPropsFile.outputStream().use { props.store(it, null) }
     }
 }
@@ -36,20 +40,10 @@ val generateVersionKt by tasks.registering {
 
     // Inputs: the updated version file
     inputs.file(versionPropsFile)
-    // Outputs: the generated source file
     val outputDir = layout.buildDirectory.dir("generated/source/version")
     outputs.dir(outputDir)
 
     doLast {
-        val props = Properties().apply {
-            versionPropsFile.inputStream().use { load(it) }
-        }
-        val major = props.getProperty("version.major")
-        val minor = props.getProperty("version.minor")
-        val patch = props.getProperty("version.patch")
-        val versionName = "$major.$minor.$patch"
-
-        // Write Version.kt
         val dir = outputDir.get().asFile.apply { mkdirs() }
         file("$dir/Version.kt").writeText("""
             package com.GrandSphere.Topiks
@@ -66,7 +60,6 @@ kotlin {
     sourceSets["main"].kotlin.srcDir(generateVersionKt.map { it.outputs.files.singleFile })
 }
 
-
 tasks.matching { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
     .configureEach {
         dependsOn(generateVersionKt)
@@ -76,13 +69,12 @@ android {
     namespace = "com.GrandSphere.Topiks"
     compileSdk = 35
 
-
     defaultConfig {
         applicationId = "com.GrandSphere.Topiks"
         minSdk = 31
         targetSdk = 34
-        versionCode = 3
-        versionName = "ABC"
+        versionCode = versionCode
+        versionName = versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -109,6 +101,7 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -134,5 +127,4 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.annotation)
-
 }
