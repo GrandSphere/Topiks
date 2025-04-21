@@ -146,15 +146,9 @@ fun colorToHex(color: Color): String {
 
 // Convert Hex to Color (RGB), with input sanitization
 fun hexToColor(hex: String): Color {
-    // Step 1: Remove '#' if it exists
-    // Step 2: Filter out any characters that are not valid hex digits
+    // Remove '#' if it exists, filter out any invalid hex digits and take first 6 characters
     val cleanHex = hex.removePrefix("#").filter { it.isDigit() || it in 'A'..'F' || it in 'a'..'f' }
-
-    // Step 3: Take the first 6 characters
-    // Step 4: If the string is shorter than 6 characters, pad with '0's
     val sanitizedHex = cleanHex.take(6).padEnd(6, '0')
-
-    // Step 5: Convert the hex string to RGB values
     val red = Integer.valueOf(sanitizedHex.substring(0, 2), 16) / 255f
     val green = Integer.valueOf(sanitizedHex.substring(2, 4), 16) / 255f
     val blue = Integer.valueOf(sanitizedHex.substring(4, 6), 16) / 255f
@@ -166,14 +160,12 @@ fun hexToColor(hex: String): Color {
 fun getClipboardText(): String? {
     val context = LocalContext.current
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
     // Get the primary clip (the first item on the clipboard)
     val clip = clipboardManager.primaryClip
     return clip?.getItemAt(0)?.text?.toString()  // Retrieve the text and convert it to String
 }
 
 fun chooseColorBasedOnLuminance(inputColor: Color): Color {
-    // Extract normalized RGB values
     val red = inputColor.red
     val green = inputColor.green
     val blue = inputColor.blue

@@ -86,10 +86,9 @@ fun picturesPreview( // State 1
         modifiera
     ) {
         LazyVerticalGrid(
-            horizontalArrangement = Arrangement.spacedBy(4.dp), // Horizontal space between items
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            columns = GridCells.Fixed(iNumberColumns), // 2 images per row
-         //   modifier = Modifier.height(calculateHeight(iPicturesToShow, iNumberColumns, cPadding, cBorder))
+            columns = GridCells.Fixed(iNumberColumns),
             modifier = Modifier.heightIn(max=800.dp) // TODO this is a temp fix
         ) {
 
@@ -107,7 +106,6 @@ fun picturesPreview( // State 1
                         }
 
                         .border(cBorder, topicFontColor.copy(1f), RoundedCornerShape(cPadding))
-//                        .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                         .padding(cBorder)
                         .clip(RoundedCornerShape(cCrop))
                         .background(topicFontColor.copy(opacity))
@@ -123,15 +121,12 @@ fun picturesPreview( // State 1
                         modifier = Modifier
 
                             .border(cBorder, topicFontColor.copy(1f), RoundedCornerShape(cPadding))
-//                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding))
                             .padding(cBorder)
                             .clip(RoundedCornerShape(cCrop))
 
-//                            .clip(RoundedCornerShape(cPadding))
-                            .background(topicFontColor.copy(opacity)) // 50% transparent blue
-//                            .border(cBorder, topicFontColor.copy(opacity2), RoundedCornerShape(cPadding)) // Apply a rounded border
+                            .background(topicFontColor.copy(opacity))
                             .aspectRatio(1f)
-                            .clickable(onClick = {navController.navigate("navShowMorePictures")}) // Trigger the show more action
+                            .clickable(onClick = {navController.navigate("navShowMorePictures")})
                     ) {
                         Text(
                             text = "Show More...",
@@ -145,7 +140,7 @@ fun picturesPreview( // State 1
                 }
             }
         }
-        Spacer(modifier = Modifier.height(5.dp)) //space between message and date
+        Spacer(modifier = Modifier.height(5.dp))
 
     }
 }

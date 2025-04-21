@@ -63,7 +63,7 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
     }
 
     Column(
-        verticalArrangement = Arrangement.Top, // Align items to the top
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         colourPopulator(

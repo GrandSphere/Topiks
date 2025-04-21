@@ -110,7 +110,6 @@ fun CustomSearchBox(
                                 detectTapGestures(
                                     onLongPress = { oncHold() },
                                     onTap = {
-                                        //focusRequester.requestFocus()
                                         onClick()
                                     }
                                 )
@@ -126,7 +125,7 @@ fun CustomSearchBox(
                             innerTextField()
                         }
                     },
-                    cursorBrush = SolidColor(colours.tertiary) // Cursor color
+                    cursorBrush = SolidColor(colours.tertiary)
                 )
 
                 Spacer(modifier = Modifier.width(5.dp))

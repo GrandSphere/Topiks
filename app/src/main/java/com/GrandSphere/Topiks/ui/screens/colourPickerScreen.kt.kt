@@ -75,12 +75,12 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
 
     var initialColor: Color = Color.Cyan
     val hsv = colorToHsv(noteColour)
-    val initialHue = hsv[0] // Hue
-    val initialSaturation = hsv[1] // Saturation
-    val initialValue = hsv[2] // Value
+    val initialHue = hsv[0]
+    val initialSaturation = hsv[1]
+    val initialValue = hsv[2]
     val initialAlpha = initialColor.alpha
     // State to track the HSV components
-    var hue by remember { mutableStateOf(initialHue) } // Use the preset value if provided
+    var hue by remember { mutableStateOf(initialHue) }
     var saturation by remember { mutableStateOf(initialSaturation) }
     var value by remember { mutableStateOf(initialValue) }
     var alpha by remember { mutableStateOf(initialAlpha) }
@@ -126,8 +126,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
         }
     }
 
-    // Main UI
-    Column(
+    Column( // Main UI
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
@@ -152,7 +151,6 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
             Spacer(modifier = Modifier.width(vSpacer))
-            // Color preview Box
             Box( // Colour previewer
                 modifier = Modifier
                     .semantics { contentDescription= "Recent Colours" }
