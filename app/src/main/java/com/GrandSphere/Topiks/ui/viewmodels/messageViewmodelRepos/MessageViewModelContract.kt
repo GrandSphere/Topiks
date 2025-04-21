@@ -98,7 +98,7 @@ interface MessageViewModelContract {
     /** Show or hide the delete dialog */
     fun setShowDeleteDialog(show: Boolean)
     /** Clear the search focus request */
-    fun clearSearchFocusFocus()
+    fun clearSearchFocus()
     /** Reset the search navigation index */
     fun resetCurrentSearchNav()
     /** Reset the highlighted search message index */

@@ -34,8 +34,8 @@ import com.GrandSphere.Topiks.db.entities.CategoriesTbl
         )
     ],
     indices = [
-        Index(value = ["lastEditTime"]),  // Index on lastEditTime for faster sorting
-        Index(value = ["createTime"]),    // Index on createTime for faster sorting
+        Index(value = ["lastEditTime"]),
+        Index(value = ["createTime"]),
     ]
 )
 data class TopicTbl(

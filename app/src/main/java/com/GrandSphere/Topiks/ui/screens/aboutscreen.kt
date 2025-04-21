@@ -39,14 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalMapOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.GrandSphere.Topiks.R
 import com.GrandSphere.Topiks.Version
 
@@ -55,7 +51,7 @@ import com.GrandSphere.Topiks.Version
 fun AboutScreen() {
     val uriHandler = LocalUriHandler.current
     val githubUrl = "https://github.com/GrandSphere/Topiks"
-    val licenseUrl = "https://github.com/GrandSphere/Topiks/LICENSE"
+    val licenseUrl = "https://github.com/GrandSphere/Topiks/blob/master/LICENSE"
     val kofiUrl = "https://ko-fi.com/grandspherestudios"
     val liberapayUrl = "https://liberapay.com/GrandSphere"
 

@@ -71,9 +71,6 @@ fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searc
 
     val focusModifier = Modifier // Used to set edit cursor
         .focusRequester(focusRequester)
-       // .onFocusChanged { focusState ->
-       //     isFocused = focusState.isFocused
-       // }
 
     var toFocusSearchBox by  remember { mutableStateOf(false) }
     LaunchedEffect(toFocusSearchBox) {
@@ -110,10 +107,8 @@ fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searc
                 searchViewModel.allSearch(newText)
             },
             sPlaceHolder = "Search...",
-            isFocused = true,
             focusModifier = focusModifier.focusRequester(focusRequester),
             onClick = { toFocusSearchBox = true},
-            boxModifier = Modifier,
         )
 
         LazyColumn(
@@ -129,22 +124,16 @@ fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searc
                         val topicId = searchResults[item].topicId
                         val name = searchResults[item].topicName
                         val messageId = searchResults[item].id
-                        //messageViewModel.setSelectedSearchMessageID(messageId)
-                        Log.d("QQWWEE", "THIS IS THE MESAGEID: ${messageId}")
-                        Log.d("QQWWEE", "Navigating to navnotescreen with TopicId: $topicId and name: $name and messageID:$messageId")
                         navController.navigate("navnotescreen/${topicId}/${name}/${messageId}")
                     }
                 ) {
                     Text( // Topic
-                        text=searchResults[item].topicName.toString(),
+                        text=searchResults[item].topicName,
                         style = cSearchTopicFont,
 
                         )
                     Text( // result string
                         text = buildAnnotatedString {
-                           // withStyle(style = SpanStyle(color = colours.onSecondary)) {
-                           //     append(searchResults[item].content.take(8) + " ")
-                           // }
 
                             val normalizedQuery = inputText.split(" ").map { it.trim() }.filter { it.isNotEmpty() }
                             val contentWords = searchResults[item].content.split(" ")

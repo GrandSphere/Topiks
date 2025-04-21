@@ -83,10 +83,9 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModelC
                 }
                 navController.popBackStack()
             },
-            shape = CircleShape, // Change the shape to rounded corners
+            shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
                 .padding(16.dp)
         ) {
             Icon(

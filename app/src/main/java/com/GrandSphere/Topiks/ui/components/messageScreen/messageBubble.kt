@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components.messageScreen
-// Moved to viewmodel
 
 import android.util.Log
 import androidx.compose.foundation.background

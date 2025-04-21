@@ -17,7 +17,6 @@
 
 package com.GrandSphere.Topiks.ui.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -53,7 +52,6 @@ import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 @Composable
 fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
-    // Get screen width and calculate block size (5 blocks per row
     val myNonsenseColours = viewModel.recentColoursList.collectAsState().value
 
     val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
@@ -63,18 +61,11 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
             )
         )
     }
-    //val scrollState = rememberScrollState()
 
     Column(
-   //     modifier = Modifier
-   //         .fillMaxHeight()
-   //         .verticalScroll(scrollState),
-        //.fillMaxSize() // Make sure the Box fills the screen,,
         verticalArrangement = Arrangement.Top, // Align items to the top
         horizontalAlignment = Alignment.CenterHorizontally,
-        //.verti
     ) {
-        // LazyVerticalGrid for displaying colors
         colourPopulator(
             colours = getColorsWithMaterialColors(MaterialTheme.colorScheme),
             boxMod = Modifier,
@@ -84,10 +75,10 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
 
         Divider(
             modifier = Modifier
-                .fillMaxWidth() // Make sure it spans the full width
+                .fillMaxWidth()
                 .padding(12.dp)
                 .size(3.dp)
-                .background(MaterialTheme.colorScheme.onBackground) // Set the line color
+                .background(MaterialTheme.colorScheme.onBackground)
         )
         colourPopulator(
             colours = myNonsenseColours,
@@ -95,13 +86,12 @@ fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
             viewModel = viewModel,
             navController = navController,
         )
-        // IconButton placed at the bottom center of the screen
+
         IconButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier
-                //.align(Alignment.BottomCenter) // Align the button at the bottom center
-                .padding(16.dp) // Add padding around the button
-                .size(30.dp) // Adjust the size of the button as needed
+                .padding(16.dp)
+                .size(30.dp)
         ) {
             Icon(
                 modifier = Modifier.size(30.dp),
@@ -123,12 +113,10 @@ fun colourPopulator(
 )
 {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val blockSize = screenWidth / iItemWidth // 5 blocks in a row
+    val blockSize = screenWidth / iItemWidth // Modify to account for large screens
     LazyVerticalGrid(
-        columns = GridCells.Fixed(iItemWidth), // 5 blocks per row
-        boxMod.fillMaxWidth() // Ensure the grid takes up the full width
-        //.weight(1f) // Take up the remaining space
-        //.weight(1f)
+        columns = GridCells.Fixed(iItemWidth),
+        boxMod.fillMaxWidth()
     ) {
         items(colours.size) { index ->
             Surface(
@@ -145,10 +133,9 @@ fun colourPopulator(
 
                         )
                     },
-                color = colours[index], // Set the background color
-                shape = CircleShape // Circle shape for the surface
+                color = colours[index],
+                shape = CircleShape
             ) {
-                // No content inside, just the color and clickable area
             }
         }
     }
@@ -157,7 +144,6 @@ fun colourPopulator(
 
 // Helper function to prepend all colors from MaterialTheme's ColorScheme
 fun getColorsWithMaterialColors(colorScheme: ColorScheme): List<Color> {
-    // Prepend all colors from the provided ColorScheme
     return listOf <Color>(
         colorScheme.primary,
         colorScheme.onPrimary,

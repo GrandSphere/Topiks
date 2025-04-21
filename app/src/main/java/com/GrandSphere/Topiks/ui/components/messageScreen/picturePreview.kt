@@ -52,7 +52,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.GrandSphere.Topiks.db.entities.FileInfoWithIcon
 import com.GrandSphere.Topiks.utilities.helper.TemporaryDataHolder
 import com.GrandSphere.Topiks.utilities.openFile
-// Moved to viewmodel
 
 @Composable
 fun picturesPreview( // State 1

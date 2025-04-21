@@ -140,8 +140,6 @@ fun TopiksApp(context: Context) {
         topBar = {
             CustomTopAppBar(
                 title = topBarTitle,
-                navController = navController,
-                // topicViewModel = topicViewModel // Commented out as per original code
             )
         },
         content = { paddingValues ->
