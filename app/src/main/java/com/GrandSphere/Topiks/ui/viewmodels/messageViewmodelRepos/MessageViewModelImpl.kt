@@ -124,7 +124,7 @@ class MessageViewModelImpl(
         showDeleteDialog.value = show
     }
 
-    override fun clearSearchFocusFocus() {
+    override fun clearSearchFocus() {
         requestSearchFocus.value = false
     }
 

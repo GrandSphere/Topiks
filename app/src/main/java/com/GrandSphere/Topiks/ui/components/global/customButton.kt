@@ -39,7 +39,6 @@ fun CustomButton(
 ){
     Box(
         modifier = buttonModifier
-//            .background(Color.Red)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onLongPress = {

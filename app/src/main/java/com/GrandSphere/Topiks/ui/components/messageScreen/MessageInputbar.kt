@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components.messageScreen
-// Moved to viewmodel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -62,8 +61,6 @@ import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.utilities.getFileNameFromUri
 import multipleFilePicker
-
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun InputBarMessageScreen(
     viewModel: MessageViewModelContract,
@@ -104,8 +101,7 @@ fun InputBarMessageScreen(
     }
 
     Column {
-        // File attachments
-        Column(
+        Column( // File Attachments
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = 200.dp)
@@ -146,8 +142,7 @@ fun InputBarMessageScreen(
             }
         }
 
-        // Input bar
-        Row(
+        Row( // Input Bar
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 3.dp, start = 5.dp, end = 0.dp, bottom = 3.dp)

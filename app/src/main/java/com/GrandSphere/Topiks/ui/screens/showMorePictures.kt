@@ -54,10 +54,8 @@ import com.GrandSphere.Topiks.utilities.helper.TemporaryDataHolder
 import com.GrandSphere.Topiks.utilities.openFile
 
 @Composable
-fun ShowMorePictures( // State 2
+fun ShowMorePictures(
     navController: NavController,
-    //viewModel: MessageViewModel,
-    topicColor: Color = MaterialTheme.colorScheme.primary,
     topicFontColor: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
@@ -71,7 +69,6 @@ fun ShowMorePictures( // State 2
     }
     Box(
         modifier = Modifier
-            //.background(Color.White) // Only useful for png's
             .fillMaxSize()
     ) {
         LazyColumn(
@@ -91,7 +88,7 @@ fun ShowMorePictures( // State 2
                         )
                     },
                     modifier = Modifier
-                        .fillMaxWidth() // Take full width
+                        .fillMaxWidth()
                         .padding(bottom = 2.dp)
                         .pointerInput(Unit) {
                             detectTapGestures(
@@ -102,7 +99,6 @@ fun ShowMorePictures( // State 2
                                 }
                             )
                         } ,
-                    //.border(2.dp, Color.Black) // Add border around the image
                 )
             }
         }
@@ -110,15 +106,13 @@ fun ShowMorePictures( // State 2
         FloatingActionButton(
             onClick = {navController.popBackStack() },
             modifier = Modifier
-                .align(Alignment.BottomEnd) // Align to the bottom end
-                .padding(16.dp), // Add padding to the edge
-            //containerColor = topicColor,
-            //shape = RoundedCornerShape(16.dp), // Change the shape to rounded corners
-            shape = CircleShape, // Change the shape to rounded corners
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            shape = CircleShape,
 
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowBack, // Example icon
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Add",
                 tint = topicFontColor
             )

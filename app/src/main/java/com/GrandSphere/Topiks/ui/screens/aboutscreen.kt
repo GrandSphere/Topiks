@@ -18,6 +18,7 @@
 package com.GrandSphere.Topiks.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,37 +40,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalMapOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.GrandSphere.Topiks.R
 import com.GrandSphere.Topiks.Version
 
 
 @Composable
 fun AboutScreen() {
-    val uriHandler = LocalUriHandler.current
+    val uriHandler= LocalUriHandler.current
     val githubUrl = "https://github.com/GrandSphere/Topiks"
-    val licenseUrl = "https://github.com/GrandSphere/Topiks/LICENSE"
+    val licenseUrl = "https://github.com/GrandSphere/Topiks/blob/master/LICENSE"
     val kofiUrl = "https://ko-fi.com/grandspherestudios"
     val liberapayUrl = "https://liberapay.com/GrandSphere"
-
+    val isDarkTheme : Boolean = isSystemInDarkTheme()
+    val hyperlinkColour: Color = if (isDarkTheme) Color(0xFF00B2FF) else Color(0xFF0051FF)
     Column(
         modifier = Modifier
-            .fillMaxSize()
-        ,
-//            .padding(16.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Image(
-            painter = painterResource(id = R.mipmap.topiks_icon_blockfont_foreground),
+            painter = painterResource(id =
+                if (isDarkTheme) R.mipmap.topiks_icon_fulltransparent_foreground
+                else R.mipmap.topiks_icon_fulltransparent_light_foreground),
             contentDescription = "App Icon",
             modifier = Modifier
                 .size(128.dp)
@@ -100,7 +98,7 @@ fun AboutScreen() {
         ClickableText(
             text = AnnotatedString("GNU General Public License 3"),
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.Blue,
+                color = hyperlinkColour,
             ),
             onClick = {
                 uriHandler.openUri(licenseUrl)
@@ -114,7 +112,7 @@ fun AboutScreen() {
             ClickableText(
                 text = AnnotatedString("(GPLv3)"),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Blue,
+                    color = hyperlinkColour,
                 ),
                 onClick = {
                     uriHandler.openUri(licenseUrl)
@@ -128,7 +126,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue
+                tint =  hyperlinkColour
             )
         }
 
@@ -145,7 +143,7 @@ fun AboutScreen() {
             ClickableText(
                 text = AnnotatedString("GitHub Repository"),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Blue,
+                    color = hyperlinkColour,
                 ),
                 onClick = {
                     uriHandler.openUri(githubUrl)
@@ -156,7 +154,7 @@ fun AboutScreen() {
                 imageVector = Icons.Default.OpenInNew,
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp).align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue
+                tint = hyperlinkColour
             )
         }
 
@@ -173,7 +171,7 @@ fun AboutScreen() {
             ClickableText(
                 text = AnnotatedString("Ko-fi"),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Blue,
+                    color = hyperlinkColour,
                 ),
                 onClick = {
                     uriHandler.openUri(kofiUrl)
@@ -185,7 +183,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue
+                tint = hyperlinkColour
             )
         }
 
@@ -197,7 +195,7 @@ fun AboutScreen() {
             ClickableText(
                 text = AnnotatedString("Liberapay"),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Blue,
+                    color = hyperlinkColour,
                 ),
                 onClick = {
                     uriHandler.openUri(liberapayUrl)
@@ -209,7 +207,7 @@ fun AboutScreen() {
                 contentDescription = "Hyperlink Icon",
                 modifier = Modifier.size(10.dp)
                     .align(alignment = Alignment.CenterVertically),
-                tint = Color.Blue
+                tint = hyperlinkColour
             )
         }
     }

@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components
-// Moved to viewmodel
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -59,9 +58,7 @@ fun CustomSearchBox(
     oncHold: () -> Unit = {},
     sPlaceHolder: String = "Enter message",
     bShowSearchNav: Boolean = false,
-    isFocused: Boolean = false,
     focusModifier: Modifier = Modifier,
-    boxModifier: Modifier = Modifier, // Modifier for the Box
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
     onClick: () -> Unit = {},
@@ -71,12 +68,10 @@ fun CustomSearchBox(
     val colours = MaterialTheme.colorScheme
     var isSearchFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-//            .pointerInput(Unit) { detectTapGestures( onLongPress = { oncHold() } ) }
             .padding(top = 5.dp, bottom = 10.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -115,7 +110,6 @@ fun CustomSearchBox(
                                 detectTapGestures(
                                     onLongPress = { oncHold() },
                                     onTap = {
-                                        //focusRequester.requestFocus()
                                         onClick()
                                     }
                                 )
@@ -131,7 +125,7 @@ fun CustomSearchBox(
                             innerTextField()
                         }
                     },
-                    cursorBrush = SolidColor(colours.tertiary) // Cursor color
+                    cursorBrush = SolidColor(colours.tertiary)
                 )
 
                 Spacer(modifier = Modifier.width(5.dp))

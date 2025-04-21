@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components
-// Moved to viewmodel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,7 +54,6 @@ import com.GrandSphere.Topiks.ui.viewmodels.TopBarViewModel
 @Composable
 fun CustomTopAppBar(
     title: String,
-    navController: NavController,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val colours = MaterialTheme.colorScheme
@@ -105,7 +103,6 @@ fun CustomTopAppBar(
             CustomTopMenu(
                 isMenuExpanded = isMenuExpanded,
                 onDismiss = { isMenuExpanded = false },
-                navController = navController,
                 topBarViewModel = topBarViewModel,
             )
         },
@@ -121,7 +118,6 @@ fun CustomTopAppBar(
 fun CustomTopMenu(
     isMenuExpanded: Boolean,
     onDismiss: () -> Unit,
-    navController: NavController,
     topBarViewModel: TopBarViewModel
 ) {
     val colours = MaterialTheme.colorScheme
@@ -135,8 +131,8 @@ fun CustomTopMenu(
             .background(colours.surface)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(), // Ensure it always takes up full height
-            contentAlignment = Alignment.TopStart // Keep items at the top
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopStart
         ) {
             Column {
                 menuItems.forEach { item ->

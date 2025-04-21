@@ -71,25 +71,19 @@ import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 @Composable
 fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel = viewModel()) {
-    //val noteColour by viewModel.colour.collectAsState()
     val noteColour by viewModel.tempColour.collectAsState()
 
-    //initialColor: Color = MaterialTheme.colorScheme.tertiary
     var initialColor: Color = Color.Cyan
-    //val colors = MaterialTheme.colorScheme
-    //val hsv = colorToHsv(noteColour)
     val hsv = colorToHsv(noteColour)
-    val initialHue = hsv[0] // Hue
-    val initialSaturation = hsv[1] // Saturation
-    val initialValue = hsv[2] // Value
+    val initialHue = hsv[0]
+    val initialSaturation = hsv[1]
+    val initialValue = hsv[2]
     val initialAlpha = initialColor.alpha
     // State to track the HSV components
-    var hue by remember { mutableStateOf(initialHue) } // Use the preset value if provided
+    var hue by remember { mutableStateOf(initialHue) }
     var saturation by remember { mutableStateOf(initialSaturation) }
     var value by remember { mutableStateOf(initialValue) }
     var alpha by remember { mutableStateOf(initialAlpha) }
-    // Calculate the selected color based on HSV
-    //var bPastedColour : Boolean = false
     val context = LocalContext.current
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     var tempClip by remember { mutableStateOf("") }
@@ -106,7 +100,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
         if (bShouldPaste) {
             val clip = clipboardManager.primaryClip
 
-            tempClip = clip?.getItemAt(0)?.text?.toString() ?: ""  // Fallback to empty string if clipboard is empty
+            tempClip = clip?.getItemAt(0)?.text?.toString() ?: ""
             var tempHsv= colorToHsv(hexToColor(tempClip))
 
             hue = tempHsv[0]
@@ -119,31 +113,27 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     }
 
     val newNoteColour = Color.hsv(hue, saturation, value, alpha)
-    val vSpacer: Dp = 25.dp // You can change this value as needed
-    val vIconSize: Dp = 25.dp // You can change this value as needed
+    val vSpacer: Dp = 25.dp
+    val vIconSize: Dp = 25.dp
 
 
     var bShouldCopy by remember { mutableStateOf(false) }
     LaunchedEffect(bShouldCopy) {
         if (bShouldCopy) {
-            val clip = android.content.ClipData.newPlainText("Copied Text", colorToHex(newNoteColour).toString())
+            val clip = android.content.ClipData.newPlainText("Copied Text", colorToHex(newNoteColour))
             clipboardManager.setPrimaryClip(clip)
             bShouldCopy=false
         }
     }
 
-    // Main UI
-    Column(
+    Column( // Main UI
         horizontalAlignment = Alignment.CenterHorizontally,
-        //verticalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = 20.dp)
-        //.padding(16.dp)
     ) {
 
         Row(
-            //verticalAlignment = Alignment.CenterVertically,
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center,
         ) {
@@ -161,14 +151,12 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                 )
             }
             Spacer(modifier = Modifier.width(vSpacer))
-            // Color preview Box
             Box( // Colour previewer
                 modifier = Modifier
                     .semantics { contentDescription= "Recent Colours" }
                     .pointerInput(Unit) { detectTapGestures(
                         onTap = {
                             navController.navigate("navrecentcolours")
-                            //Log.d("zzzSelectedColour", "Selected color: ${combinedColors[index]}")
                         },
 
                         onLongPress = {
@@ -176,9 +164,8 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
                         }
                     ) }
                     .size(100.dp)
-                    .clip(CircleShape) // Make the box circular
+                    .clip(CircleShape)
                     .background(newNoteColour),
-                //.align(Alignment.Center)
             ){
 
                 Text(
@@ -210,9 +197,9 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
         Text(text = "Hue: ${hue.toInt()}")
         CustomSlider(// Hue Slider
 
-            value = hue / 360f, // Normalize hue to 0..1
-            onValueChange = { hue = it * 360f }, // De-normalize back to 0..360
-            valueRange = 0f..1f, // Use normalized range
+            value = hue / 360f,
+            onValueChange = { hue = it * 360f },
+            valueRange = 0f..1f,
         )
 
         Text(text = "Saturation: ${(saturation * 100).toInt()}%")
@@ -238,7 +225,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
             valueRange = 0f..1f,
         )
 
-        Text(text = colorToHex(newNoteColour).toString(),
+        Text(text = colorToHex(newNoteColour),
             modifier = Modifier
                 .padding(top = 5.dp, bottom = 20.dp)
                 .pointerInput(Unit) { detectTapGestures(

@@ -67,9 +67,8 @@ Key dependencies (see `app/build.gradle`):
 
 - Jetpack Compose (UI)
 - Room (database)
-- Dagger Hilt v2.51 (dependency injection, partially implemented)
 - Jetpack Navigation Compose (navigation)
-- Coil and Picasso (image loading)
+- Coil (image loading)
 
 
 ## Contributing

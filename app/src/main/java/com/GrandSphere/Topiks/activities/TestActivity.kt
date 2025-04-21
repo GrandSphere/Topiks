@@ -34,7 +34,6 @@ class TestActivity : ComponentActivity() {
     }
 }
 
-//val Purple200 = Color(0xFFBB86FC) FIX THIS
 @Composable
 fun TestApp(context: Context) {
 }

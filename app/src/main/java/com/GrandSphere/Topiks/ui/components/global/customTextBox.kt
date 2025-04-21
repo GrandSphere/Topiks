@@ -53,16 +53,13 @@ fun CustomTextBox(
             value = inputText,
             onValueChange = onValueChange,
             modifier = focusModifier
-                .fillMaxWidth() // Ensure textfield takes full width
-                .padding(start = 3.dp, top = 3.dp) // Ensure padding inside text field
-//                .heightIn(max = vMaxLinesSize),
+                .fillMaxWidth()
+                .padding(start = 3.dp, top = 3.dp)
             ,
             textStyle = TextStyle(
                 fontSize = vFontSize,
-                color = colors.onBackground, // Set font color for the input text
+                color = colors.onBackground,
                 lineHeight = 20.sp,
-
-//        softWrap = true // Allow the text to wrap within the available space
 
             ),
 //                            maxLines = 6,
@@ -77,20 +74,11 @@ fun CustomTextBox(
                             fontSize = vFontSize,
                             lineHeight = 20.sp
                         ),
-                        modifier = Modifier.padding(start = 0.dp, top = 0.dp) // Adjust placeholder padding
+                        modifier = Modifier.padding(start = 0.dp, top = 0.dp)
                     )
                 }
-                innerTextField() // This is where the input text goes
+                innerTextField()
             }
         )
     }
 }
-
-
-//fun hsvToHex(hsv: FloatArray): String {
-//    // Convert HSV to RGB
-//    val rgb = android.graphics.Color.HSVToColor(hsv)
-//
-//    // Format RGB as a hex string
-//    return String.format("#%06X", (0xFFFFFF and rgb))
-//}

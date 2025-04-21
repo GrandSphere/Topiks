@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.screens
-// Moved to viewmodel
 
 import ExportDatabaseWithPicker
 import android.net.Uri
@@ -138,7 +137,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                     navController.navigate("navAboutScreen")
                 },
                 MenuItem("Close") {
-                    // Handle cleanup here
                     System.exit(0)
                 }
             )
@@ -150,8 +148,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             .fillMaxSize()
 
     ) {
-        // Topic List Column
-        Column(
+        Column( // Topic List
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 1.dp)
@@ -170,7 +167,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 oncHold = { navController.navigate("newSearch") },
                 onClick = { toFocusSearchBox = true},
             )
-            // Topic List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
 
@@ -193,8 +189,8 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
                 }
             }
         }
-        // Button to add new topic, aligned at the bottom end of the screen
-        FloatingActionButton(
+
+        FloatingActionButton( // Add new Topic
             onClick = {
                 viewModel.setTempCategory("Topics")
                 viewModel.setTempTopicName("")
@@ -204,7 +200,6 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
             shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                //.align(Alignment.BottomEnd) // Align it to bottom end of the Box
                 .padding(16.dp)
         ) {
             Icon(
@@ -225,12 +220,10 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            //.background(Color.Transparent)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { // Go to specific Topic
                         viewModel.cTopicColor=argbToColor(topic.colour)
-                        //viewModel.setTopicColor(topic)
                         navController.navigate("navnotescreen/${topic.id}/${topic.name}/-1")
                     },
                     onLongPress = { showMenu = true }
@@ -248,17 +241,15 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = "Circular Image",
-                    contentScale = ContentScale.Crop, // Crop the image to fill the circle
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(35.dp)
                         .fillMaxSize()
                         .clip(CircleShape)
                 )
             } else {
-                // Show an icon as a fallback if no image URL is provided
-                Surface(
-                    //color = colors.primaryContainer,
-                    shape = CircleShape, // Ensures the Surface is circular
+                Surface( // Show an icon as a fallback if no image URL is provided
+                    shape = CircleShape,
                     modifier = Modifier
                         .size(35.dp)
                         .heightIn(max = 35.dp),
@@ -294,28 +285,24 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
         if (showDialog) {
 
             val styledText = buildAnnotatedString {
-                append("Delete topic: ") // Default text
-//                withStyle(style = SpanStyle(color = argbToColor(topic.colour))) {
+                append("Delete topic: ")
                 withStyle(style = SpanStyle(color = colors.error)) {
-                    append(topic.name) // Styled part (topic.name)
+                    append(topic.name)
                 }
-                append(" ?") // End of the text
+                append(" ?")
             }
             AlertDialog(
 
                 modifier = Modifier
                     .background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
-//                containerColor = colors.background,
                 containerColor = colors.surface,
-//                 containerColor = Color.Red.copy(alpha = 0.7f),
                 tonalElevation = 0.dp,
-                onDismissRequest = { showDialog = false }, // Close on outside tap
+                onDismissRequest = { showDialog = false },
                 title = { Text("Confirm Delete", color = colors.onSurface) },
-//                text = { Text("Delete topic: '${topic.name}'?", color = colors.onBackground) },
                 text = {
                     Text(
                         styledText,
-                        color = colors.onSurface // Default text color
+                        color = colors.onSurface
                     )
                 },
                 confirmButton = {
@@ -336,9 +323,6 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
         }
         DropdownMenu(
             modifier = Modifier
-//                .fillMaxHeight()
-//                .fillMaxWidth(0.4f)
-//                .background(colors.background)
                 .background(colors.surface)
             ,
             expanded = showMenu,

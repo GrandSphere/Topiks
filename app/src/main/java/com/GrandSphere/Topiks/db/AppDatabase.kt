@@ -57,7 +57,6 @@ abstract class AppDatabase : RoomDatabase() {
                 instance
             }
         }
-                // Add this function to clear the existing instance
         fun clearInstance() {
             INSTANCE = null
         }

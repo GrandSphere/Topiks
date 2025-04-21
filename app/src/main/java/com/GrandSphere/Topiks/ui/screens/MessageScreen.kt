@@ -17,8 +17,6 @@
 
 package com.GrandSphere.Topiks.ui.screens
 
-// Moved to viewmodel
-
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -82,7 +80,6 @@ fun MessageScreen(
     val focusRequester = remember { FocusRequester() }
     val selectMultiple by viewModel.multipleMessageSelected.collectAsState()
     val colors = MaterialTheme.colorScheme
-    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
     val isSearchActive by viewModel.isSearchActive.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -103,9 +100,7 @@ fun MessageScreen(
 
    val tempMessageId = viewModel.tempMessageId
     LaunchedEffect (tempMessageId){
-        //Log.d("QQMESSAGE TEMPMSG ID: ", viewModel.getTempMessageId().toString())
-        //Log.d("QQMESSAGE test : ", viewModel.gettest().toString())
-
+        // Empty, but needed
     }
     LaunchedEffect(Unit) {
         viewModel.initialize(
@@ -122,8 +117,7 @@ fun MessageScreen(
         if (requestSearchFocus) {
             focusManager.clearFocus()
             focusRequester.requestFocus()
-            //viewModel.clearSearchFocusRequest()
-            viewModel.clearSearchFocusFocus()
+            viewModel.clearSearchFocus()
         }
     }
 

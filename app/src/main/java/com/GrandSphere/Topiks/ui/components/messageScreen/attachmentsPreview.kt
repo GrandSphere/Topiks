@@ -16,7 +16,6 @@
  */
 
 package com.GrandSphere.Topiks.ui.components.messageScreen
-// Moved to viewmodel
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -55,16 +54,13 @@ fun showAttachments(
     val context: Context = LocalContext.current
     var bshowMore: Boolean by remember { mutableStateOf(false) }
     var iNumToTake: Int by remember { mutableStateOf(4) }
-//   var bShowMore by remember { mutableStateOf(false)}
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-//            .background(topicFontColor.copy(opacity))
-//            .border(2.dp, topicFontColor, RoundedCornerShape(8.dp))
             .fillMaxWidth(newBubbleWidth)
             .padding(vertical =5.dp)
             .padding(5.dp)
-    ) { //Divider(color = Color.Red, thickness = 2.dp)
+    ) {
 
         val iDefaultNumToTake: Int=4
         Text( // get text name from path
@@ -75,7 +71,6 @@ fun showAttachments(
             style = TextStyle(
                 fontSize = 16.sp,
                 color = topicFontColor,
-//                textDecoration = TextDecoration.Underline
             )
         )
 
@@ -104,7 +99,6 @@ fun showAttachments(
 
         if (attachments.size> iDefaultNumToTake) {
             if (bshowMore) {
-                //iNumToTake = attachments.size
                 iNumToTake = attachments.size
             } else {
                 iNumToTake = iDefaultNumToTake
@@ -116,7 +110,6 @@ fun showAttachments(
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = topicFontColor.copy(alpha = 0.5f),
-//                    textDecoration = TextDecoration.Underline
                 )
             )
         }

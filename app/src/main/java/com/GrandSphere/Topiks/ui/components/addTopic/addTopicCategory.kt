@@ -61,7 +61,7 @@ fun TopicCategory(viewModel: TopicViewModel) {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
-    ) { // Label "Category"
+    ) {
         Text(
             text = "Category:",
             modifier = Modifier

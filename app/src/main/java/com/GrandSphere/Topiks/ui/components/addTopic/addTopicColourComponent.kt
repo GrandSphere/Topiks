@@ -88,11 +88,11 @@ fun TopicColour(navController: NavController, viewModel: TopicViewModel ) {
                  contentAlignment = Alignment.Center
         ) {
 
-            if (imageUrl.length > 4) { // Load and display the image
+            if (imageUrl.length > 4) {
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = "Circular Image",
-                    contentScale = ContentScale.Crop, // Crop the image to fill the circle
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
