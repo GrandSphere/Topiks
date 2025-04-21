@@ -52,6 +52,7 @@ import com.GrandSphere.Topiks.Version
 fun AboutScreen() {
     val uriHandler= LocalUriHandler.current
     val githubUrl = "https://github.com/GrandSphere/Topiks"
+    val latestRelease = "https://github.com/GrandSphere/Topiks/releases/latest"
     val licenseUrl = "https://github.com/GrandSphere/Topiks/blob/master/LICENSE"
     val kofiUrl = "https://ko-fi.com/grandspherestudios"
     val liberapayUrl = "https://liberapay.com/GrandSphere"
@@ -90,7 +91,9 @@ fun AboutScreen() {
             text = "Version: ${Version.APP}",
             style = MaterialTheme.typography.bodyMedium,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = "License:",
             style = MaterialTheme.typography.bodyMedium,
@@ -104,6 +107,7 @@ fun AboutScreen() {
                 uriHandler.openUri(licenseUrl)
             }
         )
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
@@ -120,6 +124,7 @@ fun AboutScreen() {
             )
 
             Spacer(modifier = Modifier.width(2.dp))
+
             Icon(
                 imageVector = Icons.Default.OpenInNew,
 
@@ -131,11 +136,12 @@ fun AboutScreen() {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = "Github:",
             style = MaterialTheme.typography.bodyMedium,
         )
-        Row(
+        Row( // Repo
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -158,6 +164,30 @@ fun AboutScreen() {
             )
         }
 
+        Row( // Latest Release
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        {
+            ClickableText(
+                text = AnnotatedString("Latest Release"),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = hyperlinkColour,
+                ),
+                onClick = {
+                    uriHandler.openUri(latestRelease)
+                }
+            )
+
+            Spacer(modifier = Modifier.width(2.dp))
+
+            Icon(
+                imageVector = Icons.Default.OpenInNew,
+                contentDescription = "Hyperlink Icon",
+                modifier = Modifier.size(10.dp).align(alignment = Alignment.CenterVertically),
+                tint = hyperlinkColour
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Donate:",
