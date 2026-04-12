@@ -63,7 +63,7 @@ import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.components.messageScreen.InputBarMessageScreen
 import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
 import com.GrandSphere.Topiks.ui.focusClear
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 
 @Composable
@@ -93,7 +93,7 @@ fun MessageScreen(
     val requestSearchFocus by viewModel.requestSearchFocus.collectAsState()
     val topicFontColor by viewModel.topicFontColor.collectAsState()
     val context = LocalContext.current
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
     var inputBarHeightPx by remember { mutableStateOf(0) }
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }

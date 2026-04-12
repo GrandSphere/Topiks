@@ -65,7 +65,7 @@ import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.components.addTopic.colorToHex
 import com.GrandSphere.Topiks.ui.components.addTopic.colorToHsv
 import com.GrandSphere.Topiks.ui.components.addTopic.hexToColor
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 
@@ -88,7 +88,7 @@ fun ColourPickerScreen(navController: NavController, viewModel: TopicViewModel =
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     var tempClip by remember { mutableStateOf("") }
     var bShouldPaste by remember { mutableStateOf(false) }
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
     val colours = MaterialTheme.colorScheme
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(

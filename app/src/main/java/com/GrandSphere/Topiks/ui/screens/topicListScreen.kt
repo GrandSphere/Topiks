@@ -85,7 +85,7 @@ import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
 import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.focusClear
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 import com.GrandSphere.Topiks.utilities.helper.restartMainActivity
@@ -97,7 +97,7 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
     val topics by viewModel.topics.collectAsState()
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
     var inputText by remember{ mutableStateOf("")}
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
