@@ -43,7 +43,12 @@ class TopBarViewModel : ViewModel() {
     private val _customIcons = MutableStateFlow<List<CustomIcon>>(emptyList())
     val customIcons: StateFlow<List<CustomIcon>> get() = _customIcons
 
-    fun updateTopBarTitle(currentRoute: String?, currentBackStackEntry: NavBackStackEntry?) {
+    fun updateTopBarTitle(
+        currentRoute: String?,
+        currentBackStackEntry: NavBackStackEntry?,
+        shareToTopic: Boolean = false,
+        shareToTopicTitle: String = "",
+    ) {
         val title = when (currentRoute) {
             "navnotescreen/{topicId}/{topicName}/{messageId}" -> {
                 val topicName = currentBackStackEntry?.arguments?.getString("topicName") ?: "Chat"
@@ -51,16 +56,17 @@ class TopBarViewModel : ViewModel() {
             }
             "navaddtopic/{topicId}" -> {
                 val topicId = currentBackStackEntry?.arguments?.getInt("topicId")
-                var title = ""
-                title = if (topicId == -1) { "Add Topic" } else { "Edit Topic" }
-                title
+                if (topicId == -1) "Add Topic" else "Edit Topic"
             }
             "navAboutScreen" -> "About"
             "newSearch" -> "Search All"
             "navViewMessage" -> "View Message"
             "navcolourpicker" -> "Pick a colour"
             "navrecentcolours" -> "Recent colours"
-            "navtopicListScreen" -> "Topics"
+            "navtopicListScreen" -> {
+                if (shareToTopic && shareToTopicTitle.isNotEmpty()) shareToTopicTitle
+                else "Topics"
+            }
             "navShowMorePictures" -> "Pictures"
             else -> "Unknown"
         }

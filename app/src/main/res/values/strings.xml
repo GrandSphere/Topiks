@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Topiks</string>
+    <string name="share_to_topic">Share to topic</string>
 </resources>

@@ -96,10 +96,6 @@ fun InputBarMessageScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.initializeInputBar()
-    }
-
     Column {
         Column( // File Attachments
             modifier = Modifier

@@ -65,6 +65,7 @@ import com.GrandSphere.Topiks.ui.components.messageScreen.MessageBubble
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
+import com.GrandSphere.Topiks.ui.viewmodels.ShareIntentViewModel
 
 @Composable
 fun MessageScreen(
@@ -72,7 +73,8 @@ fun MessageScreen(
     viewModel: MessageViewModelContract,
     topicId: Int,
     messageId: Int = -1,
-    topicColor: Color = MaterialTheme.colorScheme.tertiary
+    topicColor: Color = MaterialTheme.colorScheme.tertiary,
+    shareViewModel: ShareIntentViewModel,
 ) {
     val messages by viewModel.messages.collectAsState()
     val toastMessage by viewModel.toastMessage.collectAsState()
@@ -98,17 +100,32 @@ fun MessageScreen(
     val density = LocalDensity.current
     val inputBarHeight = with(density) { inputBarHeightPx.toDp() }
 
-   val tempMessageId = viewModel.tempMessageId
-    LaunchedEffect (tempMessageId){
+    val tempMessageId = viewModel.tempMessageId
+    LaunchedEffect(tempMessageId) {
         // Empty, but needed
     }
-    LaunchedEffect(Unit) {
+    val shareSessionId by shareViewModel.shareSessionId.collectAsState()
+    LaunchedEffect(topicId, messageId, shareSessionId) {
         viewModel.initialize(
             topicId = topicId,
             topicColor = topicColor,
             messageId = messageId,
             context = context
         )
+        val draft = shareViewModel.consumePendingDraft()
+        if (draft != null && (draft.text.isNotBlank() || draft.uris.isNotEmpty())) {
+            if (draft.text.isNotBlank()) {
+                viewModel.updateInputText(draft.text)
+            }
+            if (draft.uris.isNotEmpty()) {
+                viewModel.addSelectedFiles(draft.uris)
+            }
+            viewModel.setEditMode(false)
+            viewModel.setTempMessageID(-1)
+            viewModel.setToFocusTextbox(true)
+        } else {
+            viewModel.initializeInputBar()
+        }
         viewModel.updateTopBar(topBarViewModel)
     }
 

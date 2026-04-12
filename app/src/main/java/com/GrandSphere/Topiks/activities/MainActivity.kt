@@ -17,7 +17,7 @@
 
 package com.GrandSphere.Topiks.activities
 
-import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,6 +32,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.GrandSphere.Topiks.R
 import com.GrandSphere.Topiks.db.AppDatabase
 import com.GrandSphere.Topiks.ui.components.CustomTopAppBar
 import com.GrandSphere.Topiks.ui.screens.AboutScreen
@@ -63,6 +66,7 @@ import com.GrandSphere.Topiks.ui.viewmodels.messageViewmodelRepos.FileRepository
 import com.GrandSphere.Topiks.ui.viewmodels.messageViewmodelRepos.MessageRepositoryImpl
 import com.GrandSphere.Topiks.ui.viewmodels.messageViewmodelRepos.MessageViewModelImpl
 import com.GrandSphere.Topiks.ui.viewmodels.messageViewmodelRepos.SearchRepositoryImpl
+import com.GrandSphere.Topiks.ui.viewmodels.ShareIntentViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.searchViewModel
 import com.GrandSphere.Topiks.viewmodel.SettingsViewModel
 
@@ -80,14 +84,23 @@ class MainActivity : ComponentActivity() {
                     (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
                 iTheme = if (bDarkMode) 0 else 1
             }
-            TopiksTheme(iTheme) { TopiksApp(applicationContext) }
+            TopiksTheme(iTheme) { TopiksApp() }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        ViewModelProvider(this)[ShareIntentViewModel::class.java]
+            .acceptIntent(this, intent, fromNewIntent = true)
     }
 }
 
 @Composable
-fun TopiksApp(context: Context) {
-    val database = AppDatabase.getDatabase(context)
+fun TopiksApp() {
+    val context = LocalContext.current
+    val activity = context as ComponentActivity
+    val database = AppDatabase.getDatabase(context.applicationContext)
     val topicViewModel: TopicViewModel = viewModel(factory = TopicViewModel.Factory)
 
     // Manually instantiate MessageViewModelImpl
@@ -119,9 +132,24 @@ fun TopiksApp(context: Context) {
     val settingsViewModel: SettingsViewModel = viewModel()
     val searchViewModel: searchViewModel = viewModel() // Note: SearchViewModel is unchanged
     val topBarViewModel = viewModel<TopBarViewModel>()
+    val shareViewModel: ShareIntentViewModel = viewModel()
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
+    val pendingDraft by shareViewModel.pendingDraft.collectAsState()
+    val hasPendingShare =
+        pendingDraft?.let { it.text.isNotBlank() || it.uris.isNotEmpty() } == true
+    val shareToTopicTitle = stringResource(R.string.share_to_topic)
+
+    LaunchedEffect(Unit) {
+        shareViewModel.acceptIntent(activity, activity.intent, fromNewIntent = false)
+    }
+
+    LaunchedEffect(Unit) {
+        shareViewModel.navigateToTopicList.collect {
+            navController.popBackStack("navtopicListScreen", inclusive = false)
+        }
+    }
 
     // Add test category
     LaunchedEffect(true) {
@@ -130,9 +158,14 @@ fun TopiksApp(context: Context) {
     }
 
     // Listen for changes in the navController's back stack and update the title accordingly
-    LaunchedEffect(backStackEntry.value) {
+    LaunchedEffect(backStackEntry.value, hasPendingShare) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
-        topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
+        topBarViewModel.updateTopBarTitle(
+            currentRoute = currentRoute,
+            currentBackStackEntry = navController.currentBackStackEntry,
+            shareToTopic = hasPendingShare && currentRoute == "navtopicListScreen",
+            shareToTopicTitle = shareToTopicTitle,
+        )
     }
 
     CompositionLocalProvider(LocalTopBarViewModel provides topBarViewModel) {
@@ -207,7 +240,8 @@ fun TopiksApp(context: Context) {
                                     messageViewModel,
                                     topicId ?: -1,
                                     topicColor = topicViewModel.cTopicColor,
-                                    messageId = messageId
+                                    messageId = messageId,
+                                    shareViewModel = shareViewModel,
                                 )
                             }
                         }
