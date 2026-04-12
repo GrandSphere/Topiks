@@ -54,6 +54,10 @@ interface MessageDao {
     @Update
     suspend fun updateMessage(message: MessageTbl)
 
+    /** Invalidates observers of message_tbl so file-only updates refresh the message list UI. */
+    @Query("UPDATE message_tbl SET lastEditTime = :time WHERE id = :messageId")
+    suspend fun touchMessageTimestamp(messageId: Int, time: Long)
+
      @Query("""
         SELECT m.id, m.content, m.topicId, t.name AS topicName
         FROM message_tbl m

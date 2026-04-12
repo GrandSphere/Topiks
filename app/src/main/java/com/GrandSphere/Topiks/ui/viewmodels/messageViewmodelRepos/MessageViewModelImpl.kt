@@ -17,10 +17,13 @@
 
 package com.GrandSphere.Topiks.ui.viewmodels.messageViewmodelRepos
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Search
@@ -58,6 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class MessageViewModelImpl(
+    private val appContext: Context,
     private val messageRepository: MessageRepository,
     private val fileRepository: FileRepository,
     private val searchRepository: SearchRepository,
@@ -254,6 +258,19 @@ class MessageViewModelImpl(
         Log.d("MessageViewModel", "Select All toggled, Selected IDs: ${selectedMessageIds.value}")
     }
 
+    override fun copySelectedMessagesText() {
+        val ids = selectedMessageIds.value
+        if (ids.isEmpty()) {
+            toastMessage.value = "No messages selected"
+            return
+        }
+        val segments = messages.value.filter { it.id in ids }
+        val combined = segments.joinToString("\n\n") { it.messageContent }
+        val clipboard = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("Messages", combined))
+        toastMessage.value = "Copied ${segments.size} message(s)"
+    }
+
     override fun navigateNextSearchResult() {
         val results = searchResults.value ?: emptyList()
         if (results.isEmpty()) {
@@ -321,6 +338,11 @@ class MessageViewModelImpl(
                         icon = Icons.Default.SelectAll,
                         onClick = { toggleSelectAllMessages() },
                         contentDescription = "Select All"
+                    ),
+                    CustomIcon(
+                        icon = Icons.Filled.ContentCopy,
+                        onClick = { copySelectedMessagesText() },
+                        contentDescription = "Copy selected messages"
                     ),
                     CustomIcon(
                         icon = Icons.Default.ImportExport,
@@ -471,6 +493,7 @@ class MessageViewModelImpl(
             categoryID = 1
         ).toInt()
         addFilesToMessage(messageId, topicId, selectedFiles.value, context, widthSetting, heightSetting)
+        messageRepository.touchMessageTimestamp(messageId)
     }
 
     override suspend fun editMessageOnly(
@@ -519,6 +542,7 @@ class MessageViewModelImpl(
         }
         if (addedFiles.isNotEmpty()) {
             addFilesToMessage(messageId, topicId, addedFiles, context, widthSetting, heightSetting)
+            messageRepository.touchMessageTimestamp(messageId)
         }
     }
 
@@ -590,6 +614,7 @@ class MessageViewModelImpl(
                 val application = checkNotNull(extras[APPLICATION_KEY])
                 val myApplication = application as DbTopics
                 return MessageViewModelImpl(
+                    appContext = myApplication.applicationContext,
                     messageRepository = MessageRepositoryImpl(myApplication.messageDao, myApplication.topicDao),
                     fileRepository = FileRepositoryImpl(myApplication.filesDao),
                     searchRepository = SearchRepositoryImpl(),

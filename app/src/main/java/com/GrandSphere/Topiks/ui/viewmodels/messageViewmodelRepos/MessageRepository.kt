@@ -56,4 +56,7 @@ interface MessageRepository {
 
     /** Get messages for search purposes */
     fun getSearchMessages(): Flow<List<MessageSearchContent>>
+
+    /** Bump lastEditTime so Room re-emits getMessagesForTopic after file rows change. */
+    suspend fun touchMessageTimestamp(messageId: Int)
 }

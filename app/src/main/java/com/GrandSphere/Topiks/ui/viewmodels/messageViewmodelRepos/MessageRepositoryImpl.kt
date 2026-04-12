@@ -86,4 +86,9 @@ class MessageRepositoryImpl(
     override fun getSearchMessages(): Flow<List<MessageSearchContent>> {
         return messageDao.getSearchMessages()
     }
+
+    override suspend fun touchMessageTimestamp(messageId: Int) {
+        val time = System.currentTimeMillis()
+        messageDao.touchMessageTimestamp(messageId, time)
+    }
 }

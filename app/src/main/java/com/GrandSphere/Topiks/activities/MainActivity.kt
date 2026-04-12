@@ -119,6 +119,7 @@ fun TopiksApp() {
                 val exportRepository = ExportRepositoryImpl()
 
                 return MessageViewModelImpl(
+                    appContext = context.applicationContext,
                     messageRepository = messageRepository,
                     fileRepository = fileRepository,
                     searchRepository = searchRepository,

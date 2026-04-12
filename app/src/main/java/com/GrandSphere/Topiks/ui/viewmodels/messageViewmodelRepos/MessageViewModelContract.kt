@@ -129,6 +129,8 @@ interface MessageViewModelContract {
     fun toggleMessageSelection(messageId: Int)
     /** Select or deselect all messages */
     fun toggleSelectAllMessages()
+    /** Copy selected messages' text to the clipboard in on-screen order */
+    fun copySelectedMessagesText()
     /** Go to the next search result */
     fun navigateNextSearchResult()
     /** Go to the previous search result */
