@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,7 +54,7 @@ import com.GrandSphere.Topiks.ui.screens.TopicListScreen
 import com.GrandSphere.Topiks.ui.screens.allSearch
 import com.GrandSphere.Topiks.ui.themes.TopiksTheme
 import com.GrandSphere.Topiks.ui.viewmodels.CategoryViewModel
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.ui.viewmodels.TopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
@@ -118,7 +119,6 @@ fun TopiksApp(context: Context) {
     val settingsViewModel: SettingsViewModel = viewModel()
     val searchViewModel: searchViewModel = viewModel() // Note: SearchViewModel is unchanged
     val topBarViewModel = viewModel<TopBarViewModel>()
-    GlobalViewModelHolder.setTopBarViewModel(topBarViewModel)
     val navController = rememberNavController()
     val topBarTitle by topBarViewModel.topBarTitle.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
@@ -135,83 +135,85 @@ fun TopiksApp(context: Context) {
         topBarViewModel.updateTopBarTitle(currentRoute, navController.currentBackStackEntry)
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            CustomTopAppBar(
-                title = topBarTitle,
-            )
-        },
-        content = { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = "navtopicListScreen"
+    CompositionLocalProvider(LocalTopBarViewModel provides topBarViewModel) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                CustomTopAppBar(
+                    title = topBarTitle,
+                )
+            },
+            content = { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = paddingValues.calculateTopPadding()) // Respect the top bar space
                 ) {
-                    composable("navtopicListScreen") {
-                        TopicListScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
-                    composable("newSearch") {
-                        allSearch(messageViewModel, searchViewModel, navController)
-                    }
-                    composable("navViewMessage") {
-                        MessageViewScreen(navController, messageViewModel)
-                    }
-                    composable("navAboutScreen") {
-                        AboutScreen()
-                    }
-                    composable(
-                        route = "navaddtopic/{topicId}",
-                        arguments = listOf(
-                            navArgument("topicId") { type = NavType.IntType },
-                        )
-                    ) { backStackEntry ->
-                        val topicId = backStackEntry.arguments?.getInt("topicId")
-                        AddTopicScreen(navController, topicViewModel, topicId ?: -1)
-                    }
-                    composable("navcolourpicker") {
-                        ColourPickerScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
-                    composable("navrecentcolours") {
-                        ColorGridScreen(
-                            navController,
-                            topicViewModel
-                        )
-                    }
-                    composable("navShowMorePictures") {
-                        ShowMorePictures(navController)
-                    }
-                    composable(
-                        "navnotescreen/{topicId}/{topicName}/{messageId}",
-                        arguments = listOf(
-                            navArgument("topicId") { type = NavType.IntType },
-                            navArgument("messageId") { type = NavType.IntType }
-                        )
-                    ) { backStackEntry ->
-                        val topicId = backStackEntry.arguments?.getInt("topicId")
-                        val messageId = backStackEntry.arguments?.getInt("messageId") ?: -1
-                        if (topicId != -1) {
-                            MessageScreen(
+                    NavHost(
+                        navController = navController,
+                        startDestination = "navtopicListScreen"
+                    ) {
+                        composable("navtopicListScreen") {
+                            TopicListScreen(
                                 navController,
-                                messageViewModel,
-                                topicId ?: -1,
-                                topicColor = topicViewModel.cTopicColor,
-                                messageId = messageId
+                                topicViewModel
                             )
+                        }
+                        composable("newSearch") {
+                            allSearch(messageViewModel, searchViewModel, navController)
+                        }
+                        composable("navViewMessage") {
+                            MessageViewScreen(navController, messageViewModel)
+                        }
+                        composable("navAboutScreen") {
+                            AboutScreen()
+                        }
+                        composable(
+                            route = "navaddtopic/{topicId}",
+                            arguments = listOf(
+                                navArgument("topicId") { type = NavType.IntType },
+                            )
+                        ) { backStackEntry ->
+                            val topicId = backStackEntry.arguments?.getInt("topicId")
+                            AddTopicScreen(navController, topicViewModel, topicId ?: -1)
+                        }
+                        composable("navcolourpicker") {
+                            ColourPickerScreen(
+                                navController,
+                                topicViewModel
+                            )
+                        }
+                        composable("navrecentcolours") {
+                            ColorGridScreen(
+                                navController,
+                                topicViewModel
+                            )
+                        }
+                        composable("navShowMorePictures") {
+                            ShowMorePictures(navController)
+                        }
+                        composable(
+                            "navnotescreen/{topicId}/{topicName}/{messageId}",
+                            arguments = listOf(
+                                navArgument("topicId") { type = NavType.IntType },
+                                navArgument("messageId") { type = NavType.IntType }
+                            )
+                        ) { backStackEntry ->
+                            val topicId = backStackEntry.arguments?.getInt("topicId")
+                            val messageId = backStackEntry.arguments?.getInt("messageId") ?: -1
+                            if (topicId != -1) {
+                                MessageScreen(
+                                    navController,
+                                    messageViewModel,
+                                    topicId ?: -1,
+                                    topicColor = topicViewModel.cTopicColor,
+                                    messageId = messageId
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-    )
+        )
+    }
 }

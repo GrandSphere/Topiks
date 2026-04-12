@@ -47,14 +47,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 @Composable
 fun ColorGridScreen(navController: NavController, viewModel: TopicViewModel) {
     val myNonsenseColours = viewModel.recentColoursList.collectAsState().value
 
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(

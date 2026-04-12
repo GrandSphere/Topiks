@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.CustomSearchBox
 import com.GrandSphere.Topiks.ui.themes.cSearchTopicFont
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.ui.viewmodels.searchViewModel
 
@@ -64,7 +64,7 @@ fun allSearch(messageViewModel: MessageViewModelContract, searchViewModel: searc
     val searchResults by searchViewModel.searchResults.observeAsState(emptyList())
 
     val colours = MaterialTheme.colorScheme
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
 
     val focusManager = LocalFocusManager.current // For clearing focus
     val focusRequester = remember { FocusRequester() }

@@ -39,13 +39,13 @@ import com.GrandSphere.Topiks.ui.components.addTopic.TopicCategory
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicColour
 import com.GrandSphere.Topiks.ui.components.addTopic.TopicName
 import com.GrandSphere.Topiks.ui.focusClear
-import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
+import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
 
 @Composable
 fun AddTopicScreen(navController: NavController, viewModel: TopicViewModel, topicId: Int = -1) {
     val bEditMode: Boolean by viewModel.bEditMode.collectAsState()
-    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
+    val topBarViewModel = LocalTopBarViewModel.current
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems( listOf() )
 
