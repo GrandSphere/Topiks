@@ -47,7 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
-import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.TopBarViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +58,7 @@ fun CustomTopAppBar(
     var isMenuExpanded by remember { mutableStateOf(false) }
     val colours = MaterialTheme.colorScheme
 
-    val topBarViewModel = LocalTopBarViewModel.current
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     val customIcons by topBarViewModel.customIcons.collectAsState()
     TopAppBar(
         modifier = Modifier.height(45.dp),

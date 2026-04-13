@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.utilities.getFileNameFromUri
 import com.GrandSphere.Topiks.utilities.helper.TemporaryDataHolder
 import com.GrandSphere.Topiks.utilities.openFile
@@ -60,7 +60,7 @@ fun ShowMorePictures(
 ) {
     val imagePaths by remember { mutableStateOf(TemporaryDataHolder.getImagePaths()) }
     val context: Context = LocalContext.current;
-    val topBarViewModel = LocalTopBarViewModel.current
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(

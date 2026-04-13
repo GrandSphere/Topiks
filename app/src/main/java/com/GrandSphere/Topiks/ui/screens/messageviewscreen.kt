@@ -39,7 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.GrandSphere.Topiks.ui.components.global.CustomTextBox
-import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.GlobalViewModelHolder
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import kotlinx.coroutines.launch
 
@@ -49,7 +49,7 @@ fun MessageViewScreen(navController: NavController, viewModel: MessageViewModelC
     var inputText by remember { mutableStateOf( viewModel.getMessageContentById(tempMessageID))}
     val coroutineScope = rememberCoroutineScope()
 
-    val topBarViewModel = LocalTopBarViewModel.current
+    val topBarViewModel = GlobalViewModelHolder.getTopBarViewModel()
     LaunchedEffect(Unit) {
         topBarViewModel.setMenuItems(
             listOf(
