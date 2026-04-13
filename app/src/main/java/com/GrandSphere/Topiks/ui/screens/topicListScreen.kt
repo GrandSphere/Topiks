@@ -18,7 +18,9 @@
 package com.GrandSphere.Topiks.ui.screens
 
 import ExportDatabaseWithPicker
+import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -87,7 +89,12 @@ import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
+import com.GrandSphere.Topiks.ui.viewmodels.ShareDialogState
+import com.GrandSphere.Topiks.ui.viewmodels.ShareOption
+import com.GrandSphere.Topiks.ui.viewmodels.ShareRequest
 import com.GrandSphere.Topiks.ui.viewmodels.TopicViewModel
+import com.GrandSphere.Topiks.utilities.buildShareIntentForFiles
+import com.GrandSphere.Topiks.utilities.buildShareIntentForText
 import com.GrandSphere.Topiks.utilities.helper.restartMainActivity
 import com.GrandSphere.Topiks.utilities.importDatabaseFromUri
 import kotlinx.coroutines.launch
@@ -215,8 +222,11 @@ fun TopicListScreen(navController: NavController, viewModel: TopicViewModel) {
 fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: TopicTbl) {
     var showMenu by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
+    var shareDialogState by remember { mutableStateOf<ShareDialogState?>(null) }
+    var pendingShareRequest by remember { mutableStateOf<ShareRequest?>(null) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -344,7 +354,105 @@ fun TopicItem(navController: NavController, viewModel: TopicViewModel,  topic: T
                     showMenu = false
                 }
             )
+            DropdownMenuItem( // Share Topic Button
+                text = { Text("Share", color = textColour) },
+                onClick = {
+                    showMenu = false
+                    coroutineScope.launch {
+                        val data = viewModel.buildTopicShareData(topic.id)
+                        val hasText = data.textBlob.isNotBlank()
+                        val hasImages = data.imagePaths.isNotEmpty()
+                        val hasAttachments = data.attachmentPaths.isNotEmpty()
+                        val presentTypes = listOf(hasText, hasImages, hasAttachments).count { it }
+
+                        if (presentTypes == 0) {
+                            Toast.makeText(context, "Nothing to share", Toast.LENGTH_SHORT).show()
+                            return@launch
+                        }
+
+                        if (presentTypes <= 1) {
+                            pendingShareRequest = when {
+                                hasImages -> ShareRequest.Files(data.imagePaths, mimeType = "image/*")
+                                hasAttachments -> ShareRequest.Files(data.attachmentPaths, mimeType = "*/*")
+                                else -> ShareRequest.Text(data.textBlob)
+                            }
+                        } else {
+                            shareDialogState = ShareDialogState(
+                                hasText = hasText,
+                                imageCount = data.imagePaths.size,
+                                attachmentCount = data.attachmentPaths.size
+                            )
+                        }
+                    }
+                }
+            )
         }
+    }
+
+    pendingShareRequest?.let { req ->
+        val intent = when (req) {
+            is ShareRequest.Text -> buildShareIntentForText(req.text)
+            is ShareRequest.Files -> buildShareIntentForFiles(
+                context = context,
+                filePaths = req.filePaths,
+                mimeTypeHint = req.mimeType
+            )
+        }
+
+        if (intent == null) {
+            Toast.makeText(context, "No files to share", Toast.LENGTH_SHORT).show()
+        } else {
+            context.startActivity(Intent.createChooser(intent, "Share"))
+        }
+        pendingShareRequest = null
+    }
+
+    if (shareDialogState != null) {
+        val state = shareDialogState!!
+        AlertDialog(
+            modifier = Modifier.background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
+            containerColor = colors.surface,
+            tonalElevation = 0.dp,
+            onDismissRequest = { shareDialogState = null },
+            title = { Text("Share topic", color = colors.onSurface) },
+            text = {
+                Column {
+                    if (state.hasText) {
+                        TextButton(onClick = {
+                            coroutineScope.launch {
+                                val data = viewModel.buildTopicShareData(topic.id)
+                                shareDialogState = null
+                                pendingShareRequest = ShareRequest.Text(data.textBlob)
+                            }
+                        }) { Text("Text only", color = colors.onSurface) }
+                    }
+                    if (state.imageCount > 0) {
+                        TextButton(onClick = {
+                            coroutineScope.launch {
+                                val data = viewModel.buildTopicShareData(topic.id)
+                                shareDialogState = null
+                                pendingShareRequest = ShareRequest.Files(data.imagePaths, mimeType = "image/*")
+                            }
+                        }) { Text("Images only (${state.imageCount})", color = colors.onSurface) }
+                    }
+                    if (state.attachmentCount > 0) {
+                        TextButton(onClick = {
+                            coroutineScope.launch {
+                                val data = viewModel.buildTopicShareData(topic.id)
+                                shareDialogState = null
+                                pendingShareRequest = ShareRequest.Files(data.attachmentPaths, mimeType = "*/*")
+                            }
+                        }) { Text("Attachments only (${state.attachmentCount})", color = colors.onSurface) }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { shareDialogState = null }) {
+                    Text("Cancel", color = colors.onSurface)
+                }
+            }
+        )
     }
 }
 

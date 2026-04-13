@@ -29,12 +29,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.GrandSphere.Topiks.DbTopics
 import com.GrandSphere.Topiks.db.dao.TopicDao
+import com.GrandSphere.Topiks.db.dao.FilesDao
+import com.GrandSphere.Topiks.db.dao.MessageDao
 import com.GrandSphere.Topiks.db.enitities.TopicTbl
 import com.GrandSphere.Topiks.model.TopicSearchHandler
 import com.GrandSphere.Topiks.model.tblTopicIdName
 import com.GrandSphere.Topiks.ui.components.addTopic.argbToColor
 import com.GrandSphere.Topiks.ui.components.addTopic.colorToArgb
 import com.GrandSphere.Topiks.utilities.copyFileToUserFolder
+import com.GrandSphere.Topiks.utilities.determineFileType
 import com.GrandSphere.Topiks.utilities.logFunc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +50,18 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 
-class TopicViewModel(private val topicDao: TopicDao, private val context: Context) : ViewModel() {
+data class TopicShareData(
+    val textBlob: String,
+    val imagePaths: List<String>,
+    val attachmentPaths: List<String>,
+)
+
+class TopicViewModel(
+    private val topicDao: TopicDao,
+    private val messageDao: MessageDao,
+    private val filesDao: FilesDao,
+    private val context: Context
+) : ViewModel() {
 
     val cTopicID: Int = 1
     val defaultColor: Color = Color(0xFFDCD0FF)
@@ -272,6 +286,39 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
         return topicDao.getTopicById(topicId)
     }
 
+    suspend fun buildTopicShareData(topicId: Int): TopicShareData {
+        return try {
+            val messages = messageDao.getMessagesForTopic(topicId).first()
+                .sortedBy { it.createTime }
+
+            val textBlob = messages
+                .map { it.content.trim() }
+                .filter { it.isNotEmpty() }
+                .joinToString(separator = "\n")
+
+            val filePaths = messages
+                .flatMap { msg -> filesDao.getFilesByMessageId(msg.id).map { it.filePath } }
+                .distinct()
+
+            val imagePaths = filePaths
+                .filter { determineFileType(context, it) == "Image" }
+                .distinct()
+
+            val attachmentPaths = filePaths
+                .filter { determineFileType(context, it) != "Image" }
+                .distinct()
+
+            TopicShareData(
+                textBlob = textBlob,
+                imagePaths = imagePaths,
+                attachmentPaths = attachmentPaths
+            )
+        } catch (e: Exception) {
+            logFunc(context, "TopicViewModel: Error building share data: ${e.message}")
+            TopicShareData(textBlob = "", imagePaths = emptyList(), attachmentPaths = emptyList())
+        }
+    }
+
     fun loadIconPathForEdit(topicId: Int) {
         viewModelScope.launch {
             try {
@@ -409,7 +456,12 @@ class TopicViewModel(private val topicDao: TopicDao, private val context: Contex
 
                 // Get the TopicDao from the Application class
                 val myApplication = application as DbTopics
-                return TopicViewModel(myApplication.topicDao, context) as T
+                return TopicViewModel(
+                    topicDao = myApplication.topicDao,
+                    messageDao = myApplication.messageDao,
+                    filesDao = myApplication.filesDao,
+                    context = context
+                ) as T
             }
         }
     }
