@@ -17,16 +17,11 @@
 
 package com.GrandSphere.Topiks.ui.viewmodels
 
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import com.GrandSphere.Topiks.model.dataClasses.CustomIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-val LocalTopBarViewModel = staticCompositionLocalOf<TopBarViewModel> {
-    error("LocalTopBarViewModel not provided")
-}
 
 data class MenuItem(val label: String, val onClick: () -> Unit)
 // TopBarViewModel.kt
@@ -123,4 +118,16 @@ class TopBarViewModel : ViewModel() {
         }
     }
 
+}
+
+object GlobalViewModelHolder {
+    private var topBarViewModel: TopBarViewModel? = null
+
+    fun setTopBarViewModel(viewModel: TopBarViewModel) {
+        topBarViewModel = viewModel
+    }
+
+    fun getTopBarViewModel(): TopBarViewModel {
+        return topBarViewModel ?: throw IllegalStateException("TopBarViewModel not initialized")
+    }
 }
