@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -48,8 +49,12 @@ import com.GrandSphere.Topiks.ui.components.addTopic.chooseColorBasedOnLuminance
 import com.GrandSphere.Topiks.ui.viewmodels.MenuItem
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.ui.viewmodels.TopBarViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.ShareDialogState
+import com.GrandSphere.Topiks.ui.viewmodels.ShareOption
+import com.GrandSphere.Topiks.ui.viewmodels.ShareRequest
 import com.GrandSphere.Topiks.utilities.determineFileType
 import com.GrandSphere.Topiks.utilities.helper.highlightSearchText
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -94,6 +99,9 @@ class MessageViewModelImpl(
     private val _messagesContentById = MutableStateFlow<Map<Int, String>>(emptyMap())
     override val topicId = MutableStateFlow(0)
     override val searchMessages = MutableStateFlow<List<MessageSearchContent>>(emptyList())
+
+    override val shareDialogState = MutableStateFlow<ShareDialogState?>(null)
+    override val shareRequests = MutableSharedFlow<ShareRequest>(extraBufferCapacity = 1)
 
     // UI Actions
     override fun setToFocusTextbox(newValue: Boolean) {
@@ -271,6 +279,98 @@ class MessageViewModelImpl(
         toastMessage.value = "Copied ${segments.size} message(s)"
     }
 
+    override fun requestShareSelected() {
+        val ids = selectedMessageIds.value
+        if (ids.isEmpty()) {
+            toastMessage.value = "No messages selected"
+            return
+        }
+
+        val selected = messages.value.filter { it.id in ids }
+        val textBlob = selected
+            .map { it.messageContent.trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
+
+        val imagePaths = selected
+            .flatMap { it.pictures }
+            .map { it.filePath }
+            .distinct()
+
+        val attachmentPaths = selected
+            .flatMap { it.attachments }
+            .distinct()
+
+        val hasText = textBlob.isNotBlank()
+        val hasImages = imagePaths.isNotEmpty()
+        val hasAttachments = attachmentPaths.isNotEmpty()
+        val presentTypes = listOf(hasText, hasImages, hasAttachments).count { it }
+
+        if (presentTypes <= 1) {
+            when {
+                hasImages -> shareRequests.tryEmit(
+                    ShareRequest.Files(filePaths = imagePaths, mimeType = "image/*")
+                )
+                hasAttachments -> shareRequests.tryEmit(
+                    ShareRequest.Files(filePaths = attachmentPaths, mimeType = "*/*")
+                )
+                hasText -> shareRequests.tryEmit(ShareRequest.Text(textBlob))
+                else -> toastMessage.value = "Nothing to share"
+            }
+            return
+        }
+
+        shareDialogState.value = ShareDialogState(
+            hasText = hasText,
+            imageCount = imagePaths.size,
+            attachmentCount = attachmentPaths.size
+        )
+    }
+
+    override fun dismissShareDialog() {
+        shareDialogState.value = null
+    }
+
+    override fun pickShareOption(option: ShareOption) {
+        val ids = selectedMessageIds.value
+        if (ids.isEmpty()) {
+            shareDialogState.value = null
+            toastMessage.value = "No messages selected"
+            return
+        }
+
+        val selected = messages.value.filter { it.id in ids }
+        val textBlob = selected
+            .map { it.messageContent.trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
+
+        val imagePaths = selected
+            .flatMap { it.pictures }
+            .map { it.filePath }
+            .distinct()
+
+        val attachmentPaths = selected
+            .flatMap { it.attachments }
+            .distinct()
+
+        shareDialogState.value = null
+        when (option) {
+            ShareOption.TEXT_ONLY -> {
+                if (textBlob.isBlank()) toastMessage.value = "No text to share"
+                else shareRequests.tryEmit(ShareRequest.Text(textBlob))
+            }
+            ShareOption.IMAGES_ONLY -> {
+                if (imagePaths.isEmpty()) toastMessage.value = "No images to share"
+                else shareRequests.tryEmit(ShareRequest.Files(imagePaths, mimeType = "image/*"))
+            }
+            ShareOption.ATTACHMENTS_ONLY -> {
+                if (attachmentPaths.isEmpty()) toastMessage.value = "No attachments to share"
+                else shareRequests.tryEmit(ShareRequest.Files(attachmentPaths, mimeType = "*/*"))
+            }
+        }
+    }
+
     override fun navigateNextSearchResult() {
         val results = searchResults.value ?: emptyList()
         if (results.isEmpty()) {
@@ -338,6 +438,11 @@ class MessageViewModelImpl(
                         icon = Icons.Default.SelectAll,
                         onClick = { toggleSelectAllMessages() },
                         contentDescription = "Select All"
+                    ),
+                    CustomIcon(
+                        icon = Icons.Default.Share,
+                        onClick = { requestShareSelected() },
+                        contentDescription = "Share selected"
                     ),
                     CustomIcon(
                         icon = Icons.Filled.ContentCopy,

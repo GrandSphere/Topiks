@@ -26,6 +26,7 @@ import androidx.lifecycle.LiveData
 import com.GrandSphere.Topiks.model.Message
 import com.GrandSphere.Topiks.model.MessageSearchContent
 import com.GrandSphere.Topiks.model.dataClasses.MessageUiModel
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -81,6 +82,11 @@ interface MessageViewModelContract {
     /** Messages available for search */
     val searchMessages: StateFlow<List<MessageSearchContent>>
 
+    /** Outgoing share: request to show a chooser dialog (null = hidden) */
+    val shareDialogState: StateFlow<ShareDialogState?>
+    /** Outgoing share: one-shot share requests to be launched by UI */
+    val shareRequests: SharedFlow<ShareRequest>
+
     // UI Actions
     /** Set whether to focus the textbox */
     fun setToFocusTextbox(newValue: Boolean)
@@ -131,6 +137,12 @@ interface MessageViewModelContract {
     fun toggleSelectAllMessages()
     /** Copy selected messages' text to the clipboard in on-screen order */
     fun copySelectedMessagesText()
+    /** Share selected messages (text/images/attachments) to other apps */
+    fun requestShareSelected()
+    /** Dismiss the share-type chooser dialog (if visible) */
+    fun dismissShareDialog()
+    /** User picked which share payload to send */
+    fun pickShareOption(option: ShareOption)
     /** Go to the next search result */
     fun navigateNextSearchResult()
     /** Go to the previous search result */

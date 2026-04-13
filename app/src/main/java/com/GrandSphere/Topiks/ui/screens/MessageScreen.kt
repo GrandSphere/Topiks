@@ -17,6 +17,7 @@
 
 package com.GrandSphere.Topiks.ui.screens
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +67,10 @@ import com.GrandSphere.Topiks.ui.focusClear
 import com.GrandSphere.Topiks.ui.viewmodels.LocalTopBarViewModel
 import com.GrandSphere.Topiks.ui.viewmodels.MessageViewModelContract
 import com.GrandSphere.Topiks.ui.viewmodels.ShareIntentViewModel
+import com.GrandSphere.Topiks.ui.viewmodels.ShareOption
+import com.GrandSphere.Topiks.ui.viewmodels.ShareRequest
+import com.GrandSphere.Topiks.utilities.buildShareIntentForFiles
+import com.GrandSphere.Topiks.utilities.buildShareIntentForText
 
 @Composable
 fun MessageScreen(
@@ -94,6 +99,7 @@ fun MessageScreen(
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
     val requestSearchFocus by viewModel.requestSearchFocus.collectAsState()
     val topicFontColor by viewModel.topicFontColor.collectAsState()
+    val shareDialogState by viewModel.shareDialogState.collectAsState()
     val context = LocalContext.current
     val topBarViewModel = LocalTopBarViewModel.current
     var inputBarHeightPx by remember { mutableStateOf(0) }
@@ -169,6 +175,29 @@ fun MessageScreen(
 
     LaunchedEffect(isDeleteEnabled) {
         viewModel.updateTopBar(topBarViewModel)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.shareRequests.collect { req ->
+            when (req) {
+                is ShareRequest.Text -> {
+                    val intent = buildShareIntentForText(req.text)
+                    context.startActivity(Intent.createChooser(intent, "Share"))
+                }
+                is ShareRequest.Files -> {
+                    val intent = buildShareIntentForFiles(
+                        context = context,
+                        filePaths = req.filePaths,
+                        mimeTypeHint = req.mimeType
+                    )
+                    if (intent == null) {
+                        Toast.makeText(context, "No files to share", Toast.LENGTH_SHORT).show()
+                    } else {
+                        context.startActivity(Intent.createChooser(intent, "Share"))
+                    }
+                }
+            }
+        }
     }
 
     Column(
@@ -284,6 +313,42 @@ fun MessageScreen(
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.cancelDeleteDialog() }) {
+                    Text("Cancel", color = colors.onSurface)
+                }
+            }
+        )
+    }
+
+    if (shareDialogState != null) {
+        val state = shareDialogState!!
+        AlertDialog(
+            modifier = Modifier.background(Color.Transparent, shape = RoundedCornerShape(8.dp)),
+            containerColor = colors.surface,
+            tonalElevation = 0.dp,
+            onDismissRequest = { viewModel.dismissShareDialog() },
+            title = { Text("Share selected", color = colors.onSurface) },
+            text = {
+                Column {
+                    if (state.hasText) {
+                        TextButton(onClick = { viewModel.pickShareOption(ShareOption.TEXT_ONLY) }) {
+                            Text("Text only", color = colors.onSurface)
+                        }
+                    }
+                    if (state.imageCount > 0) {
+                        TextButton(onClick = { viewModel.pickShareOption(ShareOption.IMAGES_ONLY) }) {
+                            Text("Images only (${state.imageCount})", color = colors.onSurface)
+                        }
+                    }
+                    if (state.attachmentCount > 0) {
+                        TextButton(onClick = { viewModel.pickShareOption(ShareOption.ATTACHMENTS_ONLY) }) {
+                            Text("Attachments only (${state.attachmentCount})", color = colors.onSurface)
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissShareDialog() }) {
                     Text("Cancel", color = colors.onSurface)
                 }
             }
